@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GRANDE AÇO | Dashboard de Produção & PCP</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #060d10;
+      --bg-card: #0c181d;
+      --bg-card-grad: linear-gradient(145deg, rgba(16, 36, 44, 0.85) 0%, rgba(9, 20, 24, 0.95) 100%);
+      --border-teal: rgba(45, 212, 191, 0.22);
+      --teal-bright: #2dd4bf;
+      --teal-glow: rgba(45, 212, 191, 0.15);
+      --emerald: #34d399;
+      --gold: #f59e0b;
+      --orange: #f97316;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(45, 212, 191, 0.06), transparent 35%),
+        radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.05), transparent 35%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding: 18px 24px;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding-bottom: 16px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-teal);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      background: linear-gradient(135deg, #0ea5e9, #2dd4bf);
+      color: #041014;
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      font-size: 1.5rem;
+      padding: 8px 14px;
+      border-radius: 8px;
+      letter-spacing: 1px;
+      box-shadow: 0 0 18px rgba(45, 212, 191, 0.3);
+    }
+
+    .brand-title h1 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.45rem;
+      letter-spacing: 1.5px;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .brand-title span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    /* TABS DE NAVEGAÇÃO */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      background: rgba(12, 24, 29, 0.9);
+      padding: 6px;
+      border-radius: 10px;
+      border: 1px solid var(--border-teal);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 600;
+      font-size: 0.92rem;
+      padding: 9px 18px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, rgba(45, 212, 191, 0.22), rgba(16, 185, 129, 0.15));
+      color: var(--teal-bright);
+      border: 1px solid rgba(45, 212, 191, 0.45);
+      box-shadow: 0 0 12px var(--teal-glow);
+    }
+
+    /* FILTROS DO TOPO */
+    .top-filters {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: 1px solid var(--border-teal);
+      padding: 4px 10px;
+      border-radius: 7px;
+    }
+
+    .filter-group label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .filter-group select {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-group select option {
+      background: #0c181d;
+      color: #fff;
+    }
+
+    /* SEÇÕES DE ABAS */
+    .tab-section {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI BIG NUMBERS (ESTILO OEE / POWER BI) */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .kpi-card {
+      background: var(--bg-card-grad);
+      border: 1px solid var(--border-teal);
+      border-radius: 12px;
+      padding: 16px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 90px;
+      height: 90px;
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.14), transparent 70%);
+      pointer-events: none;
+    }
+
+    .kpi-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+    }
+
+    .kpi-value {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.05;
+      color: var(--text-main);
+    }
+
+    .kpi-value.teal { color: var(--emerald); }
+    .kpi-value.gold { color: var(--gold); }
+    .kpi-value.orange { color: var(--orange); }
+
+    .kpi-sub {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* LAYOUT PRINCIPAL DA ABA 1 */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 1024px) {
+      .main-grid, .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: var(--bg-card-grad);
+      border: 1px solid var(--border-teal);
+      border-radius: 12px;
+      padding: 18px 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .panel-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      color: var(--text-main);
+      text-transform: uppercase;
+    }
+
+    .chart-box {
+      position: relative;
+      height: 270px;
+      width: 100%;
+    }
+
+    /* BARRAS DE STATUS DE MÁQUINAS (ESTILO OEE) */
+    .status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .status-item {
+      display: grid;
+      grid-template-columns: 115px 1fr 85px;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+
+    .status-name {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .status-name small {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    .progress-track {
+      height: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0d9488, #2dd4bf);
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+
+    .status-val {
+      text-align: right;
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      color: var(--teal-bright);
+    }
+
+    /* GAUGES SEMICIRCULARES (ESTILO POWER BI) */
+    .gauge-wrap {
+      position: relative;
+      height: 185px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .gauge-number {
+      position: absolute;
+      bottom: 18px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* TABELA DE MÁQUINAS E BITOLAS */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 11px 12px;
+      background: rgba(45, 212, 191, 0.1);
+      color: var(--teal-bright);
+      font-family: 'Chakra Petch', sans-serif;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      letter-spacing: 0.6px;
+      border-bottom: 1px solid var(--border-teal);
+    }
+
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    tr.zero-row td {
+      color: var(--text-muted);
+    }
+
+    .badge-type {
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-estrib {
+      background: rgba(45, 212, 191, 0.14);
+      color: var(--teal-bright);
+      border: 1px solid rgba(45, 212, 191, 0.3);
+    }
+
+    .badge-dobra {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    /* FORMULÁRIOS DA ABA 3 (PCP) */
+    .pcp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-row label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .form-row input, .form-row select {
+      background: rgba(6, 13, 16, 0.9);
+      border: 1px solid var(--border-teal);
+      color: var(--text-main);
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .form-row input:focus, .form-row select:focus {
+      border-color: var(--teal-bright);
+      box-shadow: 0 0 10px var(--teal-glow);
+    }
+
+    .btn-action {
+      width: 100%;
+      padding: 11px 16px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: linear-gradient(135deg, #14b8a6, #0d9488);
+      color: #041014;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-action:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(45, 212, 191, 0.35);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #041014;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">GA</div>
+      <div class="brand-title">
+        <h1>Dashboard de Produção</h1>
+        <span>GRANDE AÇO • TELEMETRIA & PCP INDUSTRIAL</span>
+      </div>
+    </div>
+
+    <nav class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('visao-geral', this)">1. Visão Geral (Telão)</button>
+      <button class="tab-btn" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas & Bitolas</button>
+      <button class="tab-btn" onclick="switchTab('lancamentos-pcp', this)">3. Lançar Produção & Metas</button>
+    </nav>
+
+    <div class="top-filters">
+      <div class="filter-group">
+        <label>Mês de Referência</label>
+        <select id="monthSelect" onchange="changeActiveMonth(this.value)">
+          <option value="0">JUNHO</option>
+          <option value="1">JULHO</option>
+          <option value="2">AGOSTO</option>
+          <option value="3">SETEMBRO</option>
+          <option value="4" selected>OUTUBRO</option>
+          <option value="5">NOVEMBRO</option>
+          <option value="6">DEZEMBRO</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Unidade</label>
+        <select id="unitSelect" onchange="toggleUnit(this.value)">
+          <option value="kg">Quilos (kg)</option>
+          <option value="t">Toneladas (t)</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ABA 1: VISÃO GERAL (INSPIRADO NO OEE + POWER BI) -->
+  <section id="visao-geral" class="tab-section active">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Atingimento no Mês (OEE Meta)</div>
+        <div class="kpi-value teal" id="kpiAttainment">73,5%</div>
+        <div class="kpi-sub" id="kpiMonthSub">Referência: OUTUBRO</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Quant. Produzida no Mês</div>
+        <div class="kpi-value" id="kpiMonthProd">36.762 kg</div>
+        <div class="kpi-sub" id="kpiMonthGoal">Meta Prevista: 50.000 kg</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Acumulado Anual (Jun–Dez)</div>
+        <div class="kpi-value gold" id="kpiTotalProd">103.233 kg</div>
+        <div class="kpi-sub" id="kpiTotalGoal">Previsão Total: 156.000 kg</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Bitolas Ativas / Cadastro</div>
+        <div class="kpi-value orange" id="kpiActiveGauges">8 / 9</div>
+        <div class="kpi-sub">4 Estribadeiras + 1 Dobradeira Manual</div>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <!-- GRÁFICO DE DEGRAUS / ÁREA MENSAL (ESTILO POWER BI) -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Evolução de Produção Mensal vs. Previsão Operacional</span>
+        </div>
+        <div class="chart-box">
+          <canvas id="monthlyStepChart"></canvas>
+        </div>
+      </div>
+
+      <!-- BARRAS DE STATUS POR MÁQUINA (ESTILO OEE) -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Carga por Máquina (Mês Ativo)</span>
+        </div>
+        <div class="status-list" id="machineStatusList"></div>
+      </div>
+    </div>
+
+    <!-- VELOCÍMETROS SEMICIRCULARES (ESTILO POWER BI) -->
+    <div class="bottom-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Disponibilidade & Atingimento Mensal</span>
+        </div>
+        <div class="gauge-wrap">
+          <canvas id="gaugeMonthChart"></canvas>
+          <div class="gauge-number" id="gaugeMonthText">73,5%</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Performance Acumulada do Semestre</span>
+        </div>
+        <div class="gauge-wrap">
+          <canvas id="gaugeYearChart"></canvas>
+          <div class="gauge-number" id="gaugeYearText">66,2%</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABA 2: MÁQUINAS & BITOLAS (TODAS AS 9 BITOLAS VISÍVEIS) -->
+  <section id="maquinas-bitolas" class="tab-section">
+    <div class="main-grid" style="grid-template-columns: 1.25fr 1fr;">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Produção por Máquina e Bitola (5,00mm a 32,00mm)</span>
+        </div>
+        <div class="chart-box" style="height: 360px;">
+          <canvas id="machineBarChart"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Tabela Oficial de Equipamentos e Bitolas</span>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Máquina</th>
+                <th>Categoria</th>
+                <th>Bitola</th>
+                <th>Produzido</th>
+                <th>Subtotal Máq.</th>
+              </tr>
+            </thead>
+            <tbody id="machinesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABA 3: LANÇAMENTOS PCP E METAS -->
+  <section id="lancamentos-pcp" class="tab-section">
+    <div class="pcp-grid">
+      <!-- LANÇAR PRODUÇÃO POR MÁQUINA E BITOLA -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Lançar Produção na Máquina</span>
+        </div>
+        <div class="form-row">
+          <label>Máquina e Bitola Oficial</label>
+          <select id="inputMachineGauge"></select>
+        </div>
+        <div class="form-row">
+          <label>Modo de Apontamento</label>
+          <select id="inputMode">
+            <option value="add">+ Somar ao Peso Atual (Lote/Etiqueta)</option>
+            <option value="set">= Substituir Total da Bitola</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Peso (em kg)</label>
+          <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500" />
+        </div>
+        <button class="btn-action" onclick="handleLaunchProduction()">Registrar Produção</button>
+      </div>
+
+      <!-- DEFINIR METAS MENSAIS -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Definir Meta / Previsão Mensal</span>
+        </div>
+        <div class="form-row">
+          <label>Mês da Meta</label>
+          <select id="goalMonthSelect">
+            <option value="0">JUNHO</option>
+            <option value="1">JULHO</option>
+            <option value="2">AGOSTO</option>
+            <option value="3">SETEMBRO</option>
+            <option value="4" selected>OUTUBRO</option>
+            <option value="5">NOVEMBRO</option>
+            <option value="6">DEZEMBRO</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Nova Meta Operacional (em kg)</label>
+          <input type="number" id="inputGoalKg" step="100" value="50000" />
+        </div>
+        <button class="btn-action btn-gold" onclick="handleUpdateGoal()">Salvar Nova Meta</button>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    Chart.register(ChartDataLabels);
+
+    // ESTADO INICIAL FIEL AOS SEUS DADOS E À PLANILHA CRIADA
+    const state = {
+      unit: 'kg',
+      activeMonthIndex: 4, // Outubro selecionado por padrão
+      months: [
+        { name: 'JUNHO', producedKg: 8277, goalKg: 8000 },
+        { name: 'JULHO', producedKg: 7216, goalKg: 8000 },
+        { name: 'AGOSTO', producedKg: 20246, goalKg: 10000 },
+        { name: 'SETEMBRO', producedKg: 30732, goalKg: 30000 },
+        { name: 'OUTUBRO', producedKg: 36762.272, goalKg: 50000 },
+        { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000 },
+        { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000 }
+      ],
+      // TODAS AS 9 BITOLAS SOLICITADAS (5.00 a 32.00mm), MESMO ZERADAS
+      items: [
+        { id: 'ES02_5.00', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 3467.856 },
+        { id: 'EB10_6.30', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 5977.857 },
+        { id: 'EB10_8.00', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 4401.101 },
+        { id: 'EB12_10.00', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 4069.508 },
+        { id: 'EB12_12.50', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 7552.335 },
+        { id: '20B_16.00', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 6482.599 },
+        { id: 'PT32_20.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 3080.413 },
+        { id: 'PT32_25.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 1730.603 },
+        { id: 'PT32_32.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
+      ]
+    };
+
+    let monthlyChart, machineChart, gaugeMonth, gaugeYear;
+
+    function formatValue(valKg, decimals = 0) {
+      if (state.unit === 't') {
+        return (valKg / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' t';
+      }
+      return valKg.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + ' kg';
+    }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function toggleUnit(u) {
+      state.unit = u;
+      renderAll();
+    }
+
+    function changeActiveMonth(idx) {
+      state.activeMonthIndex = parseInt(idx, 10);
+      renderAll();
+    }
+
+    function populateSelects() {
+      const sel = document.getElementById('inputMachineGauge');
+      sel.innerHTML = state.items.map(item =>
+        `<option value="${item.id}">${item.machine} (${item.category}) — Bitola ${item.gauge}</option>`
+      ).join('');
+    }
+
+    function renderKPIsAndStatus() {
+      const m = state.months[state.activeMonthIndex];
+      const pctMonth = m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0;
+
+      const totalProd = state.months.reduce((acc, cur) => acc + cur.producedKg, 0);
+      const totalGoal = state.months.reduce((acc, cur) => acc + cur.goalKg, 0);
+      const pctYear = totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0;
+
+      const activeGaugesCount = state.items.filter(i => i.kg > 0).length;
+
+      document.getElementById('kpiAttainment').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
+      document.getElementById('kpiMonthSub').textContent = `Referência: ${m.name}`;
+      document.getElementById('kpiMonthProd').textContent = formatValue(m.producedKg, 0);
+      document.getElementById('kpiMonthGoal').textContent = `Meta Prevista: ${formatValue(m.goalKg, 0)}`;
+      document.getElementById('kpiTotalProd').textContent = formatValue(totalProd, 0);
+      document.getElementById('kpiTotalGoal').textContent = `Previsão Total: ${formatValue(totalGoal, 0)}`;
+      document.getElementById('kpiActiveGauges').textContent = `${activeGaugesCount} / 9`;
+
+      document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
+      document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
+
+      // Status horizontal por Máquina
+      const machinesOrder = [
+        { name: 'ES02', type: 'Estribadeira' },
+        { name: 'EB10', type: 'Estribadeira' },
+        { name: 'EB12', type: 'Estribadeira' },
+        { name: '20B', type: 'Estribadeira' },
+        { name: 'PT 32', type: 'Dobradeira Manual' }
+      ];
+
+      const maxMachTotal = Math.max(...machinesOrder.map(mo =>
+        state.items.filter(i => i.machine === mo.name).reduce((a, b) => a + b.kg, 0)
+      ), 1);
+
+      const listEl = document.getElementById('machineStatusList');
+      listEl.innerHTML = machinesOrder.map(mo => {
+        const sumKg = state.items.filter(i => i.machine === mo.name).reduce((a, b) => a + b.kg, 0);
+        const widthPct = Math.min(100, (sumKg / maxMachTotal) * 100);
+        return `
+          <div class="status-item">
+            <div class="status-name">${mo.name}<small>${mo.type}</small></div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: ${widthPct}%"></div>
+            </div>
+            <div class="status-val">${formatValue(sumKg, 0)}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('machinesTableBody');
+      tbody.innerHTML = state.items.map(item => {
+        const machineTotal = state.items
+          .filter(i => i.machine === item.machine)
+          .reduce((acc, cur) => acc + cur.kg, 0);
+        const isZero = item.kg === 0;
+        const badgeClass = item.category === 'Estribadeira' ? 'badge-estrib' : 'badge-dobra';
+
+        return `
+          <tr class="${isZero ? 'zero-row' : ''}">
+            <td><strong>${item.machine}</strong></td>
+            <td><span class="badge-type ${badgeClass}">${item.category}</span></td>
+            <td><strong>${item.gauge}</strong></td>
+            <td>${formatValue(item.kg, 3)}</td>
+            <td>${formatValue(machineTotal, 3)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderCharts() {
+      const factor = state.unit === 't' ? 0.001 : 1;
+
+      // 1. Gráfico de Degraus Mensal (Inspirado no Power BI)
+      const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
+      if (monthlyChart) monthlyChart.destroy();
+
+      monthlyChart = new Chart(ctxMonth, {
+        type: 'line',
+        data: {
+          labels: state.months.map(m => m.name),
+          datasets: [
+            {
+              label: `Produzido (${state.unit})`,
+              data: state.months.map(m => +(m.producedKg * factor).toFixed(2)),
+              borderColor: '#2dd4bf',
+              backgroundColor: 'rgba(45, 212, 191, 0.18)',
+              fill: true,
+              stepped: 'middle',
+              borderWidth: 2.5,
+              pointRadius: 4
+            },
+            {
+              label: `Previsão / Meta (${state.unit})`,
+              data: state.months.map(m => +(m.goalKg * factor).toFixed(2)),
+              borderColor: '#f59e0b',
+              borderDash: [6, 4],
+              fill: false,
+              tension: 0.25,
+              borderWidth: 2,
+              pointRadius: 4
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#cbd5e1' } },
+            datalabels: {
+              color: '#f8fafc',
+              align: 'top',
+              font: { weight: 'bold', size: 10 },
+              formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+          }
+        }
+      });
+
+      // 2. Gauges Semicirculares
+      const m = state.months[state.activeMonthIndex];
+      const pctMonth = Math.min(100, m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0);
+      const totalProd = state.months.reduce((a, b) => a + b.producedKg, 0);
+      const totalGoal = state.months.reduce((a, b) => a + b.goalKg, 0);
+      const pctYear = Math.min(100, totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0);
+
+      if (gaugeMonth) gaugeMonth.destroy();
+      gaugeMonth = createGauge(document.getElementById('gaugeMonthChart'), pctMonth, '#2dd4bf');
+
+      if (gaugeYear) gaugeYear.destroy();
+      gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#34d399');
+
+      // 3. Gráfico de Máquinas e Bitolas (Todas as 9 Bitolas fixas no eixo X)
+      const ctxMach = document.getElementById('machineBarChart').getContext('2d');
+      if (machineChart) machineChart.destroy();
+
+      machineChart = new Chart(ctxMach, {
+        type: 'bar',
+        data: {
+          labels: state.items.map(i => `${i.machine} (${i.gauge})`),
+          datasets: [{
+            label: `Peso Produzido (${state.unit})`,
+            data: state.items.map(i => +(i.kg * factor).toFixed(3)),
+            backgroundColor: state.items.map(i =>
+              i.category === 'Estribadeira' ? 'rgba(45, 212, 191, 0.75)' : 'rgba(245, 158, 11, 0.8)'
+            ),
+            borderColor: state.items.map(i =>
+              i.category === 'Estribadeira' ? '#2dd4bf' : '#f59e0b'
+            ),
+            borderWidth: 1.5,
+            borderRadius: 5
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              color: '#f8fafc',
+              anchor: 'end',
+              align: 'top',
+              font: { weight: 'bold', size: 10 },
+              formatter: (val) => val.toLocaleString('pt-BR')
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+          }
+        }
+      });
+    }
+
+    function createGauge(canvasEl, pct, colorHex) {
+      return new Chart(canvasEl, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [pct, 100 - pct],
+            backgroundColor: [colorHex, 'rgba(255, 255, 255, 0.08)'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          rotation: -90,
+          circumference: 180,
+          cutout: '76%',
+          plugins: {
+            legend: { display: false },
+            tooltip: { enabled: false },
+            datalabels: { display: false }
+          }
+        }
+      });
+    }
+
+    function handleLaunchProduction() {
+      const itemId = document.getElementById('inputMachineGauge').value;
+      const mode = document.getElementById('inputMode').value;
+      const val = parseFloat(document.getElementById('inputWeightKg').value);
+
+      if (isNaN(val) || val < 0) return alert('Informe um peso válido em kg.');
+
+      const item = state.items.find(i => i.id === itemId);
+      if (!item) return;
+
+      if (mode === 'add') {
+        item.kg += val;
+      } else {
+        item.kg = val;
+      }
+
+      // Recalcula o total do mês ativo com base na soma das máquinas
+      const totalMachinesKg = state.items.reduce((acc, cur) => acc + cur.kg, 0);
+      state.months[state.activeMonthIndex].producedKg = totalMachinesKg;
+
+      document.getElementById('inputWeightKg').value = '';
+      renderAll();
+    }
+
+    function handleUpdateGoal() {
+      const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
+      const val = parseFloat(document.getElementById('inputGoalKg').value);
+      if (isNaN(val) || val < 0) return alert('Informe uma meta válida em kg.');
+
+      state.months[mIdx].goalKg = val;
+      renderAll();
+    }
+
+    function renderAll() {
+      renderKPIsAndStatus();
+      renderTable();
+      renderCharts();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      populateSelects();
+      renderAll();
+    });
+  </script>
+</body>
+</html>
