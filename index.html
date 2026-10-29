@@ -47,7 +47,7 @@
       align-items: center;
       gap: 14px;
       padding-bottom: 16px;
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       border-bottom: 1px solid var(--border-teal);
     }
 
@@ -196,7 +196,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* FAIXA DE PERÍODO ATIVO */
+    /* FAIXA DE PERÍODO ATIVO + STATUS DA NUVEM */
     .period-banner {
       display: flex;
       justify-content: space-between;
@@ -215,6 +215,36 @@
       color: var(--gold);
       font-family: 'Chakra Petch', sans-serif;
       font-size: 0.95rem;
+    }
+
+    .cloud-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cloud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .cloud-badge.online {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--emerald);
+      border-color: rgba(52, 211, 153, 0.4);
+    }
+
+    .cloud-badge.local {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--gold);
+      border-color: rgba(245, 158, 11, 0.4);
     }
 
     /* KPI BIG NUMBERS */
@@ -445,9 +475,21 @@
     /* FORMULÁRIOS DA ABA 3 (PCP) */
     .pcp-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
       gap: 18px;
       margin-bottom: 18px;
+    }
+
+    .split-2-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .split-2-cols {
+        grid-template-columns: 1fr;
+      }
     }
 
     .form-row {
@@ -461,6 +503,9 @@
       font-size: 0.78rem;
       color: var(--text-muted);
       font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .form-row input, .form-row select {
@@ -477,6 +522,15 @@
     .form-row input:focus, .form-row select:focus {
       border-color: var(--teal-bright);
       box-shadow: 0 0 10px var(--teal-glow);
+    }
+
+    .checkbox-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      color: var(--teal-bright);
+      cursor: pointer;
     }
 
     .btn-action {
@@ -512,11 +566,52 @@
       border-radius: 6px;
       font-size: 0.76rem;
       cursor: pointer;
+      text-decoration: none;
     }
 
     .btn-outline:hover {
       color: var(--teal-bright);
       border-color: var(--teal-bright);
+    }
+
+    /* MODAL DE CONFIGURAÇÃO DE NUVEM */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #0c181d;
+      border: 1px solid var(--teal-bright);
+      border-radius: 12px;
+      max-width: 560px;
+      width: 100%;
+      padding: 22px;
+      box-shadow: 0 0 30px rgba(45, 212, 191, 0.25);
+    }
+
+    .modal-card h3 {
+      font-family: 'Chakra Petch', sans-serif;
+      color: var(--gold);
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+    }
+
+    .modal-card p {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin-bottom: 14px;
     }
   </style>
 </head>
@@ -538,7 +633,7 @@
       <button class="tab-btn" onclick="switchTab('lancamentos-pcp', this)">3. Lançar Produção & Metas</button>
     </nav>
 
-    <!-- SELETOR DE CALENDÁRIO COMPLETO (TODOS OS ANOS, MESES E DATAS) -->
+    <!-- SELETOR DE CALENDÁRIO COMPLETO -->
     <div class="top-filters">
       <div class="filter-group">
         <label>Calendário (Dia/Mês/Ano)</label>
@@ -582,13 +677,19 @@
     </div>
   </header>
 
-  <!-- FAIXA DE INFORMAÇÃO DE DATA ATIVA -->
+  <!-- FAIXA DE INFORMAÇÃO DE DATA ATIVA E BANCO NA NUVEM -->
   <div class="period-banner">
     <div>
       📅 Visualizando Período: <strong id="bannerPeriodText">OUTUBRO / 2026</strong>
       <span style="color: var(--text-muted); margin-left: 10px;" id="bannerDateText">(Data selecionada: 29/10/2026)</span>
     </div>
-    <button class="btn-outline" onclick="resetDefaultData()">Restaurar Dados Padrão (Out/2026)</button>
+    <div class="cloud-actions">
+      <span id="cloudStatusBadge" class="cloud-badge local">⚡ Modo Local (Configure a Nuvem)</span>
+      <button class="btn-outline" onclick="syncFromCloud(true)">🔄 Atualizar Agora</button>
+      <button class="btn-outline" onclick="openCloudModal()">☁️ Configurar Banco na Nuvem</button>
+      <a class="btn-outline" href="https://docs.google.com/spreadsheets/d/1qu-srbL3PhV3p2dTitNfe_m6OT-yWdPzNRWnu5uEWQg/edit" target="_blank">📊 Abrir Planilha Google Sheets</a>
+      <button class="btn-outline" onclick="resetDefaultData()">Restaurar Padrão</button>
+    </div>
   </div>
 
   <!-- ABA 1: VISÃO GERAL -->
@@ -691,22 +792,45 @@
     </div>
   </section>
 
-  <!-- ABA 3: LANÇAMENTOS PCP E METAS COM CALENDÁRIO -->
+  <!-- ABA 3: LANÇAMENTOS PCP E METAS (CAMPOS DE MÁQUINA E BITOLA SEPARADOS) -->
   <section id="lancamentos-pcp" class="tab-section">
     <div class="pcp-grid">
-      <!-- LANÇAR PRODUÇÃO POR DATA, MÁQUINA E BITOLA -->
+      <!-- LANÇAR PRODUÇÃO POR DATA, MÁQUINA E BITOLA SEPARADOS -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Lançar Produção por Data e Máquina</span>
+          <span class="panel-title">Lançar Produção por Data, Máquina e Bitola</span>
         </div>
+
         <div class="form-row">
           <label>Data do Apontamento (Qualquer Dia/Mês/Ano)</label>
           <input type="date" id="launchDateInput" onchange="syncDateFromLaunch(this.value)" />
         </div>
-        <div class="form-row">
-          <label>Máquina e Bitola Oficial</label>
-          <select id="inputMachineGauge"></select>
+
+        <!-- CAMPOS SEPARADOS: ESCOLHER MÁQUINA E ESCOLHER BITOLA -->
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Escolher Máquina</label>
+            <select id="inputMachineSelect" onchange="onMachineSelectChange()">
+              <option value="ES02">ES02 (Estribadeira)</option>
+              <option value="EB10">EB10 (Estribadeira)</option>
+              <option value="EB12">EB12 (Estribadeira)</option>
+              <option value="20B">20B (Estribadeira)</option>
+              <option value="PT 32">PT 32 (Dobradeira Manual)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label>
+              <span>Escolher Bitola</span>
+              <span class="checkbox-inline" title="Permite selecionar qualquer uma das 9 bitolas em qualquer máquina">
+                <input type="checkbox" id="allowAllGaugesCheck" onchange="onMachineSelectChange()" />
+                Todas as 9 bitolas
+              </span>
+            </label>
+            <select id="inputGaugeSelect"></select>
+          </div>
         </div>
+
         <div class="form-row">
           <label>Modo de Apontamento</label>
           <select id="inputMode">
@@ -714,11 +838,13 @@
             <option value="set">= Substituir Total da Bitola no Mês</option>
           </select>
         </div>
+
         <div class="form-row">
           <label>Peso Produzido (em kg)</label>
           <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500" />
         </div>
-        <button class="btn-action" onclick="handleLaunchProduction()">Registrar Produção na Data</button>
+
+        <button class="btn-action" onclick="handleLaunchProduction()">Registrar Produção e Salvar na Nuvem</button>
       </div>
 
       <!-- DEFINIR METAS MENSAIS DE QUALQUER ANO -->
@@ -751,7 +877,7 @@
           <label>Nova Meta Operacional (em kg)</label>
           <input type="number" id="inputGoalKg" step="100" value="50000" />
         </div>
-        <button class="btn-action btn-gold" onclick="handleUpdateGoal()">Salvar Meta no Calendário</button>
+        <button class="btn-action btn-gold" onclick="handleUpdateGoal()">Salvar Meta no Calendário e Nuvem</button>
       </div>
     </div>
 
@@ -779,31 +905,69 @@
     </div>
   </section>
 
+  <!-- MODAL DE CONFIGURAÇÃO DO BANCO NA NUVEM -->
+  <div class="modal-backdrop" id="cloudModal">
+    <div class="modal-card">
+      <h3>☁️ Conexão com Banco de Dados em Nuvem (Multi-PC)</h3>
+      <p>
+        Cole abaixo a <strong>URL do App da Web (Google Apps Script)</strong> vinculada à sua planilha do Google Sheets.
+        Assim, qualquer lançamento feito em um computador ficará gravado na nuvem e aparecerá em todos os outros PCs.
+      </p>
+      <div class="form-row">
+        <label>URL do Google Apps Script (termina com /exec)</label>
+        <input type="url" id="cloudUrlInput" placeholder="https://script.google.com/macros/s/.../exec" />
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <button class="btn-action" onclick="saveCloudUrl()">Salvar e Sincronizar</button>
+        <button class="btn-outline" style="padding: 10px 18px;" onclick="closeCloudModal()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     Chart.register(ChartDataLabels);
+
+    // =========================================================================
+    // DICA PARA O GITHUB: Se você colar a sua URL do Apps Script entre as aspas
+    // abaixo antes de subir pro GitHub, nenhum PC precisará configurar nada!
+    // =========================================================================
+    const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbxSp-7XVKcqAPgD7hSj3xFxO4uESgAcY92SOHapGaDz7jfkgF6wKj8UrxVBC8NY8lpO5Q/exec";
 
     const MONTH_NAMES = [
       'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
       'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
     ];
 
-    // CADASTRO FIXO DAS 5 MÁQUINAS E 9 BITOLAS OFICIAIS (MESMO ZERADAS)
-    const BASE_ITEMS_TEMPLATE = [
-      { id: 'ES02_5.00', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 0 },
-      { id: 'EB10_6.30', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 0 },
-      { id: 'EB10_8.00', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 0 },
-      { id: 'EB12_10.00', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 0 },
-      { id: 'EB12_12.50', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 0 },
-      { id: '20B_16.00', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 0 },
-      { id: 'PT32_20.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 0 },
-      { id: 'PT32_25.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 0 },
-      { id: 'PT32_32.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
+    const ALL_GAUGES = [
+      '5,00 mm', '6,30 mm', '8,00 mm', '10,00 mm', '12,50 mm',
+      '16,00 mm', '20,00 mm', '25,00 mm', '32,00 mm'
     ];
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V2';
+    const MACHINE_CATALOG = {
+      'ES02':  { category: 'Estribadeira', defaultGauges: ['5,00 mm'] },
+      'EB10':  { category: 'Estribadeira', defaultGauges: ['6,30 mm', '8,00 mm'] },
+      'EB12':  { category: 'Estribadeira', defaultGauges: ['10,00 mm', '12,50 mm'] },
+      '20B':   { category: 'Estribadeira', defaultGauges: ['16,00 mm'] },
+      'PT 32': { category: 'Dobradeira Manual', defaultGauges: ['20,00 mm', '25,00 mm', '32,00 mm'] }
+    };
+
+    // CADASTRO FIXO DAS 5 MÁQUINAS E 9 BITOLAS OFICIAIS (MESMO ZERADAS)
+    const BASE_ITEMS_TEMPLATE = [
+      { id: 'ES02_5,00 mm', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 0 },
+      { id: 'EB10_6,30 mm', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 0 },
+      { id: 'EB10_8,00 mm', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 0 },
+      { id: 'EB12_10,00 mm', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 0 },
+      { id: 'EB12_12,50 mm', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 0 },
+      { id: '20B_16,00 mm', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 0 },
+      { id: 'PT 32_20,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 0 },
+      { id: 'PT 32_25,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 0 },
+      { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
+    ];
+
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V3';
+    const CLOUD_URL_KEY = 'GRANDE_ACO_CLOUD_URL';
 
     function cloneItemsWithTotal(totalKg) {
-      // Distribui proporcionalmente ao padrão de Outubro ou zera
       const octWeights = [3467.856, 5977.857, 4401.101, 4069.508, 7552.335, 6482.599, 3080.413, 1730.603, 0];
       const octSum = 36762.272;
       return BASE_ITEMS_TEMPLATE.map((item, idx) => ({
@@ -823,7 +987,6 @@
 
     function createDefaultDatabase() {
       const year2026 = createEmptyYearData();
-      // Dados reais de Junho a Dezembro de 2026
       year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, items: cloneItemsWithTotal(8277) };
       year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, items: cloneItemsWithTotal(7216) };
       year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, items: cloneItemsWithTotal(20246) };
@@ -833,15 +996,15 @@
         producedKg: 36762.272,
         goalKg: 50000,
         items: [
-          { id: 'ES02_5.00', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 3467.856 },
-          { id: 'EB10_6.30', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 5977.857 },
-          { id: 'EB10_8.00', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 4401.101 },
-          { id: 'EB12_10.00', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 4069.508 },
-          { id: 'EB12_12.50', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 7552.335 },
-          { id: '20B_16.00', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 6482.599 },
-          { id: 'PT32_20.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 3080.413 },
-          { id: 'PT32_25.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 1730.603 },
-          { id: 'PT32_32.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
+          { id: 'ES02_5,00 mm', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 3467.856 },
+          { id: 'EB10_6,30 mm', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 5977.857 },
+          { id: 'EB10_8,00 mm', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 4401.101 },
+          { id: 'EB12_10,00 mm', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 4069.508 },
+          { id: 'EB12_12,50 mm', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 7552.335 },
+          { id: '20B_16,00 mm', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 6482.599 },
+          { id: 'PT 32_20,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 3080.413 },
+          { id: 'PT 32_25,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 1730.603 },
+          { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
         ]
       };
       year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, items: cloneItemsWithTotal(0) };
@@ -851,10 +1014,8 @@
         unit: 'kg',
         selectedDate: '2026-10-29',
         activeYear: 2026,
-        activeMonthIndex: 9, // Outubro (0=Jan, 9=Out)
-        years: {
-          2026: year2026
-        },
+        activeMonthIndex: 9,
+        years: { 2026: year2026 },
         dailyLogs: [
           { date: '2026-10-29', year: 2026, monthIndex: 9, machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', mode: 'Saldo Consolidado', kg: 7552.335 }
         ]
@@ -863,6 +1024,16 @@
 
     let state = loadState();
     let monthlyChart, machineChart, gaugeMonth, gaugeYear;
+
+    function getCloudUrl() {
+      return localStorage.getItem(CLOUD_URL_KEY) || DEFAULT_CLOUD_URL;
+    }
+
+    function updateCloudBadge(statusText, isOnline) {
+      const badge = document.getElementById('cloudStatusBadge');
+      badge.textContent = statusText;
+      badge.className = 'cloud-badge ' + (isOnline ? 'online' : 'local');
+    }
 
     function loadState() {
       try {
@@ -874,12 +1045,92 @@
       return createDefaultDatabase();
     }
 
-    function saveState() {
+    function saveState(lastLog = null) {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {
         console.warn('Falha ao salvar localStorage:', e);
       }
+      pushToCloud(lastLog);
+    }
+
+    // SINCRONIZAÇÃO EM NUVEM (GOOGLE APPS SCRIPT / SHEETS)
+    async function syncFromCloud(showAlert = false) {
+      const url = getCloudUrl();
+      if (!url) {
+        updateCloudBadge('⚡ Modo Local (Sem URL de Nuvem)', false);
+        if (showAlert) openCloudModal();
+        return;
+      }
+
+      updateCloudBadge('🔄 Sincronizando com a Nuvem...', true);
+      try {
+        const res = await fetch(url, { method: 'GET', cache: 'no-store' });
+        const cloudData = await res.json();
+        if (cloudData && cloudData.years) {
+          state = cloudData;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          syncFilterInputs();
+          renderAll();
+          updateCloudBadge('☁️ Nuvem Sincronizada (Todos os PCs)', true);
+        } else {
+          // Primeiro uso: envia a base padrão para a nuvem
+          await pushToCloud();
+        }
+      } catch (err) {
+        console.warn('Erro ao buscar da nuvem:', err);
+        updateCloudBadge('⚠️ Offline / Verifique URL da Nuvem', false);
+      }
+    }
+
+    async function pushToCloud(lastLog = null) {
+      const url = getCloudUrl();
+      if (!url) return;
+
+      updateCloudBadge('☁️ Gravando na Nuvem...', true);
+      try {
+        await fetch(url, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ state, lastLog })
+        });
+        updateCloudBadge('☁️ Gravado na Nuvem (Todos os PCs)', true);
+      } catch (err) {
+        console.warn('Erro ao gravar na nuvem:', err);
+        updateCloudBadge('⚠️ Erro ao Gravar na Nuvem', false);
+      }
+    }
+
+    function openCloudModal() {
+      document.getElementById('cloudUrlInput').value = getCloudUrl();
+      document.getElementById('cloudModal').classList.add('open');
+    }
+
+    function closeCloudModal() {
+      document.getElementById('cloudModal').classList.remove('open');
+    }
+
+    function saveCloudUrl() {
+      const val = document.getElementById('cloudUrlInput').value.trim();
+      localStorage.setItem(CLOUD_URL_KEY, val);
+      closeCloudModal();
+      syncFromCloud(false);
+    }
+
+    // LÓGICA DE CAMPOS SEPARADOS: MÁQUINA E BITOLA
+    function onMachineSelectChange() {
+      const machine = document.getElementById('inputMachineSelect').value;
+      const allowAll = document.getElementById('allowAllGaugesCheck').checked;
+      const gaugeSelect = document.getElementById('inputGaugeSelect');
+
+      const gaugesToShow = allowAll
+        ? ALL_GAUGES
+        : (MACHINE_CATALOG[machine]?.defaultGauges || ALL_GAUGES);
+
+      gaugeSelect.innerHTML = gaugesToShow.map(g =>
+        `<option value="${g}">Bitola ${g}</option>`
+      ).join('');
     }
 
     function ensureYearExists(year) {
@@ -910,7 +1161,6 @@
       return `${d}/${m}/${y}`;
     }
 
-    // SINCRONIZAÇÃO DOS CONTROLES DE CALENDÁRIO
     function onGlobalDateChange(val) {
       if (!val) return;
       const [y, m] = val.split('-').map(Number);
@@ -978,13 +1228,6 @@
       renderAll();
     }
 
-    function populateSelects() {
-      const sel = document.getElementById('inputMachineGauge');
-      sel.innerHTML = BASE_ITEMS_TEMPLATE.map(item =>
-        `<option value="${item.id}">${item.machine} (${item.category}) — Bitola ${item.gauge}</option>`
-      ).join('');
-    }
-
     function renderKPIsAndStatus() {
       const months = getActiveYearMonths();
       const m = getActiveMonthObj();
@@ -1006,7 +1249,7 @@
       document.getElementById('kpiYearLabel').textContent = state.activeYear;
       document.getElementById('kpiTotalProd').textContent = formatValue(totalProd, 0);
       document.getElementById('kpiTotalGoal').textContent = `Previsão Anual: ${formatValue(totalGoal, 0)}`;
-      document.getElementById('kpiActiveGauges').textContent = `${activeGaugesCount} / 9`;
+      document.getElementById('kpiActiveGauges').textContent = `${activeGaugesCount} / ${m.items.length}`;
 
       document.getElementById('chartYearTitle').textContent = state.activeYear;
       document.getElementById('statusMonthTitle').textContent = `${m.name}/${state.activeYear}`;
@@ -1087,7 +1330,6 @@
       const months = getActiveYearMonths();
       const m = getActiveMonthObj();
 
-      // 1. Gráfico dos 12 Meses do Ano Selecionado
       const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
       if (monthlyChart) monthlyChart.destroy();
 
@@ -1137,7 +1379,6 @@
         }
       });
 
-      // 2. Gauges Semicirculares
       const pctMonth = Math.min(100, m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0);
       const totalProd = months.reduce((a, b) => a + b.producedKg, 0);
       const totalGoal = months.reduce((a, b) => a + b.goalKg, 0);
@@ -1149,7 +1390,6 @@
       if (gaugeYear) gaugeYear.destroy();
       gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#34d399');
 
-      // 3. Gráfico de Máquinas e Bitolas do Mês/Ano Ativo
       const ctxMach = document.getElementById('machineBarChart').getContext('2d');
       if (machineChart) machineChart.destroy();
 
@@ -1221,7 +1461,8 @@
       const [yr, mo] = launchDate.split('-').map(Number);
       const mIdx = mo - 1;
 
-      const itemId = document.getElementById('inputMachineGauge').value;
+      const selectedMachine = document.getElementById('inputMachineSelect').value;
+      const selectedGauge = document.getElementById('inputGaugeSelect').value;
       const mode = document.getElementById('inputMode').value;
       const val = parseFloat(document.getElementById('inputWeightKg').value);
 
@@ -1233,8 +1474,20 @@
       state.selectedDate = launchDate;
 
       const monthObj = state.years[yr][mIdx];
-      const item = monthObj.items.find(i => i.id === itemId);
-      if (!item) return;
+      let item = monthObj.items.find(i => i.machine === selectedMachine && i.gauge === selectedGauge);
+
+      // Caso o usuário tenha marcado uma bitola extra para aquela máquina, cria a linha dinamicamente
+      if (!item) {
+        const cat = MACHINE_CATALOG[selectedMachine]?.category || 'Estribadeira';
+        item = {
+          id: `${selectedMachine}_${selectedGauge}`,
+          machine: selectedMachine,
+          category: cat,
+          gauge: selectedGauge,
+          kg: 0
+        };
+        monthObj.items.push(item);
+      }
 
       if (mode === 'add') {
         item.kg = +(item.kg + val).toFixed(3);
@@ -1244,20 +1497,23 @@
 
       monthObj.producedKg = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
 
-      state.dailyLogs.push({
+      const newLog = {
         date: launchDate,
         year: yr,
         monthIndex: mIdx,
+        monthName: MONTH_NAMES[mIdx],
         machine: item.machine,
         category: item.category,
         gauge: item.gauge,
         mode: mode === 'add' ? '+ Lote Somado' : '= Total Substituído',
         kg: val
-      });
+      };
+
+      state.dailyLogs.push(newLog);
 
       document.getElementById('inputWeightKg').value = '';
       syncFilterInputs();
-      saveState();
+      saveState(newLog);
       renderAll();
     }
 
@@ -1282,6 +1538,7 @@
       localStorage.removeItem(STORAGE_KEY);
       state = createDefaultDatabase();
       syncFilterInputs();
+      saveState();
       renderAll();
     }
 
@@ -1292,9 +1549,10 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      populateSelects();
+      onMachineSelectChange();
       syncFilterInputs();
       renderAll();
+      syncFromCloud(false);
     });
   </script>
 </body>
