@@ -11,10 +11,10 @@
     :root {
       --bg-main: #060d10;
       --bg-card: #0c181d;
-      --bg-card-grad: linear-gradient(145deg, rgba(16, 36, 44, 0.85) 0%, rgba(9, 20, 24, 0.95) 100%);
-      --border-teal: rgba(45, 212, 191, 0.22);
+      --bg-card-grad: linear-gradient(145deg, rgba(16, 36, 44, 0.88) 0%, rgba(9, 20, 24, 0.96) 100%);
+      --border-teal: rgba(45, 212, 191, 0.24);
       --teal-bright: #2dd4bf;
-      --teal-glow: rgba(45, 212, 191, 0.15);
+      --teal-glow: rgba(45, 212, 191, 0.16);
       --emerald: #34d399;
       --gold: #f59e0b;
       --orange: #f97316;
@@ -36,7 +36,7 @@
       color: var(--text-main);
       font-family: 'Inter', sans-serif;
       min-height: 100vh;
-      padding: 18px 24px;
+      padding: 16px 22px;
     }
 
     /* TOPBAR */
@@ -45,16 +45,16 @@
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       padding-bottom: 16px;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       border-bottom: 1px solid var(--border-teal);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .brand-logo {
@@ -62,8 +62,8 @@
       color: #041014;
       font-family: 'Chakra Petch', sans-serif;
       font-weight: 700;
-      font-size: 1.5rem;
-      padding: 8px 14px;
+      font-size: 1.45rem;
+      padding: 8px 13px;
       border-radius: 8px;
       letter-spacing: 1px;
       box-shadow: 0 0 18px rgba(45, 212, 191, 0.3);
@@ -71,14 +71,14 @@
 
     .brand-title h1 {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       letter-spacing: 1.5px;
       color: var(--gold);
       text-transform: uppercase;
     }
 
     .brand-title span {
-      font-size: 0.8rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
       letter-spacing: 0.5px;
     }
@@ -86,9 +86,9 @@
     /* TABS DE NAVEGAÇÃO */
     .nav-tabs {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       background: rgba(12, 24, 29, 0.9);
-      padding: 6px;
+      padding: 5px;
       border-radius: 10px;
       border: 1px solid var(--border-teal);
     }
@@ -99,8 +99,8 @@
       color: var(--text-muted);
       font-family: 'Chakra Petch', sans-serif;
       font-weight: 600;
-      font-size: 0.92rem;
-      padding: 9px 18px;
+      font-size: 0.88rem;
+      padding: 8px 15px;
       border-radius: 7px;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -117,11 +117,12 @@
       box-shadow: 0 0 12px var(--teal-glow);
     }
 
-    /* FILTROS DO TOPO */
+    /* BARRA DE CALENDÁRIO GLOBAL E FILTROS */
     .top-filters {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .filter-group {
@@ -130,28 +131,54 @@
       background: var(--bg-card);
       border: 1px solid var(--border-teal);
       padding: 4px 10px;
-      border-radius: 7px;
+      border-radius: 8px;
     }
 
     .filter-group label {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--teal-bright);
+      letter-spacing: 0.5px;
+      margin-bottom: 1px;
     }
 
-    .filter-group select {
+    .filter-group select,
+    .filter-group input[type="date"],
+    .filter-group input[type="number"] {
       background: transparent;
       border: none;
       color: var(--text-main);
+      font-family: 'Chakra Petch', sans-serif;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       outline: none;
       cursor: pointer;
+      color-scheme: dark;
     }
 
     .filter-group select option {
       background: #0c181d;
       color: #fff;
+    }
+
+    .year-stepper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .year-btn {
+      background: rgba(45, 212, 191, 0.12);
+      border: 1px solid rgba(45, 212, 191, 0.3);
+      color: var(--teal-bright);
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    .year-btn:hover {
+      background: rgba(45, 212, 191, 0.28);
     }
 
     /* SEÇÕES DE ABAS */
@@ -169,7 +196,28 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* KPI BIG NUMBERS (ESTILO OEE / POWER BI) */
+    /* FAIXA DE PERÍODO ATIVO */
+    .period-banner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: rgba(45, 212, 191, 0.07);
+      border: 1px solid var(--border-teal);
+      border-radius: 10px;
+      padding: 8px 16px;
+      margin-bottom: 16px;
+      font-size: 0.85rem;
+    }
+
+    .period-banner strong {
+      color: var(--gold);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 0.95rem;
+    }
+
+    /* KPI BIG NUMBERS */
     .kpi-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -198,7 +246,7 @@
     }
 
     .kpi-label {
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.8px;
@@ -207,7 +255,7 @@
 
     .kpi-value {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 2.3rem;
+      font-size: 2.2rem;
       font-weight: 700;
       line-height: 1.05;
       color: var(--text-main);
@@ -223,7 +271,7 @@
       margin-top: 6px;
     }
 
-    /* LAYOUT PRINCIPAL DA ABA 1 */
+    /* LAYOUT PRINCIPAL */
     .main-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
@@ -255,11 +303,13 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 14px;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .panel-title {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 1rem;
+      font-size: 0.98rem;
       font-weight: 600;
       letter-spacing: 0.6px;
       color: var(--text-main);
@@ -272,7 +322,7 @@
       width: 100%;
     }
 
-    /* BARRAS DE STATUS DE MÁQUINAS (ESTILO OEE) */
+    /* BARRAS DE STATUS DE MÁQUINAS */
     .status-list {
       display: flex;
       flex-direction: column;
@@ -282,7 +332,7 @@
 
     .status-item {
       display: grid;
-      grid-template-columns: 115px 1fr 85px;
+      grid-template-columns: 115px 1fr 90px;
       align-items: center;
       gap: 12px;
       font-size: 0.85rem;
@@ -321,7 +371,7 @@
       color: var(--teal-bright);
     }
 
-    /* GAUGES SEMICIRCULARES (ESTILO POWER BI) */
+    /* GAUGES SEMICIRCULARES */
     .gauge-wrap {
       position: relative;
       height: 185px;
@@ -340,7 +390,7 @@
       color: var(--text-main);
     }
 
-    /* TABELA DE MÁQUINAS E BITOLAS */
+    /* TABELAS */
     .table-container {
       overflow-x: auto;
     }
@@ -348,23 +398,23 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
     }
 
     th {
       text-align: left;
-      padding: 11px 12px;
+      padding: 10px 12px;
       background: rgba(45, 212, 191, 0.1);
       color: var(--teal-bright);
       font-family: 'Chakra Petch', sans-serif;
       text-transform: uppercase;
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       letter-spacing: 0.6px;
       border-bottom: 1px solid var(--border-teal);
     }
 
     td {
-      padding: 10px 12px;
+      padding: 9px 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
     }
 
@@ -375,7 +425,7 @@
     .badge-type {
       padding: 3px 8px;
       border-radius: 5px;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
     }
@@ -397,29 +447,31 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 18px;
+      margin-bottom: 18px;
     }
 
     .form-row {
       display: flex;
       flex-direction: column;
       gap: 6px;
-      margin-bottom: 14px;
+      margin-bottom: 13px;
     }
 
     .form-row label {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       font-weight: 500;
     }
 
     .form-row input, .form-row select {
-      background: rgba(6, 13, 16, 0.9);
+      background: rgba(6, 13, 16, 0.92);
       border: 1px solid var(--border-teal);
       color: var(--text-main);
       padding: 10px 12px;
       border-radius: 8px;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       outline: none;
+      color-scheme: dark;
     }
 
     .form-row input:focus, .form-row select:focus {
@@ -434,7 +486,7 @@
       border-radius: 8px;
       font-family: 'Chakra Petch', sans-serif;
       font-weight: 700;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       text-transform: uppercase;
       cursor: pointer;
       background: linear-gradient(135deg, #14b8a6, #0d9488);
@@ -450,6 +502,21 @@
     .btn-gold {
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: #041014;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border-teal);
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      cursor: pointer;
+    }
+
+    .btn-outline:hover {
+      color: var(--teal-bright);
+      border-color: var(--teal-bright);
     }
   </style>
 </head>
@@ -471,19 +538,40 @@
       <button class="tab-btn" onclick="switchTab('lancamentos-pcp', this)">3. Lançar Produção & Metas</button>
     </nav>
 
+    <!-- SELETOR DE CALENDÁRIO COMPLETO (TODOS OS ANOS, MESES E DATAS) -->
     <div class="top-filters">
       <div class="filter-group">
-        <label>Mês de Referência</label>
+        <label>Calendário (Dia/Mês/Ano)</label>
+        <input type="date" id="globalDatePicker" onchange="onGlobalDateChange(this.value)" />
+      </div>
+
+      <div class="filter-group">
+        <label>Mês Ativo</label>
         <select id="monthSelect" onchange="changeActiveMonth(this.value)">
-          <option value="0">JUNHO</option>
-          <option value="1">JULHO</option>
-          <option value="2">AGOSTO</option>
-          <option value="3">SETEMBRO</option>
-          <option value="4" selected>OUTUBRO</option>
-          <option value="5">NOVEMBRO</option>
-          <option value="6">DEZEMBRO</option>
+          <option value="0">JANEIRO</option>
+          <option value="1">FEVEREIRO</option>
+          <option value="2">MARÇO</option>
+          <option value="3">ABRIL</option>
+          <option value="4">MAIO</option>
+          <option value="5">JUNHO</option>
+          <option value="6">JULHO</option>
+          <option value="7">AGOSTO</option>
+          <option value="8">SETEMBRO</option>
+          <option value="9" selected>OUTUBRO</option>
+          <option value="10">NOVEMBRO</option>
+          <option value="11">DEZEMBRO</option>
         </select>
       </div>
+
+      <div class="filter-group">
+        <label>Ano Ativo</label>
+        <div class="year-stepper">
+          <button class="year-btn" onclick="stepYear(-1)" title="Ano Anterior">◀</button>
+          <input type="number" id="yearInput" value="2026" min="2000" max="2100" style="width: 62px; text-align: center;" onchange="changeActiveYear(this.value)" />
+          <button class="year-btn" onclick="stepYear(1)" title="Próximo Ano">▶</button>
+        </div>
+      </div>
+
       <div class="filter-group">
         <label>Unidade</label>
         <select id="unitSelect" onchange="toggleUnit(this.value)">
@@ -494,13 +582,22 @@
     </div>
   </header>
 
-  <!-- ABA 1: VISÃO GERAL (INSPIRADO NO OEE + POWER BI) -->
+  <!-- FAIXA DE INFORMAÇÃO DE DATA ATIVA -->
+  <div class="period-banner">
+    <div>
+      📅 Visualizando Período: <strong id="bannerPeriodText">OUTUBRO / 2026</strong>
+      <span style="color: var(--text-muted); margin-left: 10px;" id="bannerDateText">(Data selecionada: 29/10/2026)</span>
+    </div>
+    <button class="btn-outline" onclick="resetDefaultData()">Restaurar Dados Padrão (Out/2026)</button>
+  </div>
+
+  <!-- ABA 1: VISÃO GERAL -->
   <section id="visao-geral" class="tab-section active">
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-label">Atingimento no Mês (OEE Meta)</div>
         <div class="kpi-value teal" id="kpiAttainment">73,5%</div>
-        <div class="kpi-sub" id="kpiMonthSub">Referência: OUTUBRO</div>
+        <div class="kpi-sub" id="kpiMonthSub">Referência: OUTUBRO / 2026</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Quant. Produzida no Mês</div>
@@ -508,9 +605,9 @@
         <div class="kpi-sub" id="kpiMonthGoal">Meta Prevista: 50.000 kg</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Acumulado Anual (Jun–Dez)</div>
+        <div class="kpi-label">Acumulado no Ano (<span id="kpiYearLabel">2026</span>)</div>
         <div class="kpi-value gold" id="kpiTotalProd">103.233 kg</div>
-        <div class="kpi-sub" id="kpiTotalGoal">Previsão Total: 156.000 kg</div>
+        <div class="kpi-sub" id="kpiTotalGoal">Previsão Anual: 156.000 kg</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Bitolas Ativas / Cadastro</div>
@@ -520,26 +617,23 @@
     </div>
 
     <div class="main-grid">
-      <!-- GRÁFICO DE DEGRAUS / ÁREA MENSAL (ESTILO POWER BI) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Evolução de Produção Mensal vs. Previsão Operacional</span>
+          <span class="panel-title">Evolução de Produção Mensal vs. Previsão (<span id="chartYearTitle">2026</span>)</span>
         </div>
         <div class="chart-box">
           <canvas id="monthlyStepChart"></canvas>
         </div>
       </div>
 
-      <!-- BARRAS DE STATUS POR MÁQUINA (ESTILO OEE) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Carga por Máquina (Mês Ativo)</span>
+          <span class="panel-title">Carga por Máquina (<span id="statusMonthTitle">OUTUBRO/2026</span>)</span>
         </div>
         <div class="status-list" id="machineStatusList"></div>
       </div>
     </div>
 
-    <!-- VELOCÍMETROS SEMICIRCULARES (ESTILO POWER BI) -->
     <div class="bottom-grid">
       <div class="panel">
         <div class="panel-header">
@@ -553,7 +647,7 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Performance Acumulada do Semestre</span>
+          <span class="panel-title">Performance Acumulada no Ano</span>
         </div>
         <div class="gauge-wrap">
           <canvas id="gaugeYearChart"></canvas>
@@ -563,21 +657,21 @@
     </div>
   </section>
 
-  <!-- ABA 2: MÁQUINAS & BITOLAS (TODAS AS 9 BITOLAS VISÍVEIS) -->
+  <!-- ABA 2: MÁQUINAS & BITOLAS -->
   <section id="maquinas-bitolas" class="tab-section">
     <div class="main-grid" style="grid-template-columns: 1.25fr 1fr;">
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Produção por Máquina e Bitola (5,00mm a 32,00mm)</span>
+          <span class="panel-title">Produção por Máquina e Bitola — <span id="machChartPeriod">OUTUBRO/2026</span></span>
         </div>
-        <div class="chart-box" style="height: 360px;">
+        <div class="chart-box" style="height: 370px;">
           <canvas id="machineBarChart"></canvas>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Tabela Oficial de Equipamentos e Bitolas</span>
+          <span class="panel-title">Tabela Oficial de Equipamentos e Bitolas (5,00mm a 32,00mm)</span>
         </div>
         <div class="table-container">
           <table>
@@ -586,7 +680,7 @@
                 <th>Máquina</th>
                 <th>Categoria</th>
                 <th>Bitola</th>
-                <th>Produzido</th>
+                <th>Produzido no Mês</th>
                 <th>Subtotal Máq.</th>
               </tr>
             </thead>
@@ -597,13 +691,17 @@
     </div>
   </section>
 
-  <!-- ABA 3: LANÇAMENTOS PCP E METAS -->
+  <!-- ABA 3: LANÇAMENTOS PCP E METAS COM CALENDÁRIO -->
   <section id="lancamentos-pcp" class="tab-section">
     <div class="pcp-grid">
-      <!-- LANÇAR PRODUÇÃO POR MÁQUINA E BITOLA -->
+      <!-- LANÇAR PRODUÇÃO POR DATA, MÁQUINA E BITOLA -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Lançar Produção na Máquina</span>
+          <span class="panel-title">Lançar Produção por Data e Máquina</span>
+        </div>
+        <div class="form-row">
+          <label>Data do Apontamento (Qualquer Dia/Mês/Ano)</label>
+          <input type="date" id="launchDateInput" onchange="syncDateFromLaunch(this.value)" />
         </div>
         <div class="form-row">
           <label>Máquina e Bitola Oficial</label>
@@ -612,39 +710,71 @@
         <div class="form-row">
           <label>Modo de Apontamento</label>
           <select id="inputMode">
-            <option value="add">+ Somar ao Peso Atual (Lote/Etiqueta)</option>
-            <option value="set">= Substituir Total da Bitola</option>
+            <option value="add">+ Somar Lote ao Mês/Dia Selecionado</option>
+            <option value="set">= Substituir Total da Bitola no Mês</option>
           </select>
         </div>
         <div class="form-row">
-          <label>Peso (em kg)</label>
+          <label>Peso Produzido (em kg)</label>
           <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500" />
         </div>
-        <button class="btn-action" onclick="handleLaunchProduction()">Registrar Produção</button>
+        <button class="btn-action" onclick="handleLaunchProduction()">Registrar Produção na Data</button>
       </div>
 
-      <!-- DEFINIR METAS MENSAIS -->
+      <!-- DEFINIR METAS MENSAIS DE QUALQUER ANO -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Definir Meta / Previsão Mensal</span>
         </div>
         <div class="form-row">
+          <label>Ano da Meta</label>
+          <input type="number" id="goalYearInput" value="2026" min="2000" max="2100" />
+        </div>
+        <div class="form-row">
           <label>Mês da Meta</label>
           <select id="goalMonthSelect">
-            <option value="0">JUNHO</option>
-            <option value="1">JULHO</option>
-            <option value="2">AGOSTO</option>
-            <option value="3">SETEMBRO</option>
-            <option value="4" selected>OUTUBRO</option>
-            <option value="5">NOVEMBRO</option>
-            <option value="6">DEZEMBRO</option>
+            <option value="0">JANEIRO</option>
+            <option value="1">FEVEREIRO</option>
+            <option value="2">MARÇO</option>
+            <option value="3">ABRIL</option>
+            <option value="4">MAIO</option>
+            <option value="5">JUNHO</option>
+            <option value="6">JULHO</option>
+            <option value="7">AGOSTO</option>
+            <option value="8">SETEMBRO</option>
+            <option value="9" selected>OUTUBRO</option>
+            <option value="10">NOVEMBRO</option>
+            <option value="11">DEZEMBRO</option>
           </select>
         </div>
         <div class="form-row">
           <label>Nova Meta Operacional (em kg)</label>
           <input type="number" id="inputGoalKg" step="100" value="50000" />
         </div>
-        <button class="btn-action btn-gold" onclick="handleUpdateGoal()">Salvar Nova Meta</button>
+        <button class="btn-action btn-gold" onclick="handleUpdateGoal()">Salvar Meta no Calendário</button>
+      </div>
+    </div>
+
+    <!-- HISTÓRICO DE APONTAMENTOS POR DATA -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Histórico de Lançamentos Diários (Calendário PCP)</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Mês / Ano</th>
+              <th>Máquina</th>
+              <th>Categoria</th>
+              <th>Bitola</th>
+              <th>Operação</th>
+              <th>Peso Registrado</th>
+            </tr>
+          </thead>
+          <tbody id="dailyLogsTableBody"></tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -652,40 +782,187 @@
   <script>
     Chart.register(ChartDataLabels);
 
-    // ESTADO INICIAL FIEL AOS SEUS DADOS E À PLANILHA CRIADA
-    const state = {
-      unit: 'kg',
-      activeMonthIndex: 4, // Outubro selecionado por padrão
-      months: [
-        { name: 'JUNHO', producedKg: 8277, goalKg: 8000 },
-        { name: 'JULHO', producedKg: 7216, goalKg: 8000 },
-        { name: 'AGOSTO', producedKg: 20246, goalKg: 10000 },
-        { name: 'SETEMBRO', producedKg: 30732, goalKg: 30000 },
-        { name: 'OUTUBRO', producedKg: 36762.272, goalKg: 50000 },
-        { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000 },
-        { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000 }
-      ],
-      // TODAS AS 9 BITOLAS SOLICITADAS (5.00 a 32.00mm), MESMO ZERADAS
-      items: [
-        { id: 'ES02_5.00', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 3467.856 },
-        { id: 'EB10_6.30', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 5977.857 },
-        { id: 'EB10_8.00', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 4401.101 },
-        { id: 'EB12_10.00', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 4069.508 },
-        { id: 'EB12_12.50', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 7552.335 },
-        { id: '20B_16.00', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 6482.599 },
-        { id: 'PT32_20.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 3080.413 },
-        { id: 'PT32_25.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 1730.603 },
-        { id: 'PT32_32.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
-      ]
-    };
+    const MONTH_NAMES = [
+      'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
+      'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
+    ];
 
+    // CADASTRO FIXO DAS 5 MÁQUINAS E 9 BITOLAS OFICIAIS (MESMO ZERADAS)
+    const BASE_ITEMS_TEMPLATE = [
+      { id: 'ES02_5.00', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 0 },
+      { id: 'EB10_6.30', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 0 },
+      { id: 'EB10_8.00', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 0 },
+      { id: 'EB12_10.00', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 0 },
+      { id: 'EB12_12.50', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 0 },
+      { id: '20B_16.00', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 0 },
+      { id: 'PT32_20.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 0 },
+      { id: 'PT32_25.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 0 },
+      { id: 'PT32_32.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
+    ];
+
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V2';
+
+    function cloneItemsWithTotal(totalKg) {
+      // Distribui proporcionalmente ao padrão de Outubro ou zera
+      const octWeights = [3467.856, 5977.857, 4401.101, 4069.508, 7552.335, 6482.599, 3080.413, 1730.603, 0];
+      const octSum = 36762.272;
+      return BASE_ITEMS_TEMPLATE.map((item, idx) => ({
+        ...item,
+        kg: totalKg > 0 ? +((octWeights[idx] / octSum) * totalKg).toFixed(3) : 0
+      }));
+    }
+
+    function createEmptyYearData() {
+      return MONTH_NAMES.map(name => ({
+        name,
+        producedKg: 0,
+        goalKg: 0,
+        items: cloneItemsWithTotal(0)
+      }));
+    }
+
+    function createDefaultDatabase() {
+      const year2026 = createEmptyYearData();
+      // Dados reais de Junho a Dezembro de 2026
+      year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, items: cloneItemsWithTotal(8277) };
+      year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, items: cloneItemsWithTotal(7216) };
+      year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, items: cloneItemsWithTotal(20246) };
+      year2026[8] = { name: 'SETEMBRO', producedKg: 30732, goalKg: 30000, items: cloneItemsWithTotal(30732) };
+      year2026[9] = {
+        name: 'OUTUBRO',
+        producedKg: 36762.272,
+        goalKg: 50000,
+        items: [
+          { id: 'ES02_5.00', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 3467.856 },
+          { id: 'EB10_6.30', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 5977.857 },
+          { id: 'EB10_8.00', machine: 'EB10', category: 'Estribadeira', gauge: '8,00 mm', kg: 4401.101 },
+          { id: 'EB12_10.00', machine: 'EB12', category: 'Estribadeira', gauge: '10,00 mm', kg: 4069.508 },
+          { id: 'EB12_12.50', machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', kg: 7552.335 },
+          { id: '20B_16.00', machine: '20B', category: 'Estribadeira', gauge: '16,00 mm', kg: 6482.599 },
+          { id: 'PT32_20.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '20,00 mm', kg: 3080.413 },
+          { id: 'PT32_25.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '25,00 mm', kg: 1730.603 },
+          { id: 'PT32_32.00', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
+        ]
+      };
+      year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, items: cloneItemsWithTotal(0) };
+      year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, items: cloneItemsWithTotal(0) };
+
+      return {
+        unit: 'kg',
+        selectedDate: '2026-10-29',
+        activeYear: 2026,
+        activeMonthIndex: 9, // Outubro (0=Jan, 9=Out)
+        years: {
+          2026: year2026
+        },
+        dailyLogs: [
+          { date: '2026-10-29', year: 2026, monthIndex: 9, machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', mode: 'Saldo Consolidado', kg: 7552.335 }
+        ]
+      };
+    }
+
+    let state = loadState();
     let monthlyChart, machineChart, gaugeMonth, gaugeYear;
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (e) {
+        console.warn('Falha ao ler localStorage:', e);
+      }
+      return createDefaultDatabase();
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      } catch (e) {
+        console.warn('Falha ao salvar localStorage:', e);
+      }
+    }
+
+    function ensureYearExists(year) {
+      if (!state.years[year]) {
+        state.years[year] = createEmptyYearData();
+      }
+    }
+
+    function getActiveYearMonths() {
+      ensureYearExists(state.activeYear);
+      return state.years[state.activeYear];
+    }
+
+    function getActiveMonthObj() {
+      return getActiveYearMonths()[state.activeMonthIndex];
+    }
 
     function formatValue(valKg, decimals = 0) {
       if (state.unit === 't') {
         return (valKg / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' t';
       }
       return valKg.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + ' kg';
+    }
+
+    function formatDateBR(isoDate) {
+      if (!isoDate) return '';
+      const [y, m, d] = isoDate.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    // SINCRONIZAÇÃO DOS CONTROLES DE CALENDÁRIO
+    function onGlobalDateChange(val) {
+      if (!val) return;
+      const [y, m] = val.split('-').map(Number);
+      state.selectedDate = val;
+      state.activeYear = y;
+      state.activeMonthIndex = m - 1;
+      ensureYearExists(y);
+      syncFilterInputs();
+      saveState();
+      renderAll();
+    }
+
+    function syncDateFromLaunch(val) {
+      onGlobalDateChange(val);
+    }
+
+    function changeActiveMonth(mIdx) {
+      state.activeMonthIndex = parseInt(mIdx, 10);
+      const day = state.selectedDate ? state.selectedDate.split('-')[2] : '01';
+      const mm = String(state.activeMonthIndex + 1).padStart(2, '0');
+      state.selectedDate = `${state.activeYear}-${mm}-${day}`;
+      syncFilterInputs();
+      saveState();
+      renderAll();
+    }
+
+    function changeActiveYear(yVal) {
+      const yr = parseInt(yVal, 10) || 2026;
+      state.activeYear = yr;
+      ensureYearExists(yr);
+      const day = state.selectedDate ? state.selectedDate.split('-')[2] : '01';
+      const mm = String(state.activeMonthIndex + 1).padStart(2, '0');
+      state.selectedDate = `${state.activeYear}-${mm}-${day}`;
+      syncFilterInputs();
+      saveState();
+      renderAll();
+    }
+
+    function stepYear(delta) {
+      changeActiveYear(state.activeYear + delta);
+    }
+
+    function syncFilterInputs() {
+      document.getElementById('globalDatePicker').value = state.selectedDate;
+      document.getElementById('launchDateInput').value = state.selectedDate;
+      document.getElementById('monthSelect').value = state.activeMonthIndex;
+      document.getElementById('goalMonthSelect').value = state.activeMonthIndex;
+      document.getElementById('yearInput').value = state.activeYear;
+      document.getElementById('goalYearInput').value = state.activeYear;
+
+      const mObj = getActiveMonthObj();
+      document.getElementById('inputGoalKg').value = mObj.goalKg;
     }
 
     function switchTab(tabId, btn) {
@@ -697,43 +974,47 @@
 
     function toggleUnit(u) {
       state.unit = u;
-      renderAll();
-    }
-
-    function changeActiveMonth(idx) {
-      state.activeMonthIndex = parseInt(idx, 10);
+      saveState();
       renderAll();
     }
 
     function populateSelects() {
       const sel = document.getElementById('inputMachineGauge');
-      sel.innerHTML = state.items.map(item =>
+      sel.innerHTML = BASE_ITEMS_TEMPLATE.map(item =>
         `<option value="${item.id}">${item.machine} (${item.category}) — Bitola ${item.gauge}</option>`
       ).join('');
     }
 
     function renderKPIsAndStatus() {
-      const m = state.months[state.activeMonthIndex];
+      const months = getActiveYearMonths();
+      const m = getActiveMonthObj();
       const pctMonth = m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0;
 
-      const totalProd = state.months.reduce((acc, cur) => acc + cur.producedKg, 0);
-      const totalGoal = state.months.reduce((acc, cur) => acc + cur.goalKg, 0);
+      const totalProd = months.reduce((acc, cur) => acc + cur.producedKg, 0);
+      const totalGoal = months.reduce((acc, cur) => acc + cur.goalKg, 0);
       const pctYear = totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0;
 
-      const activeGaugesCount = state.items.filter(i => i.kg > 0).length;
+      const activeGaugesCount = m.items.filter(i => i.kg > 0).length;
+
+      document.getElementById('bannerPeriodText').textContent = `${m.name} / ${state.activeYear}`;
+      document.getElementById('bannerDateText').textContent = `(Data selecionada: ${formatDateBR(state.selectedDate)})`;
 
       document.getElementById('kpiAttainment').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
-      document.getElementById('kpiMonthSub').textContent = `Referência: ${m.name}`;
+      document.getElementById('kpiMonthSub').textContent = `Referência: ${m.name} / ${state.activeYear}`;
       document.getElementById('kpiMonthProd').textContent = formatValue(m.producedKg, 0);
       document.getElementById('kpiMonthGoal').textContent = `Meta Prevista: ${formatValue(m.goalKg, 0)}`;
+      document.getElementById('kpiYearLabel').textContent = state.activeYear;
       document.getElementById('kpiTotalProd').textContent = formatValue(totalProd, 0);
-      document.getElementById('kpiTotalGoal').textContent = `Previsão Total: ${formatValue(totalGoal, 0)}`;
+      document.getElementById('kpiTotalGoal').textContent = `Previsão Anual: ${formatValue(totalGoal, 0)}`;
       document.getElementById('kpiActiveGauges').textContent = `${activeGaugesCount} / 9`;
+
+      document.getElementById('chartYearTitle').textContent = state.activeYear;
+      document.getElementById('statusMonthTitle').textContent = `${m.name}/${state.activeYear}`;
+      document.getElementById('machChartPeriod').textContent = `${m.name}/${state.activeYear}`;
 
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
 
-      // Status horizontal por Máquina
       const machinesOrder = [
         { name: 'ES02', type: 'Estribadeira' },
         { name: 'EB10', type: 'Estribadeira' },
@@ -743,12 +1024,12 @@
       ];
 
       const maxMachTotal = Math.max(...machinesOrder.map(mo =>
-        state.items.filter(i => i.machine === mo.name).reduce((a, b) => a + b.kg, 0)
+        m.items.filter(i => i.machine === mo.name).reduce((a, b) => a + b.kg, 0)
       ), 1);
 
       const listEl = document.getElementById('machineStatusList');
       listEl.innerHTML = machinesOrder.map(mo => {
-        const sumKg = state.items.filter(i => i.machine === mo.name).reduce((a, b) => a + b.kg, 0);
+        const sumKg = m.items.filter(i => i.machine === mo.name).reduce((a, b) => a + b.kg, 0);
         const widthPct = Math.min(100, (sumKg / maxMachTotal) * 100);
         return `
           <div class="status-item">
@@ -762,10 +1043,11 @@
       }).join('');
     }
 
-    function renderTable() {
+    function renderTables() {
+      const m = getActiveMonthObj();
       const tbody = document.getElementById('machinesTableBody');
-      tbody.innerHTML = state.items.map(item => {
-        const machineTotal = state.items
+      tbody.innerHTML = m.items.map(item => {
+        const machineTotal = m.items
           .filter(i => i.machine === item.machine)
           .reduce((acc, cur) => acc + cur.kg, 0);
         const isZero = item.kg === 0;
@@ -781,23 +1063,42 @@
           </tr>
         `;
       }).join('');
+
+      const logsBody = document.getElementById('dailyLogsTableBody');
+      if (!state.dailyLogs || state.dailyLogs.length === 0) {
+        logsBody.innerHTML = `<tr><td colspan="7" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
+      } else {
+        logsBody.innerHTML = state.dailyLogs.slice().reverse().map(log => `
+          <tr>
+            <td><strong>${formatDateBR(log.date)}</strong></td>
+            <td>${MONTH_NAMES[log.monthIndex]} / ${log.year}</td>
+            <td><strong>${log.machine}</strong></td>
+            <td>${log.category}</td>
+            <td>${log.gauge}</td>
+            <td>${log.mode}</td>
+            <td style="color: var(--teal-bright); font-weight: 700;">${formatValue(log.kg, 3)}</td>
+          </tr>
+        `).join('');
+      }
     }
 
     function renderCharts() {
       const factor = state.unit === 't' ? 0.001 : 1;
+      const months = getActiveYearMonths();
+      const m = getActiveMonthObj();
 
-      // 1. Gráfico de Degraus Mensal (Inspirado no Power BI)
+      // 1. Gráfico dos 12 Meses do Ano Selecionado
       const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
       if (monthlyChart) monthlyChart.destroy();
 
       monthlyChart = new Chart(ctxMonth, {
         type: 'line',
         data: {
-          labels: state.months.map(m => m.name),
+          labels: months.map(item => item.name.slice(0, 3)),
           datasets: [
             {
               label: `Produzido (${state.unit})`,
-              data: state.months.map(m => +(m.producedKg * factor).toFixed(2)),
+              data: months.map(item => +(item.producedKg * factor).toFixed(2)),
               borderColor: '#2dd4bf',
               backgroundColor: 'rgba(45, 212, 191, 0.18)',
               fill: true,
@@ -807,7 +1108,7 @@
             },
             {
               label: `Previsão / Meta (${state.unit})`,
-              data: state.months.map(m => +(m.goalKg * factor).toFixed(2)),
+              data: months.map(item => +(item.goalKg * factor).toFixed(2)),
               borderColor: '#f59e0b',
               borderDash: [6, 4],
               fill: false,
@@ -837,10 +1138,9 @@
       });
 
       // 2. Gauges Semicirculares
-      const m = state.months[state.activeMonthIndex];
       const pctMonth = Math.min(100, m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0);
-      const totalProd = state.months.reduce((a, b) => a + b.producedKg, 0);
-      const totalGoal = state.months.reduce((a, b) => a + b.goalKg, 0);
+      const totalProd = months.reduce((a, b) => a + b.producedKg, 0);
+      const totalGoal = months.reduce((a, b) => a + b.goalKg, 0);
       const pctYear = Math.min(100, totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0);
 
       if (gaugeMonth) gaugeMonth.destroy();
@@ -849,21 +1149,21 @@
       if (gaugeYear) gaugeYear.destroy();
       gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#34d399');
 
-      // 3. Gráfico de Máquinas e Bitolas (Todas as 9 Bitolas fixas no eixo X)
+      // 3. Gráfico de Máquinas e Bitolas do Mês/Ano Ativo
       const ctxMach = document.getElementById('machineBarChart').getContext('2d');
       if (machineChart) machineChart.destroy();
 
       machineChart = new Chart(ctxMach, {
         type: 'bar',
         data: {
-          labels: state.items.map(i => `${i.machine} (${i.gauge})`),
+          labels: m.items.map(i => `${i.machine} (${i.gauge})`),
           datasets: [{
             label: `Peso Produzido (${state.unit})`,
-            data: state.items.map(i => +(i.kg * factor).toFixed(3)),
-            backgroundColor: state.items.map(i =>
+            data: m.items.map(i => +(i.kg * factor).toFixed(3)),
+            backgroundColor: m.items.map(i =>
               i.category === 'Estribadeira' ? 'rgba(45, 212, 191, 0.75)' : 'rgba(245, 158, 11, 0.8)'
             ),
-            borderColor: state.items.map(i =>
+            borderColor: m.items.map(i =>
               i.category === 'Estribadeira' ? '#2dd4bf' : '#f59e0b'
             ),
             borderWidth: 1.5,
@@ -917,46 +1217,83 @@
     }
 
     function handleLaunchProduction() {
+      const launchDate = document.getElementById('launchDateInput').value || state.selectedDate;
+      const [yr, mo] = launchDate.split('-').map(Number);
+      const mIdx = mo - 1;
+
       const itemId = document.getElementById('inputMachineGauge').value;
       const mode = document.getElementById('inputMode').value;
       const val = parseFloat(document.getElementById('inputWeightKg').value);
 
       if (isNaN(val) || val < 0) return alert('Informe um peso válido em kg.');
 
-      const item = state.items.find(i => i.id === itemId);
+      ensureYearExists(yr);
+      state.activeYear = yr;
+      state.activeMonthIndex = mIdx;
+      state.selectedDate = launchDate;
+
+      const monthObj = state.years[yr][mIdx];
+      const item = monthObj.items.find(i => i.id === itemId);
       if (!item) return;
 
       if (mode === 'add') {
-        item.kg += val;
+        item.kg = +(item.kg + val).toFixed(3);
       } else {
-        item.kg = val;
+        item.kg = +val.toFixed(3);
       }
 
-      // Recalcula o total do mês ativo com base na soma das máquinas
-      const totalMachinesKg = state.items.reduce((acc, cur) => acc + cur.kg, 0);
-      state.months[state.activeMonthIndex].producedKg = totalMachinesKg;
+      monthObj.producedKg = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
+
+      state.dailyLogs.push({
+        date: launchDate,
+        year: yr,
+        monthIndex: mIdx,
+        machine: item.machine,
+        category: item.category,
+        gauge: item.gauge,
+        mode: mode === 'add' ? '+ Lote Somado' : '= Total Substituído',
+        kg: val
+      });
 
       document.getElementById('inputWeightKg').value = '';
+      syncFilterInputs();
+      saveState();
       renderAll();
     }
 
     function handleUpdateGoal() {
+      const yr = parseInt(document.getElementById('goalYearInput').value, 10) || state.activeYear;
       const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
       const val = parseFloat(document.getElementById('inputGoalKg').value);
       if (isNaN(val) || val < 0) return alert('Informe uma meta válida em kg.');
 
-      state.months[mIdx].goalKg = val;
+      ensureYearExists(yr);
+      state.activeYear = yr;
+      state.activeMonthIndex = mIdx;
+      state.years[yr][mIdx].goalKg = val;
+
+      syncFilterInputs();
+      saveState();
+      renderAll();
+    }
+
+    function resetDefaultData() {
+      if (!confirm('Deseja restaurar os dados originais de 2026?')) return;
+      localStorage.removeItem(STORAGE_KEY);
+      state = createDefaultDatabase();
+      syncFilterInputs();
       renderAll();
     }
 
     function renderAll() {
       renderKPIsAndStatus();
-      renderTable();
+      renderTables();
       renderCharts();
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       populateSelects();
+      syncFilterInputs();
       renderAll();
     });
   </script>
