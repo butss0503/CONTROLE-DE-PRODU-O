@@ -687,7 +687,7 @@
         <div class="kpi-sub" id="kpiTotalGoal">Previsão Anual: 156.000 kg</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Bitolas Ativas / Cadastro</div>
+        <div class="kpi-label">Bitolas Ativas / Linhas</div>
         <div class="kpi-value orange" id="kpiActiveGauges">8 / 9</div>
         <div class="kpi-sub">4 Estribadeiras + 1 Dobradeira Manual</div>
       </div>
@@ -734,37 +734,49 @@
     </div>
   </section>
 
-  <!-- ABA 2: MÁQUINAS & BITOLAS -->
+  <!-- ABA 2: MÁQUINAS & BITOLAS (COM 2 GRÁFICOS: POR MÁQUINA+BITOLA E SÓ POR BITOLA) -->
   <section id="maquinas-bitolas" class="tab-section">
-    <div class="main-grid" style="grid-template-columns: 1.2fr 1fr;">
+    <!-- 2 GRÁFICOS LADO A LADO -->
+    <div class="bottom-grid" style="margin-bottom: 16px;">
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Produção por Máquina e Bitola — <span id="machChartPeriod">OUTUBRO/2026</span></span>
         </div>
-        <div class="chart-box" style="height: 370px;">
+        <div class="chart-box" style="height: 330px;">
           <canvas id="machineBarChart"></canvas>
         </div>
       </div>
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Tabela Oficial de Equipamentos e Bitolas (5,00mm a 32,00mm)</span>
+          <span class="panel-title">Produção Consolidada Só por Bitola (5,00mm a 32,00mm) — <span id="gaugeOnlyChartPeriod">OUTUBRO/2026</span></span>
         </div>
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th>Máquina</th>
-                <th>Categoria</th>
-                <th>Bitola</th>
-                <th>Produzido no Mês</th>
-                <th>Subtotal Máq.</th>
-                <th>Ação</th>
-              </tr>
-            </thead>
-            <tbody id="machinesTableBody"></tbody>
-          </table>
+        <div class="chart-box" style="height: 330px;">
+          <canvas id="gaugeOnlyBarChart"></canvas>
         </div>
+      </div>
+    </div>
+
+    <!-- TABELA COMPLETA ABAIXO -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Tabela Oficial de Produção por Máquina e Bitola</span>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Máquina</th>
+              <th>Categoria</th>
+              <th>Bitola</th>
+              <th>Produzido no Mês</th>
+              <th>Subtotal da Máquina</th>
+              <th>Total da Bitola (Geral)</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="machinesTableBody"></tbody>
+        </table>
       </div>
     </div>
   </section>
@@ -786,7 +798,7 @@
         <div class="split-2-cols">
           <div class="form-row">
             <label>Escolher Máquina</label>
-            <select id="inputMachineSelect" onchange="onSelectMachineAutoSuggestGauge()">
+            <select id="inputMachineSelect">
               <option value="ES02">ES02 (Estribadeira)</option>
               <option value="EB10">EB10 (Estribadeira)</option>
               <option value="EB12">EB12 (Estribadeira)</option>
@@ -814,8 +826,8 @@
         <div class="form-row">
           <label>Modo de Apontamento</label>
           <select id="inputMode">
-            <option value="add">+ Somar Lote ao Mês/Dia Selecionado</option>
-            <option value="set">= Substituir Total da Bitola no Mês</option>
+            <option value="add">+ Somar Lote na Máquina + Bitola</option>
+            <option value="set">= Substituir Total da Máquina + Bitola no Mês</option>
           </select>
         </div>
 
@@ -890,8 +902,9 @@
   <script>
     Chart.register(ChartDataLabels);
 
+    // NOVA URL DO APPS SCRIPT ATUALIZADA COMO PADRÃO
     const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyK9MD0uW3zPKpn2nFQMMpOE6vJ042rFXrFp7FDNMUfgkwNTWr6HuZBNC7B7zoJJRA8/exec";
-    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL";
+    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V2";
 
     function getActiveCloudUrl() {
       return localStorage.getItem(CUSTOM_URL_KEY) || DEFAULT_CLOUD_URL;
@@ -911,6 +924,11 @@
       'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
     ];
 
+    const ALL_GAUGES = [
+      '5,00 mm', '6,30 mm', '8,00 mm', '10,00 mm', '12,50 mm',
+      '16,00 mm', '20,00 mm', '25,00 mm', '32,00 mm'
+    ];
+
     const MACHINE_CATALOG = {
       'ES02':  'Estribadeira',
       'EB10':  'Estribadeira',
@@ -919,23 +937,6 @@
       'PT 32': 'Dobradeira Manual'
     };
 
-    // Sugestão inteligente de bitola padrão ao trocar a máquina (mas continua permitindo escolher qualquer uma das 9)
-    const MACHINE_DEFAULT_GAUGE = {
-      'ES02': '5,00 mm',
-      'EB10': '6,30 mm',
-      'EB12': '10,00 mm',
-      '20B':  '16,00 mm',
-      'PT 32': '20,00 mm'
-    };
-
-    function onSelectMachineAutoSuggestGauge() {
-      const mach = document.getElementById('inputMachineSelect').value;
-      if (MACHINE_DEFAULT_GAUGE[mach]) {
-        document.getElementById('inputGaugeSelect').value = MACHINE_DEFAULT_GAUGE[mach];
-      }
-    }
-
-    // AS 9 BITOLAS OFICIAIS (1 BARRA FIXA PARA CADA BITOLA PARA NUNCA DUPLICAR BARRAS NO GRÁFICO)
     const BASE_ITEMS_TEMPLATE = [
       { id: 'ES02_5,00 mm', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 0 },
       { id: 'EB10_6,30 mm', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 0 },
@@ -948,7 +949,7 @@
       { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
     ];
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V7';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V8';
 
     let viewFilter = {
       unit: 'kg',
@@ -958,7 +959,7 @@
     };
 
     let isSavingToCloud = false;
-    let monthlyChart, machineChart, gaugeMonth, gaugeYear;
+    let monthlyChart, machineChart, gaugeOnlyChart, gaugeMonth, gaugeYear;
 
     function cloneItemsWithTotal(totalKg) {
       const octWeights = [3467.856, 5977.857, 4401.101, 4069.508, 7552.335, 6482.599, 3080.413, 1730.603, 0];
@@ -1024,38 +1025,7 @@
       };
     }
 
-    // Normaliza o banco para remover barras extras/duplicadas da mesma bitola que tenham ficado salvas antes
-    function sanitizeDatabase(db) {
-      if (!db || !db.years) return db;
-      Object.keys(db.years).forEach(yr => {
-        db.years[yr].forEach(monthObj => {
-          if (!monthObj.items) return;
-          const uniqueByGauge = [];
-          BASE_ITEMS_TEMPLATE.forEach(tmpl => {
-            // Procura todos os itens com essa bitola (caso tenha criado barra extra antes)
-            const matches = monthObj.items.filter(i => i.gauge === tmpl.gauge);
-            if (matches.length === 0) {
-              uniqueByGauge.push({ ...tmpl });
-            } else {
-              // Mantém o último registro atualizado para aquela bitola
-              const chosen = matches[matches.length - 1];
-              uniqueByGauge.push({
-                id: `${chosen.machine}_${tmpl.gauge}`,
-                machine: chosen.machine,
-                category: MACHINE_CATALOG[chosen.machine] || chosen.category || tmpl.category,
-                gauge: tmpl.gauge,
-                kg: +Number(chosen.kg || 0).toFixed(3)
-              });
-            }
-          });
-          monthObj.items = uniqueByGauge;
-          monthObj.producedKg = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
-        });
-      });
-      return db;
-    }
-
-    let state = sanitizeDatabase(loadLocalCache());
+    let state = loadLocalCache();
 
     function updateCloudBadge(statusText, isOnline) {
       const badge = document.getElementById('cloudStatusBadge');
@@ -1129,18 +1099,18 @@
           const res = await fetch(`${url}?t=${Date.now()}`, { method: 'GET', redirect: 'follow', cache: 'no-store' });
           cloudData = await res.json();
         } catch (errFetch) {
-          updateCloudBadge('⚠️ Autorize a Permissão no Apps Script', false);
+          updateCloudBadge('⚠️ Verifique Permissão no Apps Script', false);
           return;
         }
       }
 
       if (cloudData && cloudData.status === 'error') {
-        updateCloudBadge('⚠️ Clique em Executar no Apps Script para Autorizar', false);
+        updateCloudBadge('⚠️ Erro no Apps Script', false);
         return;
       }
 
       if (cloudData && cloudData.years) {
-        state = sanitizeDatabase(cloudData);
+        state = cloudData;
         saveLocalCache();
         syncFilterInputs();
         renderAll();
@@ -1307,6 +1277,7 @@
       document.getElementById('chartYearTitle').textContent = viewFilter.activeYear;
       document.getElementById('statusMonthTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
       document.getElementById('machChartPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
+      document.getElementById('gaugeOnlyChartPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
 
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
@@ -1342,12 +1313,19 @@
     function renderTables() {
       const m = getActiveMonthObj();
       const tbody = document.getElementById('machinesTableBody');
+      const isBaseTemplateItem = (item) => BASE_ITEMS_TEMPLATE.some(b => b.machine === item.machine && b.gauge === item.gauge);
+
       tbody.innerHTML = m.items.map((item, idx) => {
         const machineTotal = m.items
           .filter(i => i.machine === item.machine)
           .reduce((acc, cur) => acc + cur.kg, 0);
+        const gaugeTotal = m.items
+          .filter(i => i.gauge === item.gauge)
+          .reduce((acc, cur) => acc + cur.kg, 0);
+
         const isZero = item.kg === 0;
         const badgeClass = item.category === 'Estribadeira' ? 'badge-estrib' : 'badge-dobra';
+        const isExtraRow = !isBaseTemplateItem(item);
 
         return `
           <tr class="${isZero ? 'zero-row' : ''}">
@@ -1356,9 +1334,10 @@
             <td><strong>${item.gauge}</strong></td>
             <td>${formatValue(item.kg, 3)}</td>
             <td>${formatValue(machineTotal, 3)}</td>
+            <td style="color: var(--gold); font-weight: 600;">${formatValue(gaugeTotal, 3)}</td>
             <td>
-              <button class="btn-delete" onclick="zeroGaugeItem(${idx})" title="Zerar peso desta bitola no mês">
-                🗑️ Zerar
+              <button class="btn-delete" onclick="removeOrZeroMachineRow(${idx})" title="${isExtraRow ? 'Excluir esta linha extra' : 'Zerar peso desta linha'}">
+                🗑️ ${isExtraRow ? 'Excluir Linha' : 'Zerar'}
               </button>
             </td>
           </tr>
@@ -1369,7 +1348,6 @@
       if (!state.dailyLogs || state.dailyLogs.length === 0) {
         logsBody.innerHTML = `<tr><td colspan="8" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
       } else {
-        // Mostra do mais recente para o mais antigo, preservando o índice real para exclusão
         logsBody.innerHTML = state.dailyLogs
           .map((log, originalIndex) => ({ log, originalIndex }))
           .reverse()
@@ -1397,6 +1375,7 @@
       const months = getActiveYearMonths();
       const m = getActiveMonthObj();
 
+      // 1. Gráfico de Evolução Mensal
       const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
       if (monthlyChart) monthlyChart.destroy();
 
@@ -1447,6 +1426,7 @@
         }
       });
 
+      // 2. Velocímetros OEE
       const pctMonth = Math.min(100, m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0);
       const totalProd = months.reduce((a, b) => a + b.producedKg, 0);
       const totalGoal = months.reduce((a, b) => a + b.goalKg, 0);
@@ -1458,6 +1438,7 @@
       if (gaugeYear) gaugeYear.destroy();
       gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#34d399');
 
+      // 3. Gráfico por Máquina + Bitola (Lógica Original)
       const ctxMach = document.getElementById('machineBarChart').getContext('2d');
       if (machineChart) machineChart.destroy();
 
@@ -1474,6 +1455,51 @@
             borderColor: m.items.map(i =>
               i.category === 'Estribadeira' ? '#2dd4bf' : '#f59e0b'
             ),
+            borderWidth: 1.5,
+            borderRadius: 5
+          }]
+        },
+        options: {
+          animation: false,
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              color: '#f8fafc',
+              anchor: 'end',
+              align: 'top',
+              font: { weight: 'bold', size: 10 },
+              formatter: (val) => val.toLocaleString('pt-BR')
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+          }
+        }
+      });
+
+      // 4. NOVO GRÁFICO: Consolidado Só por Bitola (soma todas as máquinas que produziram aquela bitola)
+      const ctxGaugeOnly = document.getElementById('gaugeOnlyBarChart').getContext('2d');
+      if (gaugeOnlyChart) gaugeOnlyChart.destroy();
+
+      const gaugeTotals = ALL_GAUGES.map(gName => {
+        const sumKg = m.items
+          .filter(i => i.gauge === gName)
+          .reduce((acc, cur) => acc + cur.kg, 0);
+        return +(sumKg * factor).toFixed(3);
+      });
+
+      gaugeOnlyChart = new Chart(ctxGaugeOnly, {
+        type: 'bar',
+        data: {
+          labels: ALL_GAUGES,
+          datasets: [{
+            label: `Total da Bitola (${viewFilter.unit})`,
+            data: gaugeTotals,
+            backgroundColor: 'rgba(52, 211, 153, 0.75)',
+            borderColor: '#34d399',
             borderWidth: 1.5,
             borderRadius: 5
           }]
@@ -1526,7 +1552,7 @@
       });
     }
 
-    // LANÇAMENTO SEM CRIAR BARRA DUPLICADA (ATUALIZA O SLOT DA BITOLA SELECIONADA)
+    // LÓGICA ANTIGA RESTAURADA: CADA COMBINAÇÃO MÁQUINA + BITOLA TEM SUA PRÓPRIA BARRA
     async function handleLaunchProduction() {
       const launchDate = document.getElementById('launchDateInput').value || viewFilter.selectedDate;
       const [yr, mo] = launchDate.split('-').map(Number);
@@ -1547,20 +1573,23 @@
       viewFilter.selectedDate = launchDate;
 
       const monthObj = state.years[yr][mIdx];
+      let item = monthObj.items.find(i => i.machine === selectedMachine && i.gauge === selectedGauge);
+      let wasCreatedNow = false;
 
-      // Busca SEMPRE pela bitola oficial para NUNCA criar uma 10ª barra extra no gráfico!
-      let item = monthObj.items.find(i => i.gauge === selectedGauge);
       if (!item) {
-        item = monthObj.items[0];
+        const cat = MACHINE_CATALOG[selectedMachine] || 'Estribadeira';
+        item = {
+          id: `${selectedMachine}_${selectedGauge}`,
+          machine: selectedMachine,
+          category: cat,
+          gauge: selectedGauge,
+          kg: 0
+        };
+        monthObj.items.push(item);
+        wasCreatedNow = true;
       }
 
       const prevKg = item.kg;
-      const prevMachine = item.machine;
-
-      // Atualiza a máquina responsável por aquela bitola e aplica a soma ou substituição
-      item.machine = selectedMachine;
-      item.category = MACHINE_CATALOG[selectedMachine] || 'Estribadeira';
-      item.id = `${selectedMachine}_${selectedGauge}`;
 
       if (mode === 'add') {
         item.kg = +(item.kg + val).toFixed(3);
@@ -1577,13 +1606,13 @@
         monthIndex: mIdx,
         monthName: MONTH_NAMES[mIdx],
         machine: item.machine,
-        prevMachine: prevMachine,
         category: item.category,
         gauge: item.gauge,
         mode: mode === 'add' ? '+ Lote Somado' : '= Total Substituído',
         rawMode: mode,
         kg: val,
-        prevKg: prevKg
+        prevKg: prevKg,
+        wasCreatedNow: wasCreatedNow
       };
 
       state.dailyLogs.push(newLog);
@@ -1594,12 +1623,12 @@
       await pushToCloud(newLog);
     }
 
-    // EXCLUIR UM REGISTRO DO HISTÓRICO E REVERTER O PESO NO GRÁFICO/TABELA
+    // EXCLUIR REGISTRO DO HISTÓRICO E REVERTER NA MÁQUINA + BITOLA EXATA
     async function deleteHistoryLog(logIndex) {
       const log = state.dailyLogs[logIndex];
       if (!log) return;
 
-      if (!confirm(`Deseja excluir o registro de ${formatValue(log.kg, 3)} (${log.machine} - Bitola ${log.gauge}) e reverter esse valor no gráfico?`)) {
+      if (!confirm(`Deseja excluir o registro de ${formatValue(log.kg, 3)} (${log.machine} - Bitola ${log.gauge}) e reverter esse valor?`)) {
         return;
       }
 
@@ -1608,17 +1637,21 @@
       const targetLog = state.dailyLogs[logIndex];
       if (targetLog && state.years[targetLog.year] && state.years[targetLog.year][targetLog.monthIndex]) {
         const monthObj = state.years[targetLog.year][targetLog.monthIndex];
-        const item = monthObj.items.find(i => i.gauge === targetLog.gauge);
+        const itemIdx = monthObj.items.findIndex(i => i.machine === targetLog.machine && i.gauge === targetLog.gauge);
 
-        if (item) {
-          if (targetLog.rawMode === 'add') {
+        if (itemIdx !== -1) {
+          const item = monthObj.items[itemIdx];
+          if (targetLog.wasCreatedNow && targetLog.prevKg === 0) {
+            const isBase = BASE_ITEMS_TEMPLATE.some(b => b.machine === item.machine && b.gauge === item.gauge);
+            if (!isBase) {
+              monthObj.items.splice(itemIdx, 1);
+            } else {
+              item.kg = 0;
+            }
+          } else if (targetLog.rawMode === 'add') {
             item.kg = Math.max(0, +(item.kg - targetLog.kg).toFixed(3));
           } else if (targetLog.rawMode === 'set' && typeof targetLog.prevKg === 'number') {
             item.kg = +targetLog.prevKg.toFixed(3);
-            if (targetLog.prevMachine) {
-              item.machine = targetLog.prevMachine;
-              item.category = MACHINE_CATALOG[targetLog.prevMachine] || item.category;
-            }
           } else {
             item.kg = 0;
           }
@@ -1631,20 +1664,27 @@
       await pushToCloud(null);
     }
 
-    // ZERAR UMA BITOLA DIRETO NA TABELA DA ABA 2
-    async function zeroGaugeItem(itemIdx) {
+    // ZERAR LINHA PADRÃO OU EXCLUIR BARRA EXTRA DIRETO NA TABELA DA ABA 2
+    async function removeOrZeroMachineRow(itemIdx) {
       const m = getActiveMonthObj();
       const item = m.items[itemIdx];
       if (!item) return;
 
-      if (!confirm(`Deseja zerar o peso da máquina ${item.machine} (${item.gauge}) em ${m.name}/${viewFilter.activeYear}?`)) {
-        return;
-      }
+      const isBase = BASE_ITEMS_TEMPLATE.some(b => b.machine === item.machine && b.gauge === item.gauge);
+      const msg = isBase
+        ? `Deseja zerar o peso de ${item.machine} (${item.gauge}) em ${m.name}/${viewFilter.activeYear}?`
+        : `Deseja remover a barra extra ${item.machine} (${item.gauge}) de ${m.name}/${viewFilter.activeYear}?`;
+
+      if (!confirm(msg)) return;
 
       await syncFromCloud(false);
       const activeMonth = getActiveMonthObj();
       if (activeMonth.items[itemIdx]) {
-        activeMonth.items[itemIdx].kg = 0;
+        if (isBase) {
+          activeMonth.items[itemIdx].kg = 0;
+        } else {
+          activeMonth.items.splice(itemIdx, 1);
+        }
         activeMonth.producedKg = +activeMonth.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
       }
       renderAll();
