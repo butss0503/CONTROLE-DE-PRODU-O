@@ -358,7 +358,7 @@
 
     .chart-box {
       position: relative;
-      height: 270px;
+      height: 280px;
       width: 100%;
     }
 
@@ -632,7 +632,7 @@
       <button class="tab-btn" onclick="switchTab('lancamentos-pcp', this)">4. Lançar Produção & Metas</button>
     </nav>
 
-    <!-- SELETOR DE CALENDÁRIO GLOBAL -->
+    <!-- SELETOR DE CALENDÁRIO GLOBAL (PUXA AUTOMATICAMENTE A DATA ATUAL DO PC) -->
     <div class="top-filters">
       <div class="filter-group">
         <label>Calendário (Dia/Mês/Ano)</label>
@@ -651,7 +651,7 @@
           <option value="6">JULHO</option>
           <option value="7">AGOSTO</option>
           <option value="8">SETEMBRO</option>
-          <option value="9" selected>OUTUBRO</option>
+          <option value="9">OUTUBRO</option>
           <option value="10">NOVEMBRO</option>
           <option value="11">DEZEMBRO</option>
         </select>
@@ -661,7 +661,7 @@
         <label>Ano Ativo</label>
         <div class="year-stepper">
           <button class="year-btn" onclick="stepYear(-1)" title="Ano Anterior">◀</button>
-          <input type="number" id="yearInput" value="2026" min="2000" max="2100" style="width: 62px; text-align: center;" onchange="changeActiveYear(this.value)" />
+          <input type="number" id="yearInput" min="2000" max="2100" style="width: 62px; text-align: center;" onchange="changeActiveYear(this.value)" />
           <button class="year-btn" onclick="stepYear(1)" title="Próximo Ano">▶</button>
         </div>
       </div>
@@ -680,17 +680,18 @@
   <div class="period-banner">
     <div>
       📅 Visualizando Período: <strong id="bannerPeriodText">OUTUBRO / 2026</strong>
-      <span style="color: var(--text-muted); margin-left: 10px;" id="bannerDateText">(Data selecionada: 29/10/2026)</span>
+      <span style="color: var(--text-muted); margin-left: 10px;" id="bannerDateText"></span>
     </div>
     <div class="cloud-actions">
       <span id="cloudStatusBadge" class="cloud-badge online">🔄 Conectando à Nuvem...</span>
+      <button class="btn-outline" onclick="setTodayDate()">📍 Ir para Hoje</button>
       <button class="btn-outline" onclick="syncFromCloud(true)">🔄 Sincronizar Agora</button>
       <button class="btn-outline" onclick="changeCloudUrlPrompt()">🔗 Trocar URL Apps Script</button>
       <button class="btn-outline" onclick="resetDefaultData()">Restaurar Padrão</button>
     </div>
   </div>
 
-  <!-- ABA 1: VISÃO GERAL (AGORA INCLUI GRÁFICO SEMANAL NO TELÃO) -->
+  <!-- ABA 1: VISÃO GERAL -->
   <section id="visao-geral" class="tab-section active">
     <div class="kpi-grid">
       <div class="kpi-card">
@@ -810,33 +811,22 @@
     </div>
   </section>
 
-  <!-- ABA 3: PRODUÇÃO SEMANAL (SEMANA 1 A SEMANA 4) -->
+  <!-- ABA 3: PRODUÇÃO SEMANAL (APENAS O GRÁFICO COMPARATIVO GRANDE EM LARGURA TOTAL) -->
   <section id="producao-semanal" class="tab-section">
     <!-- CARDS DAS 4 SEMANAS DO MÊS ATIVO -->
     <div class="kpi-grid" id="weeklyKpiCards"></div>
 
-    <!-- GRÁFICO SEMANAL DO MÊS ATIVO + COMPARATIVO SEMANAL ENTRE MESES -->
-    <div class="bottom-grid" style="margin-bottom: 16px;">
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Gráfico de Produção Semanal — <span id="weeklyTabMonthTitle">OUTUBRO/2026</span></span>
-        </div>
-        <div class="chart-box" style="height: 320px;">
-          <canvas id="weeklyDetailChart"></canvas>
-        </div>
+    <!-- GRÁFICO GRANDE EM LARGURA TOTAL: COMPARATIVO SEMANAL ENTRE OS MESES -->
+    <div class="panel" style="margin-bottom: 16px;">
+      <div class="panel-header">
+        <span class="panel-title">Comparativo Semanal entre os Meses (<span id="weeklyCompareYearTitle">2026</span>)</span>
       </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Comparativo Semanal entre os Meses (<span id="weeklyCompareYearTitle">2026</span>)</span>
-        </div>
-        <div class="chart-box" style="height: 320px;">
-          <canvas id="weeklyMultiMonthChart"></canvas>
-        </div>
+      <div class="chart-box" style="height: 390px;">
+        <canvas id="weeklyMultiMonthChart"></canvas>
       </div>
     </div>
 
-    <!-- TABELA DE FECHAMENTO SEMANAL POR MÊS (IGUAL À SUA PLANILHA) -->
+    <!-- TABELA DE FECHAMENTO SEMANAL POR MÊS -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Demonstrativo de Produção Semanal por Mês (Semana 1 a Semana 4)</span>
@@ -872,7 +862,7 @@
 
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Data do Apontamento</label>
+            <label>Data do Apontamento (Automática de Hoje)</label>
             <input type="date" id="launchDateInput" onchange="syncDateFromLaunch(this.value)" />
           </div>
 
@@ -882,7 +872,7 @@
               <option value="0">SEMANA 1 (Dias 01 a 07)</option>
               <option value="1">SEMANA 2 (Dias 08 a 14)</option>
               <option value="2">SEMANA 3 (Dias 15 a 21)</option>
-              <option value="3" selected>SEMANA 4 (Dias 22 a 31)</option>
+              <option value="3">SEMANA 4 (Dias 22 a 31)</option>
             </select>
           </div>
         </div>
@@ -939,7 +929,7 @@
         <div class="split-2-cols">
           <div class="form-row">
             <label>Ano</label>
-            <input type="number" id="directWeekYearInput" value="2026" min="2000" max="2100" onchange="onDirectWeekPeriodChange()" />
+            <input type="number" id="directWeekYearInput" min="2000" max="2100" onchange="onDirectWeekPeriodChange()" />
           </div>
           <div class="form-row">
             <label>Mês</label>
@@ -953,7 +943,7 @@
               <option value="6">JULHO</option>
               <option value="7">AGOSTO</option>
               <option value="8">SETEMBRO</option>
-              <option value="9" selected>OUTUBRO</option>
+              <option value="9">OUTUBRO</option>
               <option value="10">NOVEMBRO</option>
               <option value="11">DEZEMBRO</option>
             </select>
@@ -989,7 +979,7 @@
         </div>
         <div class="form-row">
           <label>Ano da Meta</label>
-          <input type="number" id="goalYearInput" value="2026" min="2000" max="2100" onchange="onGoalPeriodSelectChange()" />
+          <input type="number" id="goalYearInput" min="2000" max="2100" onchange="onGoalPeriodSelectChange()" />
         </div>
         <div class="form-row">
           <label>Mês da Meta</label>
@@ -1003,7 +993,7 @@
             <option value="6">JULHO</option>
             <option value="7">AGOSTO</option>
             <option value="8">SETEMBRO</option>
-            <option value="9" selected>OUTUBRO</option>
+            <option value="9">OUTUBRO</option>
             <option value="10">NOVEMBRO</option>
             <option value="11">DEZEMBRO</option>
           </select>
@@ -1093,7 +1083,6 @@
       { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
     ];
 
-    // DADOS SEMANAIS PADRÃO DE 2026 DA PLANILHA ENVIADA
     const DEFAULT_2026_WEEKS = {
       5: [2069.25, 2069.25, 2069.25, 2069.25], // JUNHO (Total 8277 kg)
       6: [4657, 588, 1971, 0],                 // JULHO (Total 7216 kg)
@@ -1102,17 +1091,36 @@
       9: [16587, 11439, 7189, 3530.622]        // OUTUBRO (Total 38745,622 kg)
     };
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V9';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V10';
 
-    let viewFilter = {
-      unit: 'kg',
-      selectedDate: '2026-10-29',
-      activeYear: 2026,
-      activeMonthIndex: 9
-    };
+    // FUNÇÃO QUE PUXA AUTOMATICAMENTE A DATA DE HOJE DO RELÓGIO DO COMPUTADOR
+    function getTodayFilterState() {
+      const now = new Date();
+      const yr = now.getFullYear();
+      const moIdx = now.getMonth(); // 0 a 11
+      const mm = String(moIdx + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      return {
+        unit: 'kg',
+        selectedDate: `${yr}-${mm}-${dd}`,
+        activeYear: yr,
+        activeMonthIndex: moIdx
+      };
+    }
 
+    let viewFilter = getTodayFilterState();
     let isSavingToCloud = false;
-    let monthlyChart, overviewWeeklyChart, machineChart, gaugeOnlyChart, weeklyDetailChart, weeklyMultiMonthChart, gaugeMonth, gaugeYear;
+    let monthlyChart, overviewWeeklyChart, machineChart, gaugeOnlyChart, weeklyMultiMonthChart, gaugeMonth, gaugeYear;
+
+    function setTodayDate() {
+      const today = getTodayFilterState();
+      viewFilter.selectedDate = today.selectedDate;
+      viewFilter.activeYear = today.activeYear;
+      viewFilter.activeMonthIndex = today.activeMonthIndex;
+      ensureYearExists(viewFilter.activeYear);
+      syncFilterInputs();
+      renderAll();
+    }
 
     function getWeekIndexFromDateStr(isoDate) {
       if (!isoDate) return 0;
@@ -1143,6 +1151,7 @@
     }
 
     function createDefaultDatabase() {
+      const todayIso = getTodayFilterState().selectedDate;
       const year2026 = createEmptyYearData();
       year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[5]], items: cloneItemsWithTotal(8277) };
       year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[6]], items: cloneItemsWithTotal(7216) };
@@ -1174,10 +1183,10 @@
         dailyLogs: [
           {
             id: 'log_init_1',
-            date: '2026-10-29',
+            date: todayIso,
             year: 2026,
             monthIndex: 9,
-            weekIndex: 3,
+            weekIndex: getWeekIndexFromDateStr(todayIso),
             machine: 'EB12',
             category: 'Estribadeira',
             gauge: '12,50 mm',
@@ -1190,7 +1199,6 @@
       };
     }
 
-    // Garante que qualquer banco antigo salvo na nuvem ganhe os arrays `weeks` de 2026 automaticamente
     function upgradeDatabaseWeeks(db) {
       if (!db || !db.years) return createDefaultDatabase();
       Object.keys(db.years).forEach(yr => {
@@ -1202,7 +1210,6 @@
               mObj.weeks = [0, 0, 0, 0];
             }
           }
-          // Se as 4 semanas estavam zeradas em 2026 mas é um dos meses da planilha, preenche com os valores da planilha
           const sumW = mObj.weeks.reduce((a, b) => a + b, 0);
           if (Number(yr) === 2026 && sumW === 0 && DEFAULT_2026_WEEKS[idx]) {
             mObj.weeks = [...DEFAULT_2026_WEEKS[idx]];
@@ -1398,7 +1405,7 @@
     }
 
     function changeActiveYear(yVal) {
-      const yr = parseInt(yVal, 10) || 2026;
+      const yr = parseInt(yVal, 10) || new Date().getFullYear();
       viewFilter.activeYear = yr;
       ensureYearExists(yr);
       const day = viewFilter.selectedDate ? viewFilter.selectedDate.split('-')[2] : '01';
@@ -1467,7 +1474,6 @@
       const totalGoal = months.reduce((acc, cur) => acc + cur.goalKg, 0);
       const pctYear = totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0;
 
-      // Melhor Semana do Mês Ativo
       const weeks = m.weeks || [0, 0, 0, 0];
       let bestWIdx = 0;
       weeks.forEach((val, idx) => {
@@ -1475,7 +1481,7 @@
       });
 
       document.getElementById('bannerPeriodText').textContent = `${m.name} / ${viewFilter.activeYear}`;
-      document.getElementById('bannerDateText').textContent = `(Data selecionada: ${formatDateBR(viewFilter.selectedDate)})`;
+      document.getElementById('bannerDateText').textContent = `(Data de Hoje/Selecionada: ${formatDateBR(viewFilter.selectedDate)})`;
 
       document.getElementById('kpiAttainment').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('kpiMonthSub').textContent = `Referência: ${m.name} / ${viewFilter.activeYear}`;
@@ -1492,13 +1498,11 @@
       document.getElementById('statusMonthTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
       document.getElementById('machChartPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
       document.getElementById('gaugeOnlyChartPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
-      document.getElementById('weeklyTabMonthTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
       document.getElementById('weeklyCompareYearTitle').textContent = viewFilter.activeYear;
 
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
 
-      // Cards das 4 semanas na Aba 3
       const sumWeeks = weeks.reduce((a, b) => a + b, 0);
       const weeklyCardsEl = document.getElementById('weeklyKpiCards');
       weeklyCardsEl.innerHTML = weeks.map((wVal, idx) => {
@@ -1575,7 +1579,6 @@
         `;
       }).join('');
 
-      // Tabela de Resumo Semanal por Mês (Aba 3)
       const weeklyBody = document.getElementById('weeklySummaryTableBody');
       weeklyBody.innerHTML = months.map((mItem, mIdx) => {
         const wks = mItem.weeks || [0, 0, 0, 0];
@@ -1598,7 +1601,6 @@
         `;
       }).join('');
 
-      // Tabela de Logs Diários
       const logsBody = document.getElementById('dailyLogsTableBody');
       if (!state.dailyLogs || state.dailyLogs.length === 0) {
         logsBody.innerHTML = `<tr><td colspan="8" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
@@ -1634,9 +1636,13 @@
       const m = getActiveMonthObj();
       const weeks = m.weeks || [0, 0, 0, 0];
 
-      // 1. Gráfico de Evolução Mensal
+      // 1. Gráfico de Evolução Mensal vs Previsão (COM ANTI-SOBREPOSIÇÃO DE TEXTOS)
       const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
       if (monthlyChart) monthlyChart.destroy();
+
+      const prodSeries = months.map(item => +(item.producedKg * factor).toFixed(1));
+      const goalSeries = months.map(item => +(item.goalKg * factor).toFixed(1));
+      const maxValMonthly = Math.max(...prodSeries, ...goalSeries, 10);
 
       monthlyChart = new Chart(ctxMonth, {
         type: 'line',
@@ -1645,23 +1651,57 @@
           datasets: [
             {
               label: `Produzido (${viewFilter.unit})`,
-              data: months.map(item => +(item.producedKg * factor).toFixed(2)),
+              data: prodSeries,
               borderColor: '#2dd4bf',
-              backgroundColor: 'rgba(45, 212, 191, 0.18)',
+              backgroundColor: 'rgba(45, 212, 191, 0.16)',
               fill: true,
               stepped: 'middle',
               borderWidth: 2.5,
-              pointRadius: 4
+              pointRadius: 4,
+              pointBackgroundColor: '#2dd4bf',
+              datalabels: {
+                color: '#2dd4bf',
+                backgroundColor: 'rgba(6, 13, 16, 0.88)',
+                borderColor: 'rgba(45, 212, 191, 0.45)',
+                borderWidth: 1,
+                borderRadius: 4,
+                padding: { top: 2, bottom: 2, left: 4, right: 4 },
+                font: { weight: 'bold', size: 9.5 },
+                // Se Produzido e Meta forem próximos, joga o rótulo do Produzido para baixo e a Meta para cima
+                align: (ctx) => {
+                  const p = prodSeries[ctx.dataIndex];
+                  const g = goalSeries[ctx.dataIndex];
+                  if (g > 0 && Math.abs(p - g) / maxValMonthly < 0.18) {
+                    return p < g ? 'bottom' : 'bottom';
+                  }
+                  return 'bottom';
+                },
+                offset: 6,
+                formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
+              }
             },
             {
               label: `Previsão / Meta (${viewFilter.unit})`,
-              data: months.map(item => +(item.goalKg * factor).toFixed(2)),
+              data: goalSeries,
               borderColor: '#f59e0b',
               borderDash: [6, 4],
               fill: false,
               tension: 0.25,
               borderWidth: 2,
-              pointRadius: 4
+              pointRadius: 4,
+              pointBackgroundColor: '#f59e0b',
+              datalabels: {
+                color: '#fbbf24',
+                backgroundColor: 'rgba(6, 13, 16, 0.88)',
+                borderColor: 'rgba(245, 158, 11, 0.45)',
+                borderWidth: 1,
+                borderRadius: 4,
+                padding: { top: 2, bottom: 2, left: 4, right: 4 },
+                font: { weight: 'bold', size: 9.5 },
+                align: 'top',
+                offset: 7,
+                formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
+              }
             }
           ]
         },
@@ -1669,18 +1709,18 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 24, bottom: 12 } },
           plugins: {
-            legend: { labels: { color: '#cbd5e1' } },
-            datalabels: {
-              color: '#f8fafc',
-              align: 'top',
-              font: { weight: 'bold', size: 10 },
-              formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
-            }
+            legend: { labels: { color: '#cbd5e1' } }
           },
           scales: {
             x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.04)' } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            y: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              beginAtZero: true,
+              suggestedMax: maxValMonthly * 1.22
+            }
           }
         }
       });
@@ -1711,6 +1751,7 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 20 } },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -1765,6 +1806,7 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 20 } },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -1810,6 +1852,7 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 20 } },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -1827,60 +1870,7 @@
         }
       });
 
-      // 6. Gráfico Detalhado de Produção Semanal do Mês Ativo (Aba 3)
-      const ctxWeekDetail = document.getElementById('weeklyDetailChart').getContext('2d');
-      if (weeklyDetailChart) weeklyDetailChart.destroy();
-
-      const weekGoalRef = +((m.goalKg / 4) * factor).toFixed(2);
-
-      weeklyDetailChart = new Chart(ctxWeekDetail, {
-        type: 'bar',
-        data: {
-          labels: WEEK_LABELS,
-          datasets: [
-            {
-              type: 'bar',
-              label: `Produzido na Semana (${viewFilter.unit})`,
-              data: weeks.map(w => +(w * factor).toFixed(3)),
-              backgroundColor: 'rgba(56, 189, 248, 0.78)',
-              borderColor: '#38bdf8',
-              borderWidth: 1.5,
-              borderRadius: 6
-            },
-            {
-              type: 'line',
-              label: `Média Meta Semanal (${viewFilter.unit})`,
-              data: [weekGoalRef, weekGoalRef, weekGoalRef, weekGoalRef],
-              borderColor: '#f59e0b',
-              borderDash: [6, 4],
-              borderWidth: 2,
-              pointRadius: 3,
-              fill: false
-            }
-          ]
-        },
-        options: {
-          animation: false,
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: '#cbd5e1' } },
-            datalabels: {
-              color: '#f8fafc',
-              anchor: 'end',
-              align: 'top',
-              font: { weight: 'bold', size: 11 },
-              formatter: (val, ctx) => ctx.datasetIndex === 0 ? val.toLocaleString('pt-BR') : ''
-            }
-          },
-          scales: {
-            x: { ticks: { color: '#cbd5e1' }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
-          }
-        }
-      });
-
-      // 7. Gráfico Comparativo Semanal Entre os Meses com Produção (Julho a Outubro / Todos os Meses Ativos)
+      // 6. GRÁFICO ÚNICO GRANDE DA ABA 3: Comparativo Semanal Entre os Meses
       const ctxWeekMulti = document.getElementById('weeklyMultiMonthChart').getContext('2d');
       if (weeklyMultiMonthChart) weeklyMultiMonthChart.destroy();
 
@@ -1897,25 +1887,31 @@
           labels: listToPlot.map(item => item.name),
           datasets: WEEK_LABELS.map((wLabel, wIdx) => ({
             label: wLabel,
-            data: listToPlot.map(item => +(((item.weeks && item.weeks[wIdx]) || 0) * factor).toFixed(2)),
+            data: listToPlot.map(item => +(((item.weeks && item.weeks[wIdx]) || 0) * factor).toFixed(1)),
             backgroundColor: weekColors[wIdx],
-            borderRadius: 4
+            borderRadius: 5,
+            barPercentage: 0.85,
+            categoryPercentage: 0.78
           }))
         },
         options: {
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
+          layout: { padding: { top: 24 } },
           plugins: {
-            legend: { labels: { color: '#cbd5e1' } },
+            legend: { labels: { color: '#cbd5e1', font: { size: 12, weight: '600' } } },
             datalabels: {
-              color: '#041014',
-              font: { weight: 'bold', size: 9 },
-              formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
+              color: '#f8fafc',
+              anchor: 'end',
+              align: 'top',
+              offset: 2,
+              font: { weight: 'bold', size: 10.5 },
+              formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
             }
           },
           scales: {
-            x: { ticks: { color: '#cbd5e1' }, grid: { display: false } },
+            x: { ticks: { color: '#e2e8f0', font: { size: 12, weight: '600' } }, grid: { display: false } },
             y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
           }
         }
@@ -1948,7 +1944,6 @@
       });
     }
 
-    // LANÇAMENTO POR MÁQUINA + BITOLA + SEMANA
     async function handleLaunchProduction() {
       const launchDate = document.getElementById('launchDateInput').value || viewFilter.selectedDate;
       const [yr, mo] = launchDate.split('-').map(Number);
@@ -2032,7 +2027,6 @@
       await pushToCloud(newLog);
     }
 
-    // SALVAR AS 4 SEMANAS DIRETAMENTE
     async function handleUpdateWeeksDirect() {
       const yr = parseInt(document.getElementById('directWeekYearInput').value, 10) || viewFilter.activeYear;
       const mIdx = parseInt(document.getElementById('directWeekMonthSelect').value, 10);
@@ -2057,7 +2051,6 @@
       await pushToCloud(null);
     }
 
-    // EXCLUIR REGISTRO DO HISTÓRICO E REVERTER NA MÁQUINA + SEMANA
     async function deleteHistoryLog(logIndex) {
       const log = state.dailyLogs[logIndex];
       if (!log) return;
@@ -2164,8 +2157,7 @@
       if (!confirm('Deseja restaurar os dados originais de 2026 (incluindo as semanas de Julho a Outubro) para TODOS os computadores?')) return;
       localStorage.removeItem(STORAGE_KEY);
       state = createDefaultDatabase();
-      syncFilterInputs();
-      renderAll();
+      setTodayDate();
       await pushToCloud(null);
     }
 
@@ -2176,8 +2168,8 @@
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
-      syncFilterInputs();
-      renderAll();
+      // Inicia sempre puxando a data real de hoje do computador
+      setTodayDate();
       await syncFromCloud(false);
 
       setInterval(() => {
