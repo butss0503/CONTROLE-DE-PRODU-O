@@ -524,15 +524,6 @@
       box-shadow: 0 0 10px var(--teal-glow);
     }
 
-    .checkbox-inline {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.72rem;
-      color: var(--teal-bright);
-      cursor: pointer;
-    }
-
     .btn-action {
       width: 100%;
       padding: 11px 16px;
@@ -551,6 +542,11 @@
     .btn-action:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 15px rgba(45, 212, 191, 0.35);
+    }
+
+    .btn-action:disabled {
+      opacity: 0.5;
+      cursor: wait;
     }
 
     .btn-gold {
@@ -573,46 +569,6 @@
       color: var(--teal-bright);
       border-color: var(--teal-bright);
     }
-
-    /* MODAL DE CONFIGURAÇÃO DE NUVEM */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.75);
-      z-index: 999;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-card {
-      background: #0c181d;
-      border: 1px solid var(--teal-bright);
-      border-radius: 12px;
-      max-width: 560px;
-      width: 100%;
-      padding: 22px;
-      box-shadow: 0 0 30px rgba(45, 212, 191, 0.25);
-    }
-
-    .modal-card h3 {
-      font-family: 'Chakra Petch', sans-serif;
-      color: var(--gold);
-      margin-bottom: 10px;
-      font-size: 1.15rem;
-    }
-
-    .modal-card p {
-      font-size: 0.84rem;
-      color: var(--text-muted);
-      line-height: 1.45;
-      margin-bottom: 14px;
-    }
   </style>
 </head>
 <body>
@@ -633,7 +589,7 @@
       <button class="tab-btn" onclick="switchTab('lancamentos-pcp', this)">3. Lançar Produção & Metas</button>
     </nav>
 
-    <!-- SELETOR DE CALENDÁRIO COMPLETO -->
+    <!-- SELETOR DE CALENDÁRIO GLOBAL -->
     <div class="top-filters">
       <div class="filter-group">
         <label>Calendário (Dia/Mês/Ano)</label>
@@ -677,17 +633,15 @@
     </div>
   </header>
 
-  <!-- FAIXA DE INFORMAÇÃO DE DATA ATIVA E BANCO NA NUVEM -->
+  <!-- FAIXA DE PERÍODO ATIVO + STATUS DA NUVEM -->
   <div class="period-banner">
     <div>
       📅 Visualizando Período: <strong id="bannerPeriodText">OUTUBRO / 2026</strong>
       <span style="color: var(--text-muted); margin-left: 10px;" id="bannerDateText">(Data selecionada: 29/10/2026)</span>
     </div>
     <div class="cloud-actions">
-      <span id="cloudStatusBadge" class="cloud-badge local">⚡ Modo Local (Configure a Nuvem)</span>
-      <button class="btn-outline" onclick="syncFromCloud(true)">🔄 Atualizar Agora</button>
-      <button class="btn-outline" onclick="openCloudModal()">☁️ Configurar Banco na Nuvem</button>
-      <a class="btn-outline" href="https://docs.google.com/spreadsheets/d/1qu-srbL3PhV3p2dTitNfe_m6OT-yWdPzNRWnu5uEWQg/edit" target="_blank">📊 Abrir Planilha Google Sheets</a>
+      <span id="cloudStatusBadge" class="cloud-badge online">🔄 Conectando à Nuvem...</span>
+      <button class="btn-outline" onclick="syncFromCloud(true)">🔄 Sincronizar Agora</button>
       <button class="btn-outline" onclick="resetDefaultData()">Restaurar Padrão</button>
     </div>
   </div>
@@ -792,10 +746,10 @@
     </div>
   </section>
 
-  <!-- ABA 3: LANÇAMENTOS PCP E METAS (CAMPOS DE MÁQUINA E BITOLA SEPARADOS) -->
+  <!-- ABA 3: LANÇAMENTOS PCP E METAS (TODAS AS MÁQUINAS RECEBEM TODAS AS BITOLAS) -->
   <section id="lancamentos-pcp" class="tab-section">
     <div class="pcp-grid">
-      <!-- LANÇAR PRODUÇÃO POR DATA, MÁQUINA E BITOLA SEPARADOS -->
+      <!-- LANÇAR PRODUÇÃO: MÁQUINA E BITOLA SEPARADOS E LIVRES -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Lançar Produção por Data, Máquina e Bitola</span>
@@ -806,11 +760,10 @@
           <input type="date" id="launchDateInput" onchange="syncDateFromLaunch(this.value)" />
         </div>
 
-        <!-- CAMPOS SEPARADOS: ESCOLHER MÁQUINA E ESCOLHER BITOLA -->
         <div class="split-2-cols">
           <div class="form-row">
             <label>Escolher Máquina</label>
-            <select id="inputMachineSelect" onchange="onMachineSelectChange()">
+            <select id="inputMachineSelect">
               <option value="ES02">ES02 (Estribadeira)</option>
               <option value="EB10">EB10 (Estribadeira)</option>
               <option value="EB12">EB12 (Estribadeira)</option>
@@ -820,14 +773,18 @@
           </div>
 
           <div class="form-row">
-            <label>
-              <span>Escolher Bitola</span>
-              <span class="checkbox-inline" title="Permite selecionar qualquer uma das 9 bitolas em qualquer máquina">
-                <input type="checkbox" id="allowAllGaugesCheck" onchange="onMachineSelectChange()" />
-                Todas as 9 bitolas
-              </span>
-            </label>
-            <select id="inputGaugeSelect"></select>
+            <label>Escolher Bitola (Todas Disponíveis)</label>
+            <select id="inputGaugeSelect">
+              <option value="5,00 mm">Bitola 5,00 mm</option>
+              <option value="6,30 mm">Bitola 6,30 mm</option>
+              <option value="8,00 mm">Bitola 8,00 mm</option>
+              <option value="10,00 mm">Bitola 10,00 mm</option>
+              <option value="12,50 mm">Bitola 12,50 mm</option>
+              <option value="16,00 mm">Bitola 16,00 mm</option>
+              <option value="20,00 mm">Bitola 20,00 mm</option>
+              <option value="25,00 mm">Bitola 25,00 mm</option>
+              <option value="32,00 mm">Bitola 32,00 mm</option>
+            </select>
           </div>
         </div>
 
@@ -844,21 +801,21 @@
           <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500" />
         </div>
 
-        <button class="btn-action" onclick="handleLaunchProduction()">Registrar Produção e Salvar na Nuvem</button>
+        <button class="btn-action" id="btnLaunchProd" onclick="handleLaunchProduction()">Registrar Produção e Salvar para Todos</button>
       </div>
 
-      <!-- DEFINIR METAS MENSAIS DE QUALQUER ANO -->
+      <!-- DEFINIR METAS MENSAIS -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Definir Meta / Previsão Mensal</span>
         </div>
         <div class="form-row">
           <label>Ano da Meta</label>
-          <input type="number" id="goalYearInput" value="2026" min="2000" max="2100" />
+          <input type="number" id="goalYearInput" value="2026" min="2000" max="2100" onchange="onGoalPeriodSelectChange()" />
         </div>
         <div class="form-row">
           <label>Mês da Meta</label>
-          <select id="goalMonthSelect">
+          <select id="goalMonthSelect" onchange="onGoalPeriodSelectChange()">
             <option value="0">JANEIRO</option>
             <option value="1">FEVEREIRO</option>
             <option value="2">MARÇO</option>
@@ -877,14 +834,14 @@
           <label>Nova Meta Operacional (em kg)</label>
           <input type="number" id="inputGoalKg" step="100" value="50000" />
         </div>
-        <button class="btn-action btn-gold" onclick="handleUpdateGoal()">Salvar Meta no Calendário e Nuvem</button>
+        <button class="btn-action btn-gold" id="btnSaveGoal" onclick="handleUpdateGoal()">Salvar Meta para Todos os PCs</button>
       </div>
     </div>
 
-    <!-- HISTÓRICO DE APONTAMENTOS POR DATA -->
+    <!-- HISTÓRICO DE APONTAMENTOS -->
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Histórico de Lançamentos Diários (Calendário PCP)</span>
+        <span class="panel-title">Histórico de Lançamentos Diários (Sincronizado em Todos os PCs)</span>
       </div>
       <div class="table-container">
         <table>
@@ -905,32 +862,10 @@
     </div>
   </section>
 
-  <!-- MODAL DE CONFIGURAÇÃO DO BANCO NA NUVEM -->
-  <div class="modal-backdrop" id="cloudModal">
-    <div class="modal-card">
-      <h3>☁️ Conexão com Banco de Dados em Nuvem (Multi-PC)</h3>
-      <p>
-        Cole abaixo a <strong>URL do App da Web (Google Apps Script)</strong> vinculada à sua planilha do Google Sheets.
-        Assim, qualquer lançamento feito em um computador ficará gravado na nuvem e aparecerá em todos os outros PCs.
-      </p>
-      <div class="form-row">
-        <label>URL do Google Apps Script (termina com /exec)</label>
-        <input type="url" id="cloudUrlInput" placeholder="https://script.google.com/macros/s/.../exec" />
-      </div>
-      <div style="display: flex; gap: 10px; margin-top: 16px;">
-        <button class="btn-action" onclick="saveCloudUrl()">Salvar e Sincronizar</button>
-        <button class="btn-outline" style="padding: 10px 18px;" onclick="closeCloudModal()">Fechar</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     Chart.register(ChartDataLabels);
 
-    // =========================================================================
-    // DICA PARA O GITHUB: Se você colar a sua URL do Apps Script entre as aspas
-    // abaixo antes de subir pro GitHub, nenhum PC precisará configurar nada!
-    // =========================================================================
+    // URL OFICIAL DO GOOGLE APPS SCRIPT
     const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbxSp-7XVKcqAPgD7hSj3xFxO4uESgAcY92SOHapGaDz7jfkgF6wKj8UrxVBC8NY8lpO5Q/exec";
 
     const MONTH_NAMES = [
@@ -938,20 +873,14 @@
       'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
     ];
 
-    const ALL_GAUGES = [
-      '5,00 mm', '6,30 mm', '8,00 mm', '10,00 mm', '12,50 mm',
-      '16,00 mm', '20,00 mm', '25,00 mm', '32,00 mm'
-    ];
-
     const MACHINE_CATALOG = {
-      'ES02':  { category: 'Estribadeira', defaultGauges: ['5,00 mm'] },
-      'EB10':  { category: 'Estribadeira', defaultGauges: ['6,30 mm', '8,00 mm'] },
-      'EB12':  { category: 'Estribadeira', defaultGauges: ['10,00 mm', '12,50 mm'] },
-      '20B':   { category: 'Estribadeira', defaultGauges: ['16,00 mm'] },
-      'PT 32': { category: 'Dobradeira Manual', defaultGauges: ['20,00 mm', '25,00 mm', '32,00 mm'] }
+      'ES02':  'Estribadeira',
+      'EB10':  'Estribadeira',
+      'EB12':  'Estribadeira',
+      '20B':   'Estribadeira',
+      'PT 32': 'Dobradeira Manual'
     };
 
-    // CADASTRO FIXO DAS 5 MÁQUINAS E 9 BITOLAS OFICIAIS (MESMO ZERADAS)
     const BASE_ITEMS_TEMPLATE = [
       { id: 'ES02_5,00 mm', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 0 },
       { id: 'EB10_6,30 mm', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 0 },
@@ -964,8 +893,18 @@
       { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
     ];
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V3';
-    const CLOUD_URL_KEY = 'GRANDE_ACO_CLOUD_URL';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V5';
+
+    // Filtros de visualização locais de cada PC (para um usuário não mudar a tela do outro ao navegar)
+    let viewFilter = {
+      unit: 'kg',
+      selectedDate: '2026-10-29',
+      activeYear: 2026,
+      activeMonthIndex: 9
+    };
+
+    let isSavingToCloud = false;
+    let monthlyChart, machineChart, gaugeMonth, gaugeYear;
 
     function cloneItemsWithTotal(totalKg) {
       const octWeights = [3467.856, 5977.857, 4401.101, 4069.508, 7552.335, 6482.599, 3080.413, 1730.603, 0];
@@ -1011,10 +950,7 @@
       year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, items: cloneItemsWithTotal(0) };
 
       return {
-        unit: 'kg',
-        selectedDate: '2026-10-29',
-        activeYear: 2026,
-        activeMonthIndex: 9,
+        updatedAt: Date.now(),
         years: { 2026: year2026 },
         dailyLogs: [
           { date: '2026-10-29', year: 2026, monthIndex: 9, machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', mode: 'Saldo Consolidado', kg: 7552.335 }
@@ -1022,12 +958,7 @@
       };
     }
 
-    let state = loadState();
-    let monthlyChart, machineChart, gaugeMonth, gaugeYear;
-
-    function getCloudUrl() {
-      return localStorage.getItem(CLOUD_URL_KEY) || DEFAULT_CLOUD_URL;
-    }
+    let state = loadLocalCache();
 
     function updateCloudBadge(statusText, isOnline) {
       const badge = document.getElementById('cloudStatusBadge');
@@ -1035,102 +966,112 @@
       badge.className = 'cloud-badge ' + (isOnline ? 'online' : 'local');
     }
 
-    function loadState() {
+    function loadLocalCache() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.years) return parsed;
+        }
       } catch (e) {
-        console.warn('Falha ao ler localStorage:', e);
+        console.warn('Falha ao ler cache local:', e);
       }
       return createDefaultDatabase();
     }
 
-    function saveState(lastLog = null) {
+    function saveLocalCache() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (e) {
-        console.warn('Falha ao salvar localStorage:', e);
+        console.warn('Falha ao salvar cache local:', e);
       }
-      pushToCloud(lastLog);
     }
 
-    // SINCRONIZAÇÃO EM NUVEM (GOOGLE APPS SCRIPT / SHEETS)
-    async function syncFromCloud(showAlert = false) {
-      const url = getCloudUrl();
-      if (!url) {
-        updateCloudBadge('⚡ Modo Local (Sem URL de Nuvem)', false);
-        if (showAlert) openCloudModal();
-        return;
-      }
+    // BUSCA DADOS NA NUVEM (COM ANTI-CACHE PARA ATUALIZAR TODOS OS PCS)
+    async function syncFromCloud(manualClick = false) {
+      if (isSavingToCloud) return;
+      if (manualClick) updateCloudBadge('🔄 Buscando dados na Nuvem...', true);
 
-      updateCloudBadge('🔄 Sincronizando com a Nuvem...', true);
       try {
-        const res = await fetch(url, { method: 'GET', cache: 'no-store' });
-        const cloudData = await res.json();
+        const cacheBuster = `${DEFAULT_CLOUD_URL}?t=${Date.now()}`;
+        const res = await fetch(cacheBuster, {
+          method: 'GET',
+          redirect: 'follow',
+          cache: 'no-store'
+        });
+
+        const text = await res.text();
+        const cloudData = JSON.parse(text);
+
         if (cloudData && cloudData.years) {
           state = cloudData;
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          saveLocalCache();
           syncFilterInputs();
           renderAll();
-          updateCloudBadge('☁️ Nuvem Sincronizada (Todos os PCs)', true);
-        } else {
-          // Primeiro uso: envia a base padrão para a nuvem
-          await pushToCloud();
+          const timeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+          updateCloudBadge(`☁️ Sincronizado (${timeStr})`, true);
+        } else if (cloudData && cloudData.empty) {
+          // Nuvem ainda vazia: envia o banco inicial para a nuvem
+          await pushToCloud(null);
         }
       } catch (err) {
-        console.warn('Erro ao buscar da nuvem:', err);
-        updateCloudBadge('⚠️ Offline / Verifique URL da Nuvem', false);
+        console.warn('Erro ao sincronizar da nuvem:', err);
+        updateCloudBadge('⚠️ Erro na Nuvem (Reimplante o Apps Script)', false);
       }
     }
 
+    // GRAVA DADOS NA NUVEM E CONFIRMA
     async function pushToCloud(lastLog = null) {
-      const url = getCloudUrl();
-      if (!url) return;
+      isSavingToCloud = true;
+      state.updatedAt = Date.now();
+      saveLocalCache();
+      updateCloudBadge('☁️ Gravando para todos os PCs...', true);
 
-      updateCloudBadge('☁️ Gravando na Nuvem...', true);
+      const btnProd = document.getElementById('btnLaunchProd');
+      const btnGoal = document.getElementById('btnSaveGoal');
+      if (btnProd) btnProd.disabled = true;
+      if (btnGoal) btnGoal.disabled = true;
+
       try {
-        await fetch(url, {
+        const response = await fetch(DEFAULT_CLOUD_URL, {
           method: 'POST',
-          mode: 'no-cors',
+          redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ state, lastLog })
         });
-        updateCloudBadge('☁️ Gravado na Nuvem (Todos os PCs)', true);
+
+        // Tenta ler resposta se CORS permitir
+        try {
+          const resJson = await response.json();
+          if (resJson && resJson.status === 'error') {
+            console.error('Erro retornado pelo Apps Script:', resJson.message);
+            updateCloudBadge('⚠️ Erro no Script da Planilha', false);
+            return;
+          }
+        } catch (_) {
+          // Resposta opaca ou redirecionada concluída
+        }
+
+        const timeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        updateCloudBadge(`☁️ Salvo na Nuvem (${timeStr})`, true);
       } catch (err) {
-        console.warn('Erro ao gravar na nuvem:', err);
-        updateCloudBadge('⚠️ Erro ao Gravar na Nuvem', false);
+        console.warn('Tentando fallback no-cors:', err);
+        try {
+          await fetch(DEFAULT_CLOUD_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ state, lastLog })
+          });
+          updateCloudBadge('☁️ Enviado para a Nuvem', true);
+        } catch (err2) {
+          updateCloudBadge('⚠️ Falha de Rede ao Gravar', false);
+        }
+      } finally {
+        isSavingToCloud = false;
+        if (btnProd) btnProd.disabled = false;
+        if (btnGoal) btnGoal.disabled = false;
       }
-    }
-
-    function openCloudModal() {
-      document.getElementById('cloudUrlInput').value = getCloudUrl();
-      document.getElementById('cloudModal').classList.add('open');
-    }
-
-    function closeCloudModal() {
-      document.getElementById('cloudModal').classList.remove('open');
-    }
-
-    function saveCloudUrl() {
-      const val = document.getElementById('cloudUrlInput').value.trim();
-      localStorage.setItem(CLOUD_URL_KEY, val);
-      closeCloudModal();
-      syncFromCloud(false);
-    }
-
-    // LÓGICA DE CAMPOS SEPARADOS: MÁQUINA E BITOLA
-    function onMachineSelectChange() {
-      const machine = document.getElementById('inputMachineSelect').value;
-      const allowAll = document.getElementById('allowAllGaugesCheck').checked;
-      const gaugeSelect = document.getElementById('inputGaugeSelect');
-
-      const gaugesToShow = allowAll
-        ? ALL_GAUGES
-        : (MACHINE_CATALOG[machine]?.defaultGauges || ALL_GAUGES);
-
-      gaugeSelect.innerHTML = gaugesToShow.map(g =>
-        `<option value="${g}">Bitola ${g}</option>`
-      ).join('');
     }
 
     function ensureYearExists(year) {
@@ -1140,16 +1081,16 @@
     }
 
     function getActiveYearMonths() {
-      ensureYearExists(state.activeYear);
-      return state.years[state.activeYear];
+      ensureYearExists(viewFilter.activeYear);
+      return state.years[viewFilter.activeYear];
     }
 
     function getActiveMonthObj() {
-      return getActiveYearMonths()[state.activeMonthIndex];
+      return getActiveYearMonths()[viewFilter.activeMonthIndex];
     }
 
     function formatValue(valKg, decimals = 0) {
-      if (state.unit === 't') {
+      if (viewFilter.unit === 't') {
         return (valKg / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' t';
       }
       return valKg.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + ' kg';
@@ -1161,15 +1102,15 @@
       return `${d}/${m}/${y}`;
     }
 
+    // MUDANÇAS DE FILTRO APENAS MUDAM A VISUALIZAÇÃO LOCAL (NÃO SOBRESCREVEM A NUVEM)
     function onGlobalDateChange(val) {
       if (!val) return;
       const [y, m] = val.split('-').map(Number);
-      state.selectedDate = val;
-      state.activeYear = y;
-      state.activeMonthIndex = m - 1;
+      viewFilter.selectedDate = val;
+      viewFilter.activeYear = y;
+      viewFilter.activeMonthIndex = m - 1;
       ensureYearExists(y);
       syncFilterInputs();
-      saveState();
       renderAll();
     }
 
@@ -1178,38 +1119,43 @@
     }
 
     function changeActiveMonth(mIdx) {
-      state.activeMonthIndex = parseInt(mIdx, 10);
-      const day = state.selectedDate ? state.selectedDate.split('-')[2] : '01';
-      const mm = String(state.activeMonthIndex + 1).padStart(2, '0');
-      state.selectedDate = `${state.activeYear}-${mm}-${day}`;
+      viewFilter.activeMonthIndex = parseInt(mIdx, 10);
+      const day = viewFilter.selectedDate ? viewFilter.selectedDate.split('-')[2] : '01';
+      const mm = String(viewFilter.activeMonthIndex + 1).padStart(2, '0');
+      viewFilter.selectedDate = `${viewFilter.activeYear}-${mm}-${day}`;
       syncFilterInputs();
-      saveState();
       renderAll();
     }
 
     function changeActiveYear(yVal) {
       const yr = parseInt(yVal, 10) || 2026;
-      state.activeYear = yr;
+      viewFilter.activeYear = yr;
       ensureYearExists(yr);
-      const day = state.selectedDate ? state.selectedDate.split('-')[2] : '01';
-      const mm = String(state.activeMonthIndex + 1).padStart(2, '0');
-      state.selectedDate = `${state.activeYear}-${mm}-${day}`;
+      const day = viewFilter.selectedDate ? viewFilter.selectedDate.split('-')[2] : '01';
+      const mm = String(viewFilter.activeMonthIndex + 1).padStart(2, '0');
+      viewFilter.selectedDate = `${viewFilter.activeYear}-${mm}-${day}`;
       syncFilterInputs();
-      saveState();
       renderAll();
     }
 
     function stepYear(delta) {
-      changeActiveYear(state.activeYear + delta);
+      changeActiveYear(viewFilter.activeYear + delta);
+    }
+
+    function onGoalPeriodSelectChange() {
+      const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
+      const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
+      ensureYearExists(yr);
+      document.getElementById('inputGoalKg').value = state.years[yr][mIdx].goalKg;
     }
 
     function syncFilterInputs() {
-      document.getElementById('globalDatePicker').value = state.selectedDate;
-      document.getElementById('launchDateInput').value = state.selectedDate;
-      document.getElementById('monthSelect').value = state.activeMonthIndex;
-      document.getElementById('goalMonthSelect').value = state.activeMonthIndex;
-      document.getElementById('yearInput').value = state.activeYear;
-      document.getElementById('goalYearInput').value = state.activeYear;
+      document.getElementById('globalDatePicker').value = viewFilter.selectedDate;
+      document.getElementById('launchDateInput').value = viewFilter.selectedDate;
+      document.getElementById('monthSelect').value = viewFilter.activeMonthIndex;
+      document.getElementById('goalMonthSelect').value = viewFilter.activeMonthIndex;
+      document.getElementById('yearInput').value = viewFilter.activeYear;
+      document.getElementById('goalYearInput').value = viewFilter.activeYear;
 
       const mObj = getActiveMonthObj();
       document.getElementById('inputGoalKg').value = mObj.goalKg;
@@ -1223,8 +1169,7 @@
     }
 
     function toggleUnit(u) {
-      state.unit = u;
-      saveState();
+      viewFilter.unit = u;
       renderAll();
     }
 
@@ -1239,21 +1184,21 @@
 
       const activeGaugesCount = m.items.filter(i => i.kg > 0).length;
 
-      document.getElementById('bannerPeriodText').textContent = `${m.name} / ${state.activeYear}`;
-      document.getElementById('bannerDateText').textContent = `(Data selecionada: ${formatDateBR(state.selectedDate)})`;
+      document.getElementById('bannerPeriodText').textContent = `${m.name} / ${viewFilter.activeYear}`;
+      document.getElementById('bannerDateText').textContent = `(Data selecionada: ${formatDateBR(viewFilter.selectedDate)})`;
 
       document.getElementById('kpiAttainment').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
-      document.getElementById('kpiMonthSub').textContent = `Referência: ${m.name} / ${state.activeYear}`;
+      document.getElementById('kpiMonthSub').textContent = `Referência: ${m.name} / ${viewFilter.activeYear}`;
       document.getElementById('kpiMonthProd').textContent = formatValue(m.producedKg, 0);
       document.getElementById('kpiMonthGoal').textContent = `Meta Prevista: ${formatValue(m.goalKg, 0)}`;
-      document.getElementById('kpiYearLabel').textContent = state.activeYear;
+      document.getElementById('kpiYearLabel').textContent = viewFilter.activeYear;
       document.getElementById('kpiTotalProd').textContent = formatValue(totalProd, 0);
       document.getElementById('kpiTotalGoal').textContent = `Previsão Anual: ${formatValue(totalGoal, 0)}`;
       document.getElementById('kpiActiveGauges').textContent = `${activeGaugesCount} / ${m.items.length}`;
 
-      document.getElementById('chartYearTitle').textContent = state.activeYear;
-      document.getElementById('statusMonthTitle').textContent = `${m.name}/${state.activeYear}`;
-      document.getElementById('machChartPeriod').textContent = `${m.name}/${state.activeYear}`;
+      document.getElementById('chartYearTitle').textContent = viewFilter.activeYear;
+      document.getElementById('statusMonthTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
+      document.getElementById('machChartPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
 
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
@@ -1326,7 +1271,7 @@
     }
 
     function renderCharts() {
-      const factor = state.unit === 't' ? 0.001 : 1;
+      const factor = viewFilter.unit === 't' ? 0.001 : 1;
       const months = getActiveYearMonths();
       const m = getActiveMonthObj();
 
@@ -1339,7 +1284,7 @@
           labels: months.map(item => item.name.slice(0, 3)),
           datasets: [
             {
-              label: `Produzido (${state.unit})`,
+              label: `Produzido (${viewFilter.unit})`,
               data: months.map(item => +(item.producedKg * factor).toFixed(2)),
               borderColor: '#2dd4bf',
               backgroundColor: 'rgba(45, 212, 191, 0.18)',
@@ -1349,7 +1294,7 @@
               pointRadius: 4
             },
             {
-              label: `Previsão / Meta (${state.unit})`,
+              label: `Previsão / Meta (${viewFilter.unit})`,
               data: months.map(item => +(item.goalKg * factor).toFixed(2)),
               borderColor: '#f59e0b',
               borderDash: [6, 4],
@@ -1361,6 +1306,7 @@
           ]
         },
         options: {
+          animation: false,
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
@@ -1398,7 +1344,7 @@
         data: {
           labels: m.items.map(i => `${i.machine} (${i.gauge})`),
           datasets: [{
-            label: `Peso Produzido (${state.unit})`,
+            label: `Peso Produzido (${viewFilter.unit})`,
             data: m.items.map(i => +(i.kg * factor).toFixed(3)),
             backgroundColor: m.items.map(i =>
               i.category === 'Estribadeira' ? 'rgba(45, 212, 191, 0.75)' : 'rgba(245, 158, 11, 0.8)'
@@ -1411,6 +1357,7 @@
           }]
         },
         options: {
+          animation: false,
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
@@ -1442,6 +1389,7 @@
           }]
         },
         options: {
+          animation: false,
           responsive: true,
           maintainAspectRatio: false,
           rotation: -90,
@@ -1456,8 +1404,8 @@
       });
     }
 
-    function handleLaunchProduction() {
-      const launchDate = document.getElementById('launchDateInput').value || state.selectedDate;
+    async function handleLaunchProduction() {
+      const launchDate = document.getElementById('launchDateInput').value || viewFilter.selectedDate;
       const [yr, mo] = launchDate.split('-').map(Number);
       const mIdx = mo - 1;
 
@@ -1468,17 +1416,19 @@
 
       if (isNaN(val) || val < 0) return alert('Informe um peso válido em kg.');
 
+      // Busca a versão mais recente da nuvem antes de somar, para não perder lançamentos de outro PC
+      await syncFromCloud(false);
+
       ensureYearExists(yr);
-      state.activeYear = yr;
-      state.activeMonthIndex = mIdx;
-      state.selectedDate = launchDate;
+      viewFilter.activeYear = yr;
+      viewFilter.activeMonthIndex = mIdx;
+      viewFilter.selectedDate = launchDate;
 
       const monthObj = state.years[yr][mIdx];
       let item = monthObj.items.find(i => i.machine === selectedMachine && i.gauge === selectedGauge);
 
-      // Caso o usuário tenha marcado uma bitola extra para aquela máquina, cria a linha dinamicamente
       if (!item) {
-        const cat = MACHINE_CATALOG[selectedMachine]?.category || 'Estribadeira';
+        const cat = MACHINE_CATALOG[selectedMachine] || 'Estribadeira';
         item = {
           id: `${selectedMachine}_${selectedGauge}`,
           machine: selectedMachine,
@@ -1513,33 +1463,35 @@
 
       document.getElementById('inputWeightKg').value = '';
       syncFilterInputs();
-      saveState(newLog);
       renderAll();
+      await pushToCloud(newLog);
     }
 
-    function handleUpdateGoal() {
-      const yr = parseInt(document.getElementById('goalYearInput').value, 10) || state.activeYear;
+    async function handleUpdateGoal() {
+      const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
       const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
       const val = parseFloat(document.getElementById('inputGoalKg').value);
       if (isNaN(val) || val < 0) return alert('Informe uma meta válida em kg.');
 
+      await syncFromCloud(false);
+
       ensureYearExists(yr);
-      state.activeYear = yr;
-      state.activeMonthIndex = mIdx;
+      viewFilter.activeYear = yr;
+      viewFilter.activeMonthIndex = mIdx;
       state.years[yr][mIdx].goalKg = val;
 
       syncFilterInputs();
-      saveState();
       renderAll();
+      await pushToCloud(null);
     }
 
-    function resetDefaultData() {
-      if (!confirm('Deseja restaurar os dados originais de 2026?')) return;
+    async function resetDefaultData() {
+      if (!confirm('Deseja restaurar os dados originais de 2026 para TODOS os computadores?')) return;
       localStorage.removeItem(STORAGE_KEY);
       state = createDefaultDatabase();
       syncFilterInputs();
-      saveState();
       renderAll();
+      await pushToCloud(null);
     }
 
     function renderAll() {
@@ -1548,11 +1500,15 @@
       renderCharts();
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      onMachineSelectChange();
+    window.addEventListener('DOMContentLoaded', async () => {
       syncFilterInputs();
       renderAll();
-      syncFromCloud(false);
+      await syncFromCloud(false);
+
+      // Sincroniza automaticamente a cada 15 segundos em todos os computadores abertos
+      setInterval(() => {
+        syncFromCloud(false);
+      }, 15000);
     });
   </script>
 </body>
