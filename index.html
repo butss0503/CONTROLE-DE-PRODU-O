@@ -18,6 +18,7 @@
       --emerald: #34d399;
       --gold: #f59e0b;
       --orange: #f97316;
+      --danger: #ef4444;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
     }
@@ -446,6 +447,7 @@
     td {
       padding: 9px 12px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      vertical-align: middle;
     }
 
     tr.zero-row td {
@@ -470,6 +472,28 @@
       background: rgba(245, 158, 11, 0.15);
       color: var(--gold);
       border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    /* BOTÕES DE EXCLUIR / ZERAR REGISTRO */
+    .btn-delete {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-delete:hover {
+      background: rgba(239, 68, 68, 0.32);
+      color: #fff;
+      border-color: var(--danger);
     }
 
     /* FORMULÁRIOS DA ABA 3 (PCP) */
@@ -712,7 +736,7 @@
 
   <!-- ABA 2: MÁQUINAS & BITOLAS -->
   <section id="maquinas-bitolas" class="tab-section">
-    <div class="main-grid" style="grid-template-columns: 1.25fr 1fr;">
+    <div class="main-grid" style="grid-template-columns: 1.2fr 1fr;">
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Produção por Máquina e Bitola — <span id="machChartPeriod">OUTUBRO/2026</span></span>
@@ -735,6 +759,7 @@
                 <th>Bitola</th>
                 <th>Produzido no Mês</th>
                 <th>Subtotal Máq.</th>
+                <th>Ação</th>
               </tr>
             </thead>
             <tbody id="machinesTableBody"></tbody>
@@ -761,7 +786,7 @@
         <div class="split-2-cols">
           <div class="form-row">
             <label>Escolher Máquina</label>
-            <select id="inputMachineSelect">
+            <select id="inputMachineSelect" onchange="onSelectMachineAutoSuggestGauge()">
               <option value="ES02">ES02 (Estribadeira)</option>
               <option value="EB10">EB10 (Estribadeira)</option>
               <option value="EB12">EB12 (Estribadeira)</option>
@@ -836,10 +861,11 @@
       </div>
     </div>
 
-    <!-- HISTÓRICO DE APONTAMENTOS -->
+    <!-- HISTÓRICO DE APONTAMENTOS COM BOTÃO DE EXCLUIR REGISTRO -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Histórico de Lançamentos Diários (Sincronizado em Todos os PCs)</span>
+        <button class="btn-delete" onclick="clearAllHistoryLogs()">🗑️ Limpar Todo o Histórico</button>
       </div>
       <div class="table-container">
         <table>
@@ -852,6 +878,7 @@
               <th>Bitola</th>
               <th>Operação</th>
               <th>Peso Registrado</th>
+              <th>Ação</th>
             </tr>
           </thead>
           <tbody id="dailyLogsTableBody"></tbody>
@@ -863,7 +890,6 @@
   <script>
     Chart.register(ChartDataLabels);
 
-    // URL PADRÃO DO APPS SCRIPT (Se você gerou outra URL, substitua aqui ou pelo botão "Trocar URL Apps Script")
     const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyK9MD0uW3zPKpn2nFQMMpOE6vJ042rFXrFp7FDNMUfgkwNTWr6HuZBNC7B7zoJJRA8/exec";
     const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL";
 
@@ -893,6 +919,23 @@
       'PT 32': 'Dobradeira Manual'
     };
 
+    // Sugestão inteligente de bitola padrão ao trocar a máquina (mas continua permitindo escolher qualquer uma das 9)
+    const MACHINE_DEFAULT_GAUGE = {
+      'ES02': '5,00 mm',
+      'EB10': '6,30 mm',
+      'EB12': '10,00 mm',
+      '20B':  '16,00 mm',
+      'PT 32': '20,00 mm'
+    };
+
+    function onSelectMachineAutoSuggestGauge() {
+      const mach = document.getElementById('inputMachineSelect').value;
+      if (MACHINE_DEFAULT_GAUGE[mach]) {
+        document.getElementById('inputGaugeSelect').value = MACHINE_DEFAULT_GAUGE[mach];
+      }
+    }
+
+    // AS 9 BITOLAS OFICIAIS (1 BARRA FIXA PARA CADA BITOLA PARA NUNCA DUPLICAR BARRAS NO GRÁFICO)
     const BASE_ITEMS_TEMPLATE = [
       { id: 'ES02_5,00 mm', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 0 },
       { id: 'EB10_6,30 mm', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 0 },
@@ -905,7 +948,7 @@
       { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
     ];
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V6';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V7';
 
     let viewFilter = {
       unit: 'kg',
@@ -964,12 +1007,55 @@
         updatedAt: Date.now(),
         years: { 2026: year2026 },
         dailyLogs: [
-          { date: '2026-10-29', year: 2026, monthIndex: 9, machine: 'EB12', category: 'Estribadeira', gauge: '12,50 mm', mode: 'Saldo Consolidado', kg: 7552.335 }
+          {
+            id: 'log_init_1',
+            date: '2026-10-29',
+            year: 2026,
+            monthIndex: 9,
+            machine: 'EB12',
+            category: 'Estribadeira',
+            gauge: '12,50 mm',
+            mode: 'Saldo Consolidado',
+            rawMode: 'init',
+            kg: 7552.335,
+            prevKg: 7552.335
+          }
         ]
       };
     }
 
-    let state = loadLocalCache();
+    // Normaliza o banco para remover barras extras/duplicadas da mesma bitola que tenham ficado salvas antes
+    function sanitizeDatabase(db) {
+      if (!db || !db.years) return db;
+      Object.keys(db.years).forEach(yr => {
+        db.years[yr].forEach(monthObj => {
+          if (!monthObj.items) return;
+          const uniqueByGauge = [];
+          BASE_ITEMS_TEMPLATE.forEach(tmpl => {
+            // Procura todos os itens com essa bitola (caso tenha criado barra extra antes)
+            const matches = monthObj.items.filter(i => i.gauge === tmpl.gauge);
+            if (matches.length === 0) {
+              uniqueByGauge.push({ ...tmpl });
+            } else {
+              // Mantém o último registro atualizado para aquela bitola
+              const chosen = matches[matches.length - 1];
+              uniqueByGauge.push({
+                id: `${chosen.machine}_${tmpl.gauge}`,
+                machine: chosen.machine,
+                category: MACHINE_CATALOG[chosen.machine] || chosen.category || tmpl.category,
+                gauge: tmpl.gauge,
+                kg: +Number(chosen.kg || 0).toFixed(3)
+              });
+            }
+          });
+          monthObj.items = uniqueByGauge;
+          monthObj.producedKg = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
+        });
+      });
+      return db;
+    }
+
+    let state = sanitizeDatabase(loadLocalCache());
 
     function updateCloudBadge(statusText, isOnline) {
       const badge = document.getElementById('cloudStatusBadge');
@@ -998,7 +1084,6 @@
       }
     }
 
-    // LEITURA VIA JSONP + FALLBACK FETCH (IMUNE A ERRO DE CORS DO NAVEGADOR)
     function fetchCloudJSONP(url) {
       return new Promise((resolve, reject) => {
         const cbName = 'ga_jsonp_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
@@ -1038,28 +1123,24 @@
       let cloudData = null;
 
       try {
-        // 1ª Tentativa: JSONP (nunca sofre bloqueio CORS)
         cloudData = await fetchCloudJSONP(url);
       } catch (errJsonp) {
-        // 2ª Tentativa: Fetch padrão caso o Apps Script ainda não tenha o callback JSONP
         try {
           const res = await fetch(`${url}?t=${Date.now()}`, { method: 'GET', redirect: 'follow', cache: 'no-store' });
           cloudData = await res.json();
         } catch (errFetch) {
-          console.warn('Falha em JSONP e Fetch:', errFetch);
-          updateCloudBadge('⚠️ Autorize a Permissão no Apps Script (Passo 1)', false);
+          updateCloudBadge('⚠️ Autorize a Permissão no Apps Script', false);
           return;
         }
       }
 
       if (cloudData && cloudData.status === 'error') {
-        console.error('Erro no Apps Script:', cloudData.message);
         updateCloudBadge('⚠️ Clique em Executar no Apps Script para Autorizar', false);
         return;
       }
 
       if (cloudData && cloudData.years) {
-        state = cloudData;
+        state = sanitizeDatabase(cloudData);
         saveLocalCache();
         syncFilterInputs();
         renderAll();
@@ -1070,7 +1151,6 @@
       }
     }
 
-    // GRAVAÇÃO NA NUVEM (POST NO-CORS PARA EVITAR BLOQUEIO DE REDIRECIONAMENTO)
     async function pushToCloud(lastLog = null) {
       isSavingToCloud = true;
       state.updatedAt = Date.now();
@@ -1095,7 +1175,6 @@
         const timeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         updateCloudBadge(`☁️ Salvo na Nuvem (${timeStr})`, true);
       } catch (err) {
-        console.error('Falha ao enviar para a nuvem:', err);
         updateCloudBadge('⚠️ Falha de Rede ao Gravar', false);
       } finally {
         isSavingToCloud = false;
@@ -1263,7 +1342,7 @@
     function renderTables() {
       const m = getActiveMonthObj();
       const tbody = document.getElementById('machinesTableBody');
-      tbody.innerHTML = m.items.map(item => {
+      tbody.innerHTML = m.items.map((item, idx) => {
         const machineTotal = m.items
           .filter(i => i.machine === item.machine)
           .reduce((acc, cur) => acc + cur.kg, 0);
@@ -1277,25 +1356,39 @@
             <td><strong>${item.gauge}</strong></td>
             <td>${formatValue(item.kg, 3)}</td>
             <td>${formatValue(machineTotal, 3)}</td>
+            <td>
+              <button class="btn-delete" onclick="zeroGaugeItem(${idx})" title="Zerar peso desta bitola no mês">
+                🗑️ Zerar
+              </button>
+            </td>
           </tr>
         `;
       }).join('');
 
       const logsBody = document.getElementById('dailyLogsTableBody');
       if (!state.dailyLogs || state.dailyLogs.length === 0) {
-        logsBody.innerHTML = `<tr><td colspan="7" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
+        logsBody.innerHTML = `<tr><td colspan="8" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
       } else {
-        logsBody.innerHTML = state.dailyLogs.slice().reverse().map(log => `
-          <tr>
-            <td><strong>${formatDateBR(log.date)}</strong></td>
-            <td>${MONTH_NAMES[log.monthIndex]} / ${log.year}</td>
-            <td><strong>${log.machine}</strong></td>
-            <td>${log.category}</td>
-            <td>${log.gauge}</td>
-            <td>${log.mode}</td>
-            <td style="color: var(--teal-bright); font-weight: 700;">${formatValue(log.kg, 3)}</td>
-          </tr>
-        `).join('');
+        // Mostra do mais recente para o mais antigo, preservando o índice real para exclusão
+        logsBody.innerHTML = state.dailyLogs
+          .map((log, originalIndex) => ({ log, originalIndex }))
+          .reverse()
+          .map(({ log, originalIndex }) => `
+            <tr>
+              <td><strong>${formatDateBR(log.date)}</strong></td>
+              <td>${MONTH_NAMES[log.monthIndex]} / ${log.year}</td>
+              <td><strong>${log.machine}</strong></td>
+              <td>${log.category}</td>
+              <td>${log.gauge}</td>
+              <td>${log.mode}</td>
+              <td style="color: var(--teal-bright); font-weight: 700;">${formatValue(log.kg, 3)}</td>
+              <td>
+                <button class="btn-delete" onclick="deleteHistoryLog(${originalIndex})" title="Excluir este lançamento e reverter o peso">
+                  🗑️ Excluir
+                </button>
+              </td>
+            </tr>
+          `).join('');
       }
     }
 
@@ -1433,6 +1526,7 @@
       });
     }
 
+    // LANÇAMENTO SEM CRIAR BARRA DUPLICADA (ATUALIZA O SLOT DA BITOLA SELECIONADA)
     async function handleLaunchProduction() {
       const launchDate = document.getElementById('launchDateInput').value || viewFilter.selectedDate;
       const [yr, mo] = launchDate.split('-').map(Number);
@@ -1453,19 +1547,20 @@
       viewFilter.selectedDate = launchDate;
 
       const monthObj = state.years[yr][mIdx];
-      let item = monthObj.items.find(i => i.machine === selectedMachine && i.gauge === selectedGauge);
 
+      // Busca SEMPRE pela bitola oficial para NUNCA criar uma 10ª barra extra no gráfico!
+      let item = monthObj.items.find(i => i.gauge === selectedGauge);
       if (!item) {
-        const cat = MACHINE_CATALOG[selectedMachine] || 'Estribadeira';
-        item = {
-          id: `${selectedMachine}_${selectedGauge}`,
-          machine: selectedMachine,
-          category: cat,
-          gauge: selectedGauge,
-          kg: 0
-        };
-        monthObj.items.push(item);
+        item = monthObj.items[0];
       }
+
+      const prevKg = item.kg;
+      const prevMachine = item.machine;
+
+      // Atualiza a máquina responsável por aquela bitola e aplica a soma ou substituição
+      item.machine = selectedMachine;
+      item.category = MACHINE_CATALOG[selectedMachine] || 'Estribadeira';
+      item.id = `${selectedMachine}_${selectedGauge}`;
 
       if (mode === 'add') {
         item.kg = +(item.kg + val).toFixed(3);
@@ -1476,15 +1571,19 @@
       monthObj.producedKg = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
 
       const newLog = {
+        id: 'log_' + Date.now(),
         date: launchDate,
         year: yr,
         monthIndex: mIdx,
         monthName: MONTH_NAMES[mIdx],
         machine: item.machine,
+        prevMachine: prevMachine,
         category: item.category,
         gauge: item.gauge,
         mode: mode === 'add' ? '+ Lote Somado' : '= Total Substituído',
-        kg: val
+        rawMode: mode,
+        kg: val,
+        prevKg: prevKg
       };
 
       state.dailyLogs.push(newLog);
@@ -1493,6 +1592,71 @@
       syncFilterInputs();
       renderAll();
       await pushToCloud(newLog);
+    }
+
+    // EXCLUIR UM REGISTRO DO HISTÓRICO E REVERTER O PESO NO GRÁFICO/TABELA
+    async function deleteHistoryLog(logIndex) {
+      const log = state.dailyLogs[logIndex];
+      if (!log) return;
+
+      if (!confirm(`Deseja excluir o registro de ${formatValue(log.kg, 3)} (${log.machine} - Bitola ${log.gauge}) e reverter esse valor no gráfico?`)) {
+        return;
+      }
+
+      await syncFromCloud(false);
+
+      const targetLog = state.dailyLogs[logIndex];
+      if (targetLog && state.years[targetLog.year] && state.years[targetLog.year][targetLog.monthIndex]) {
+        const monthObj = state.years[targetLog.year][targetLog.monthIndex];
+        const item = monthObj.items.find(i => i.gauge === targetLog.gauge);
+
+        if (item) {
+          if (targetLog.rawMode === 'add') {
+            item.kg = Math.max(0, +(item.kg - targetLog.kg).toFixed(3));
+          } else if (targetLog.rawMode === 'set' && typeof targetLog.prevKg === 'number') {
+            item.kg = +targetLog.prevKg.toFixed(3);
+            if (targetLog.prevMachine) {
+              item.machine = targetLog.prevMachine;
+              item.category = MACHINE_CATALOG[targetLog.prevMachine] || item.category;
+            }
+          } else {
+            item.kg = 0;
+          }
+        }
+        monthObj.producedKg = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
+      }
+
+      state.dailyLogs.splice(logIndex, 1);
+      renderAll();
+      await pushToCloud(null);
+    }
+
+    // ZERAR UMA BITOLA DIRETO NA TABELA DA ABA 2
+    async function zeroGaugeItem(itemIdx) {
+      const m = getActiveMonthObj();
+      const item = m.items[itemIdx];
+      if (!item) return;
+
+      if (!confirm(`Deseja zerar o peso da máquina ${item.machine} (${item.gauge}) em ${m.name}/${viewFilter.activeYear}?`)) {
+        return;
+      }
+
+      await syncFromCloud(false);
+      const activeMonth = getActiveMonthObj();
+      if (activeMonth.items[itemIdx]) {
+        activeMonth.items[itemIdx].kg = 0;
+        activeMonth.producedKg = +activeMonth.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
+      }
+      renderAll();
+      await pushToCloud(null);
+    }
+
+    async function clearAllHistoryLogs() {
+      if (!confirm('Deseja limpar toda a lista de histórico de lançamentos diários?')) return;
+      await syncFromCloud(false);
+      state.dailyLogs = [];
+      renderAll();
+      await pushToCloud(null);
     }
 
     async function handleUpdateGoal() {
