@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GRANDE AÇO | Dashboard de Produção & PCP</title>
+  <meta name="theme-color" content="#060d10" />
+  <title>GRANDE AÇO | Dashboard MES & PCP Industrial</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -251,10 +253,10 @@
       border-color: rgba(245, 158, 11, 0.4);
     }
 
-    /* KPI BIG NUMBERS (5 CARDS COM FORECAST / RITMO DIÁRIO) */
+    /* KPI BIG NUMBERS */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(205px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
       gap: 14px;
       margin-bottom: 18px;
     }
@@ -266,6 +268,30 @@
       padding: 15px 18px;
       position: relative;
       overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    /* EFEITO ESPECIAL DE META BATIDA (GAMIFICATION) */
+    .kpi-card.goal-achieved {
+      border-color: var(--emerald);
+      box-shadow: 0 0 24px rgba(52, 211, 153, 0.28);
+      background: linear-gradient(145deg, rgba(6, 78, 59, 0.45) 0%, rgba(9, 20, 24, 0.96) 100%);
+    }
+
+    .goal-badge-trophy {
+      display: none;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: rgba(52, 211, 153, 0.2);
+      color: var(--emerald);
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      margin-left: 6px;
+    }
+
+    .kpi-card.goal-achieved .goal-badge-trophy {
+      display: inline-block;
     }
 
     .kpi-card::after {
@@ -280,16 +306,19 @@
     }
 
     .kpi-label {
-      font-size: 0.76rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       text-transform: uppercase;
       letter-spacing: 0.7px;
       margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
     }
 
     .kpi-value {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 2.05rem;
+      font-size: 2rem;
       font-weight: 700;
       line-height: 1.05;
       color: var(--text-main);
@@ -300,9 +329,10 @@
     .kpi-value.orange { color: var(--orange); }
     .kpi-value.sky { color: var(--sky); }
     .kpi-value.purple { color: var(--purple); }
+    .kpi-value.danger { color: var(--danger); }
 
     .kpi-sub {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: var(--text-muted);
       margin-top: 6px;
     }
@@ -310,7 +340,7 @@
     /* LAYOUT PRINCIPAL */
     .main-grid {
       display: grid;
-      grid-template-columns: 1.35fr 1fr 0.9fr;
+      grid-template-columns: 1.3fr 0.95fr 1fr;
       gap: 16px;
       margin-bottom: 16px;
     }
@@ -351,7 +381,7 @@
 
     .panel-title {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 0.96rem;
+      font-size: 0.95rem;
       font-weight: 600;
       letter-spacing: 0.6px;
       color: var(--text-main);
@@ -364,20 +394,20 @@
       width: 100%;
     }
 
-    /* BARRAS DE STATUS DE MÁQUINAS */
+    /* BARRAS DE STATUS DE MÁQUINAS + PARADAS / UPTIME */
     .status-list {
       display: flex;
       flex-direction: column;
       gap: 12px;
-      margin-top: 8px;
+      margin-top: 6px;
     }
 
     .status-item {
       display: grid;
-      grid-template-columns: 105px 1fr 85px;
+      grid-template-columns: 112px 1fr 92px;
       align-items: center;
       gap: 10px;
-      font-size: 0.84rem;
+      font-size: 0.83rem;
     }
 
     .status-name {
@@ -390,6 +420,25 @@
       font-size: 0.68rem;
       color: var(--text-muted);
       font-weight: 400;
+    }
+
+    .uptime-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      padding: 1px 5px;
+      border-radius: 4px;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .uptime-ok {
+      background: rgba(52, 211, 153, 0.14);
+      color: var(--emerald);
+    }
+
+    .uptime-warn {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
     }
 
     .progress-track {
@@ -440,7 +489,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
     }
 
     th {
@@ -450,7 +499,7 @@
       color: var(--teal-bright);
       font-family: 'Chakra Petch', sans-serif;
       text-transform: uppercase;
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       letter-spacing: 0.6px;
       border-bottom: 1px solid var(--border-teal);
     }
@@ -475,7 +524,7 @@
     .badge-type {
       padding: 3px 8px;
       border-radius: 5px;
-      font-size: 0.7rem;
+      font-size: 0.69rem;
       font-weight: 600;
       text-transform: uppercase;
     }
@@ -490,6 +539,24 @@
       background: rgba(245, 158, 11, 0.15);
       color: var(--gold);
       border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .badge-backlog-ok {
+      background: rgba(52, 211, 153, 0.15);
+      color: var(--emerald);
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 0.72rem;
+    }
+
+    .badge-backlog-pend {
+      background: rgba(239, 68, 68, 0.16);
+      color: #fca5a5;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      font-size: 0.72rem;
     }
 
     /* BOTÕES DE EXCLUIR / ZERAR REGISTRO */
@@ -517,15 +584,15 @@
     /* FORMULÁRIOS DA ABA DE LANÇAMENTOS (PCP) */
     .pcp-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 16px;
       margin-bottom: 18px;
     }
 
     .split-2-cols {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 12px;
+      gap: 10px;
     }
 
     @media (max-width: 600px) {
@@ -537,12 +604,12 @@
     .form-row {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      margin-bottom: 12px;
+      gap: 5px;
+      margin-bottom: 11px;
     }
 
     .form-row label {
-      font-size: 0.77rem;
+      font-size: 0.76rem;
       color: var(--text-muted);
       font-weight: 500;
     }
@@ -551,9 +618,9 @@
       background: rgba(6, 13, 16, 0.92);
       border: 1px solid var(--border-teal);
       color: var(--text-main);
-      padding: 9px 12px;
+      padding: 9px 11px;
       border-radius: 8px;
-      font-size: 0.89rem;
+      font-size: 0.88rem;
       outline: none;
       color-scheme: dark;
     }
@@ -570,7 +637,7 @@
       border-radius: 8px;
       font-family: 'Chakra Petch', sans-serif;
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.89rem;
       text-transform: uppercase;
       cursor: pointer;
       background: linear-gradient(135deg, #14b8a6, #0d9488);
@@ -598,6 +665,11 @@
       color: #041014;
     }
 
+    .btn-purple {
+      background: linear-gradient(135deg, #a855f7, #7e22ce);
+      color: #ffffff;
+    }
+
     .btn-outline {
       background: transparent;
       border: 1px solid var(--border-teal);
@@ -617,15 +689,14 @@
     }
 
     .reconcile-note {
-      font-size: 0.78rem;
+      font-size: 0.77rem;
       color: var(--text-muted);
-      padding: 8px 12px;
+      padding: 7px 12px;
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px dashed rgba(45, 212, 191, 0.25);
     }
 
-    /* ESTILO DE IMPRESSÃO / RELATÓRIO FUNDO BRANCO */
     @media print {
       body {
         background: #ffffff !important;
@@ -659,18 +730,18 @@
       <div class="brand-logo">GA</div>
       <div class="brand-title">
         <h1>Dashboard de Produção</h1>
-        <span>GRANDE AÇO • TELEMETRIA & PCP INDUSTRIAL</span>
+        <span>GRANDE AÇO • MES, TELEMETRIA & PCP INDUSTRIAL</span>
       </div>
     </div>
 
     <nav class="nav-tabs">
       <button class="tab-btn active" data-tab="visao-geral" onclick="switchTab('visao-geral', this)">1. Visão Geral (Telão)</button>
-      <button class="tab-btn" data-tab="maquinas-bitolas" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas & Bitolas</button>
+      <button class="tab-btn" data-tab="maquinas-bitolas" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas, Bitolas & Backlog</button>
       <button class="tab-btn" data-tab="producao-semanal" onclick="switchTab('producao-semanal', this)">3. Produção Semanal</button>
-      <button class="tab-btn" data-tab="lancamentos-pcp" onclick="switchTab('lancamentos-pcp', this)">4. Lançar Produção & Metas</button>
+      <button class="tab-btn" data-tab="lancamentos-pcp" onclick="switchTab('lancamentos-pcp', this)">4. Lançamentos, Paradas & Metas</button>
     </nav>
 
-    <!-- SELETOR DE CALENDÁRIO GLOBAL (PUXA AUTOMATICAMENTE A DATA ATUAL DO PC) -->
+    <!-- SELETOR DE CALENDÁRIO GLOBAL -->
     <div class="top-filters">
       <div class="filter-group">
         <label>Calendário (Dia/Mês/Ano)</label>
@@ -714,7 +785,7 @@
     </div>
   </header>
 
-  <!-- FAIXA DE PERÍODO ATIVO + STATUS DA NUVEM + FERRAMENTAS INDUSTRIAIS -->
+  <!-- FAIXA DE PERÍODO ATIVO + STATUS DA NUVEM + FERRAMENTAS -->
   <div class="period-banner">
     <div>
       📅 Período: <strong id="bannerPeriodText">OUTUBRO / 2026</strong>
@@ -736,8 +807,11 @@
   <!-- ABA 1: VISÃO GERAL -->
   <section id="visao-geral" class="tab-section active">
     <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Atingimento no Mês (OEE Meta)</div>
+      <div class="kpi-card" id="kpiCardOee">
+        <div class="kpi-label">
+          <span>Atingimento (OEE Meta)</span>
+          <span class="goal-badge-trophy">🏆 META BATIDA!</span>
+        </div>
         <div class="kpi-value teal" id="kpiAttainment">96,9%</div>
         <div class="kpi-sub" id="kpiMonthSub">Referência: OUTUBRO / 2026</div>
       </div>
@@ -752,14 +826,14 @@
         <div class="kpi-sub" id="kpiForecastSub">Ritmo: 1.336 kg/dia</div>
       </div>
       <div class="kpi-card">
+        <div class="kpi-label">Disponibilidade Máquinas</div>
+        <div class="kpi-value sky" id="kpiUptimeVal">98,5%</div>
+        <div class="kpi-sub" id="kpiDowntimeSub">Horas Paradas no Mês: 0,0 h</div>
+      </div>
+      <div class="kpi-card">
         <div class="kpi-label">Acumulado no Ano (<span id="kpiYearLabel">2026</span>)</div>
         <div class="kpi-value gold" id="kpiTotalProd">105.465 kg</div>
         <div class="kpi-sub" id="kpiTotalGoal">Previsão Anual: 146.000 kg</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Melhor Semana do Mês</div>
-        <div class="kpi-value sky" id="kpiBestWeek">Semana 1</div>
-        <div class="kpi-sub" id="kpiBestWeekSub">Volume: 16.587 kg</div>
       </div>
     </div>
 
@@ -784,7 +858,7 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Carga por Máquina (<span id="statusMonthTitle">OUTUBRO/2026</span>)</span>
+          <span class="panel-title">Carga & Uptime por Máquina (<span id="statusMonthTitle">OUTUBRO/2026</span>)</span>
         </div>
         <div class="status-list" id="machineStatusList"></div>
       </div>
@@ -813,7 +887,7 @@
     </div>
   </section>
 
-  <!-- ABA 2: MÁQUINAS & BITOLAS -->
+  <!-- ABA 2: MÁQUINAS, BITOLAS & BACKLOG DE PEDIDOS -->
   <section id="maquinas-bitolas" class="tab-section">
     <div class="bottom-grid" style="margin-bottom: 16px;">
       <div class="panel">
@@ -827,7 +901,7 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Produção Consolidada Só por Bitola (5,00mm a 32,00mm) — <span id="gaugeOnlyChartPeriod">OUTUBRO/2026</span></span>
+          <span class="panel-title">Produzido vs. Carteira de Pedidos por Bitola — <span id="gaugeOnlyChartPeriod">OUTUBRO/2026</span></span>
         </div>
         <div class="chart-box" style="height: 330px;">
           <canvas id="gaugeOnlyBarChart"></canvas>
@@ -837,7 +911,7 @@
 
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Tabela Oficial de Produção por Máquina e Bitola</span>
+        <span class="panel-title">Tabela Oficial de Produção, Uptime e Backlog Comercial por Bitola</span>
         <div class="reconcile-note" id="reconcileBanner"></div>
       </div>
       <div class="table-container">
@@ -848,8 +922,10 @@
               <th>Categoria</th>
               <th>Bitola</th>
               <th>Produzido no Mês</th>
-              <th>Subtotal da Máquina</th>
-              <th>Total da Bitola (Geral)</th>
+              <th>Subtotal Máq.</th>
+              <th>Total da Bitola</th>
+              <th>Carteira / Pedido</th>
+              <th>Saldo / Backlog</th>
               <th>Ação</th>
             </tr>
           </thead>
@@ -859,12 +935,10 @@
     </div>
   </section>
 
-  <!-- ABA 3: PRODUÇÃO SEMANAL (APENAS O GRÁFICO COMPARATIVO GRANDE EM LARGURA TOTAL) -->
+  <!-- ABA 3: PRODUÇÃO SEMANAL -->
   <section id="producao-semanal" class="tab-section">
-    <!-- CARDS DAS SEMANAS DO MÊS ATIVO -->
     <div class="kpi-grid" id="weeklyKpiCards"></div>
 
-    <!-- GRÁFICO GRANDE EM LARGURA TOTAL: COMPARATIVO SEMANAL ENTRE OS MESES -->
     <div class="panel" style="margin-bottom: 16px;">
       <div class="panel-header">
         <span class="panel-title">Comparativo Semanal entre os Meses (<span id="weeklyCompareYearTitle">2026</span>)</span>
@@ -874,7 +948,6 @@
       </div>
     </div>
 
-    <!-- TABELA DE FECHAMENTO SEMANAL POR MÊS -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Demonstrativo de Produção Semanal por Mês (Semana 1 a Semana 5)</span>
@@ -900,18 +973,18 @@
     </div>
   </section>
 
-  <!-- ABA 4: LANÇAMENTOS PCP E METAS -->
+  <!-- ABA 4: LANÇAMENTOS PCP, PARADAS, BACKLOG E AUDITORIA -->
   <section id="lancamentos-pcp" class="tab-section">
     <div class="pcp-grid">
-      <!-- LANÇAR PRODUÇÃO POR MÁQUINA, BITOLA E SEMANA -->
+      <!-- 1. LANÇAR PRODUÇÃO + PARADA + OPERADOR/TURNO -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Lançar Produção (Máquina + Bitola + Semana)</span>
+          <span class="panel-title">1. Apontar Produção & Paradas (Chão de Fábrica)</span>
         </div>
 
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Data do Apontamento (Automática de Hoje)</label>
+            <label>Data do Apontamento</label>
             <input type="date" id="launchDateInput" onchange="syncDateFromLaunch(this.value)" />
           </div>
 
@@ -940,7 +1013,7 @@
           </div>
 
           <div class="form-row">
-            <label>Escolher Bitola (Todas Disponíveis)</label>
+            <label>Escolher Bitola</label>
             <select id="inputGaugeSelect">
               <option value="5,00 mm">Bitola 5,00 mm</option>
               <option value="6,30 mm">Bitola 6,30 mm</option>
@@ -955,26 +1028,65 @@
           </div>
         </div>
 
-        <div class="form-row">
-          <label>Modo de Apontamento</label>
-          <select id="inputMode">
-            <option value="add">+ Somar Lote na Máquina e na Semana</option>
-            <option value="set">= Substituir Total da Máquina + Bitola no Mês</option>
-          </select>
+        <!-- AUDITORIA: OPERADOR E TURNO -->
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Operador / Responsável</label>
+            <input type="text" id="inputOperatorName" placeholder="Ex: Flávio / Operador 01" />
+          </div>
+
+          <div class="form-row">
+            <label>Turno de Trabalho</label>
+            <select id="inputShiftSelect">
+              <option value="1º Turno (Manhã)">1º Turno (Manhã)</option>
+              <option value="2º Turno (Tarde)">2º Turno (Tarde)</option>
+              <option value="3º Turno (Noite)">3º Turno (Noite)</option>
+              <option value="Turno Comercial">Turno Comercial</option>
+            </select>
+          </div>
         </div>
 
-        <div class="form-row">
-          <label>Peso Produzido (em kg)</label>
-          <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500" />
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Modo de Apontamento</label>
+            <select id="inputMode">
+              <option value="add">+ Somar Lote na Máquina/Semana</option>
+              <option value="set">= Substituir Total no Mês</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label>Peso Produzido (kg)</label>
+            <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500 (ou 0 se só parada)" />
+          </div>
         </div>
 
-        <button class="btn-action" id="btnLaunchProd" onclick="handleLaunchProduction()">Registrar Produção e Salvar na Nuvem</button>
+        <!-- CONTROLE DE PARADAS DE MÁQUINA -->
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Horas Paradas (Opcional)</label>
+            <input type="number" id="inputDowntimeHours" step="0.1" placeholder="Ex: 1.5 (em horas)" />
+          </div>
+
+          <div class="form-row">
+            <label>Motivo da Parada</label>
+            <select id="inputDowntimeReason">
+              <option value="Sem Parada">Sem Parada (Operação Normal)</option>
+              <option value="Manutenção Corretiva">🔧 Manutenção Corretiva</option>
+              <option value="Setup / Troca de Bitola">⚙️ Setup / Troca de Bitola</option>
+              <option value="Falta de Matéria-Prima (CA-60/CA-50)">📦 Falta de Matéria-Prima</option>
+              <option value="Ajuste Elétrico / Rolo">⚡ Ajuste Elétrico / Rolo</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="btn-action" id="btnLaunchProd" onclick="handleLaunchProduction()">Registrar Apontamento na Nuvem</button>
       </div>
 
-      <!-- AJUSTE DIRETO DE PRODUÇÃO SEMANAL -->
+      <!-- 2. AJUSTE DIRETO DE PRODUÇÃO SEMANAL -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Ajustar / Lançar Fechamento Semanal Direto</span>
+          <span class="panel-title">2. Fechamento Semanal Direto</span>
         </div>
         <div class="split-2-cols">
           <div class="form-row">
@@ -1023,66 +1135,93 @@
           <label>Semana 5 / Fechamento Extra (kg)</label>
           <input type="number" id="w5Input" step="0.001" />
         </div>
-        <button class="btn-action btn-sky" id="btnSaveWeeks" onclick="handleUpdateWeeksDirect()">Salvar Semanas do Mês na Nuvem</button>
+        <button class="btn-action btn-sky" id="btnSaveWeeks" onclick="handleUpdateWeeksDirect()">Salvar Semanas do Mês</button>
       </div>
 
-      <!-- DEFINIR METAS MENSAIS & PIN DE SEGURANÇA -->
+      <!-- 3. METAS MENSAIS & CARTEIRA DE PEDIDOS (BACKLOG POR BITOLA) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Definir Meta / Previsão Mensal</span>
+          <span class="panel-title">3. Meta Mensal & Carteira de Pedidos (Backlog)</span>
+        </div>
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Ano da Meta</label>
+            <input type="number" id="goalYearInput" min="2000" max="2100" onchange="onGoalPeriodSelectChange()" />
+          </div>
+          <div class="form-row">
+            <label>Mês da Meta</label>
+            <select id="goalMonthSelect" onchange="onGoalPeriodSelectChange()">
+              <option value="0">JANEIRO</option>
+              <option value="1">FEVEREIRO</option>
+              <option value="2">MARÇO</option>
+              <option value="3">ABRIL</option>
+              <option value="4">MAIO</option>
+              <option value="5">JUNHO</option>
+              <option value="6">JULHO</option>
+              <option value="7">AGOSTO</option>
+              <option value="8">SETEMBRO</option>
+              <option value="9">OUTUBRO</option>
+              <option value="10">NOVEMBRO</option>
+              <option value="11">DEZEMBRO</option>
+            </select>
+          </div>
         </div>
         <div class="form-row">
-          <label>Ano da Meta</label>
-          <input type="number" id="goalYearInput" min="2000" max="2100" onchange="onGoalPeriodSelectChange()" />
-        </div>
-        <div class="form-row">
-          <label>Mês da Meta</label>
-          <select id="goalMonthSelect" onchange="onGoalPeriodSelectChange()">
-            <option value="0">JANEIRO</option>
-            <option value="1">FEVEREIRO</option>
-            <option value="2">MARÇO</option>
-            <option value="3">ABRIL</option>
-            <option value="4">MAIO</option>
-            <option value="5">JUNHO</option>
-            <option value="6">JULHO</option>
-            <option value="7">AGOSTO</option>
-            <option value="8">SETEMBRO</option>
-            <option value="9">OUTUBRO</option>
-            <option value="10">NOVEMBRO</option>
-            <option value="11">DEZEMBRO</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label>Nova Meta Operacional (em kg)</label>
+          <label>Meta Global do Mês (kg)</label>
           <input type="number" id="inputGoalKg" step="100" value="40000" />
         </div>
-        <button class="btn-action btn-gold" id="btnSaveGoal" onclick="handleUpdateGoal()">Salvar Meta para Todos os PCs</button>
+        <button class="btn-action btn-gold" id="btnSaveGoal" onclick="handleUpdateGoal()">Salvar Meta Global</button>
 
-        <hr style="border: none; border-top: 1px solid var(--border-teal); margin: 16px 0;" />
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <span style="font-size: 0.78rem; color: var(--text-muted);">Segurança de Edição (PIN PCP)</span>
-          <button class="btn-outline" onclick="changePinPrompt()">🔑 Alterar PIN (Atual: Padrão 1234)</button>
+        <hr style="border: none; border-top: 1px solid var(--border-teal); margin: 14px 0;" />
+
+        <!-- DEMANDA COMERCIAL / PEDIDOS POR BITOLA -->
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Bitola (Carteira Comercial)</label>
+            <select id="backlogGaugeSelect" onchange="onBacklogGaugeSelectChange()">
+              <option value="5,00 mm">Bitola 5,00 mm</option>
+              <option value="6,30 mm">Bitola 6,30 mm</option>
+              <option value="8,00 mm">Bitola 8,00 mm</option>
+              <option value="10,00 mm">Bitola 10,00 mm</option>
+              <option value="12,50 mm">Bitola 12,50 mm</option>
+              <option value="16,00 mm">Bitola 16,00 mm</option>
+              <option value="20,00 mm">Bitola 20,00 mm</option>
+              <option value="25,00 mm">Bitola 25,00 mm</option>
+              <option value="32,00 mm">Bitola 32,00 mm</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label>Pedido / Demanda no Mês (kg)</label>
+            <input type="number" id="backlogDemandInput" step="100" placeholder="Ex: 8000" />
+          </div>
+        </div>
+        <button class="btn-action btn-purple" onclick="handleUpdateBacklogDemand()">Definir Demanda de Pedidos da Bitola</button>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+          <span style="font-size: 0.74rem; color: var(--text-muted);">Segurança de Edição (PIN PCP)</span>
+          <button class="btn-outline" onclick="changePinPrompt()">🔑 Alterar PIN</button>
         </div>
       </div>
     </div>
 
-    <!-- HISTÓRICO DE APONTAMENTOS -->
+    <!-- HISTÓRICO DE AUDITORIA COMPLETO -->
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Histórico de Lançamentos Diários (Sincronizado por ID Único)</span>
+        <span class="panel-title">Trilha de Auditoria & Histórico de Lançamentos (Operador, Turno, Paradas e Horário)</span>
         <button class="btn-delete" onclick="clearAllHistoryLogs()">🗑️ Limpar Todo o Histórico</button>
       </div>
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>Data</th>
+              <th>Data & Hora</th>
               <th>Semana / Mês</th>
+              <th>Operador & Turno</th>
               <th>Máquina</th>
-              <th>Categoria</th>
               <th>Bitola</th>
               <th>Operação</th>
               <th>Peso Registrado</th>
+              <th>Parada / Motivo</th>
               <th>Ação</th>
             </tr>
           </thead>
@@ -1096,7 +1235,7 @@
     Chart.register(ChartDataLabels);
 
     const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyK9MD0uW3zPKpn2nFQMMpOE6vJ042rFXrFp7FDNMUfgkwNTWr6HuZBNC7B7zoJJRA8/exec";
-    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V4";
+    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V5";
 
     function getActiveCloudUrl() {
       return localStorage.getItem(CUSTOM_URL_KEY) || DEFAULT_CLOUD_URL;
@@ -1144,19 +1283,40 @@
       { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0 }
     ];
 
-    const DEFAULT_2026_WEEKS = {
-      5: [2069.25, 2069.25, 2069.25, 2069.25, 0], // JUNHO (Total 8277 kg)
-      6: [4657, 588, 1971, 0, 0],                 // JULHO (Total 7216 kg)
-      7: [6059, 3428, 1869, 8890, 0],             // AGOSTO (Total 20246 kg)
-      8: [1941, 3996, 11251, 13791, 0],           // SETEMBRO (Total 30980 kg)
-      9: [16587, 11439, 7189, 3530.622, 0]        // OUTUBRO (Total 38745,622 kg)
+    const DEFAULT_OCT_BACKLOG = {
+      '5,00 mm': 3500,
+      '6,30 mm': 6000,
+      '8,00 mm': 4500,
+      '10,00 mm': 4500,
+      '12,50 mm': 8000,
+      '16,00 mm': 6500,
+      '20,00 mm': 3500,
+      '25,00 mm': 2000,
+      '32,00 mm': 1500
     };
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V11';
+    const DEFAULT_2026_WEEKS = {
+      5: [2069.25, 2069.25, 2069.25, 2069.25, 0],
+      6: [4657, 588, 1971, 0, 0],
+      7: [6059, 3428, 1869, 8890, 0],
+      8: [1941, 3996, 11251, 13791, 0],
+      9: [16587, 11439, 7189, 3530.622, 0]
+    };
 
-    // CONTROLES DE MODO TV E TRAVA DE SEGURANÇA (PIN)
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V12';
+    const PENDING_SYNC_KEY = 'GRANDE_ACO_PENDING_OFFLINE_SYNC';
+
     let tvModeInterval = null;
     let pcpUnlockedSession = false;
+    let lastCelebratedKey = '';
+
+    function triggerGoalConfettiOnce(periodKey) {
+      if (lastCelebratedKey === periodKey) return;
+      lastCelebratedKey = periodKey;
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 70, spread: 65, origin: { y: 0.6 } });
+      }
+    }
 
     function toggleTvMode() {
       const btn = document.getElementById('btnTvMode');
@@ -1222,17 +1382,22 @@
       }
     }
 
-    // EXPORTAÇÃO PARA EXCEL (CSV) DO MÊS ATIVO
     function exportActiveMonthCSV() {
       const m = getActiveMonthObj();
       const rows = [
-        ['RELATORIO DE PRODUCAO PCP - GRANDE ACO'],
+        ['RELATORIO DE PRODUCAO MES/PCP - GRANDE ACO'],
         ['Periodo', `${m.name} / ${viewFilter.activeYear}`],
         ['Produzido Total (kg)', m.producedKg],
         ['Meta Prevista (kg)', m.goalKg],
         [],
-        ['MAQUINA', 'CATEGORIA', 'BITOLA', 'PESO PRODUZIDO (KG)'],
-        ...m.items.map(i => [i.machine, i.category, i.gauge, String(i.kg).replace('.', ',')]),
+        ['MAQUINA', 'CATEGORIA', 'BITOLA', 'PESO PRODUZIDO (KG)', 'DEMANDA CARTEIRA (KG)'],
+        ...m.items.map(i => [
+          i.machine,
+          i.category,
+          i.gauge,
+          String(i.kg).replace('.', ','),
+          String((m.backlog && m.backlog[i.gauge]) || 0).replace('.', ',')
+        ]),
         [],
         ['FECHAMENTO SEMANAL', 'PESO (KG)'],
         ...(m.weeks || [0, 0, 0, 0, 0]).map((w, idx) => [`Semana ${idx + 1}`, String(w).replace('.', ',')])
@@ -1293,12 +1458,24 @@
       }));
     }
 
+    function createEmptyBacklogMap(defaultVal = 0) {
+      const map = {};
+      ALL_GAUGES.forEach(g => { map[g] = defaultVal; });
+      return map;
+    }
+
+    function createEmptyDowntimeMap() {
+      return { 'ES02': 0, 'EB10': 0, 'EB12': 0, '20B': 0, 'PT 32': 0 };
+    }
+
     function createEmptyYearData() {
       return MONTH_NAMES.map(name => ({
         name,
         producedKg: 0,
         goalKg: 0,
         weeks: [0, 0, 0, 0, 0],
+        backlog: createEmptyBacklogMap(0),
+        downtimeHours: createEmptyDowntimeMap(),
         items: cloneItemsWithTotal(0)
       }));
     }
@@ -1306,15 +1483,17 @@
     function createDefaultDatabase() {
       const todayIso = getTodayFilterState().selectedDate;
       const year2026 = createEmptyYearData();
-      year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[5]], items: cloneItemsWithTotal(8277) };
-      year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[6]], items: cloneItemsWithTotal(7216) };
-      year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, weeks: [...DEFAULT_2026_WEEKS[7]], items: cloneItemsWithTotal(20246) };
-      year2026[8] = { name: 'SETEMBRO', producedKg: 30980, goalKg: 30000, weeks: [...DEFAULT_2026_WEEKS[8]], items: cloneItemsWithTotal(30980) };
+      year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[5]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(8277) };
+      year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[6]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(7216) };
+      year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, weeks: [...DEFAULT_2026_WEEKS[7]], backlog: createEmptyBacklogMap(1200), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(20246) };
+      year2026[8] = { name: 'SETEMBRO', producedKg: 30980, goalKg: 30000, weeks: [...DEFAULT_2026_WEEKS[8]], backlog: createEmptyBacklogMap(3400), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(30980) };
       year2026[9] = {
         name: 'OUTUBRO',
         producedKg: 38745.622,
         goalKg: 40000,
         weeks: [...DEFAULT_2026_WEEKS[9]],
+        backlog: { ...DEFAULT_OCT_BACKLOG },
+        downtimeHours: { 'ES02': 1.5, 'EB10': 2.0, 'EB12': 1.0, '20B': 0.5, 'PT 32': 0.0 },
         items: [
           { id: 'ES02_5,00 mm', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 3467.856 },
           { id: 'EB10_6,30 mm', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 5977.857 },
@@ -1327,8 +1506,8 @@
           { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
         ]
       };
-      year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, weeks: [0, 0, 0, 0, 0], items: cloneItemsWithTotal(0) };
-      year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, weeks: [0, 0, 0, 0, 0], items: cloneItemsWithTotal(0) };
+      year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(3300), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(0) };
+      year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(2200), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(0) };
 
       return {
         updatedAt: Date.now(),
@@ -1338,6 +1517,9 @@
           {
             id: 'log_init_1',
             date: todayIso,
+            time: '08:00:00',
+            operator: 'Flávio PCP',
+            shift: '1º Turno (Manhã)',
             year: 2026,
             monthIndex: 9,
             weekIndex: getWeekIndexFromDateStr(todayIso),
@@ -1347,13 +1529,15 @@
             mode: 'Saldo Consolidado',
             rawMode: 'init',
             kg: 7552.335,
-            prevKg: 7552.335
+            prevKg: 7552.335,
+            downtimeHours: 0,
+            downtimeReason: 'Sem Parada'
           }
         ]
       };
     }
 
-    function upgradeDatabaseWeeks(db) {
+    function upgradeDatabaseStructure(db) {
       if (!db || !db.years) return createDefaultDatabase();
       if (!db.pcpPin) db.pcpPin = '1234';
       Object.keys(db.years).forEach(yr => {
@@ -1366,17 +1550,30 @@
           if (Number(yr) === 2026 && sumW === 0 && DEFAULT_2026_WEEKS[idx]) {
             mObj.weeks = [...DEFAULT_2026_WEEKS[idx]];
           }
+          if (!mObj.backlog) {
+            mObj.backlog = (Number(yr) === 2026 && idx === 9) ? { ...DEFAULT_OCT_BACKLOG } : createEmptyBacklogMap(0);
+          }
+          if (!mObj.downtimeHours) {
+            mObj.downtimeHours = (Number(yr) === 2026 && idx === 9)
+              ? { 'ES02': 1.5, 'EB10': 2.0, 'EB12': 1.0, '20B': 0.5, 'PT 32': 0.0 }
+              : createEmptyDowntimeMap();
+          }
         });
       });
       if (Array.isArray(db.dailyLogs)) {
         db.dailyLogs.forEach((l, i) => {
           if (!l.id) l.id = 'log_legacy_' + i + '_' + (l.date || '');
+          if (!l.time) l.time = '08:00:00';
+          if (!l.operator) l.operator = 'PCP Padrão';
+          if (!l.shift) l.shift = 'Turno Comercial';
+          if (typeof l.downtimeHours !== 'number') l.downtimeHours = 0;
+          if (!l.downtimeReason) l.downtimeReason = 'Sem Parada';
         });
       }
       return db;
     }
 
-    let state = upgradeDatabaseWeeks(loadLocalCache());
+    let state = upgradeDatabaseStructure(loadLocalCache());
 
     function updateCloudBadge(statusText, isOnline) {
       const badge = document.getElementById('cloudStatusBadge');
@@ -1436,9 +1633,24 @@
       });
     }
 
-    // SINCRONIZAÇÃO INTELIGENTE: SÓ REDESENHA OS GRÁFICOS SE HOUVER MUDANÇA REAL NA NUVEM
+    // MODO OFFLINE ROBUSTO: VERIFICA FILA PENDENTE ANTES DE PUXAR DA NUVEM
+    async function flushOfflineQueueIfNeeded() {
+      const pending = localStorage.getItem(PENDING_SYNC_KEY);
+      if (pending === 'true' && navigator.onLine) {
+        await pushToCloud(null);
+      }
+    }
+
     async function syncFromCloud(forceRender = false) {
       if (isSavingToCloud) return;
+
+      if (!navigator.onLine) {
+        updateCloudBadge('📦 Modo Offline Ativo (Cache Local)', false);
+        return;
+      }
+
+      await flushOfflineQueueIfNeeded();
+
       if (forceRender) updateCloudBadge('🔄 Sincronizando com a Nuvem...', true);
 
       const url = getActiveCloudUrl();
@@ -1451,7 +1663,7 @@
           const res = await fetch(`${url}?t=${Date.now()}`, { method: 'GET', redirect: 'follow', cache: 'no-store' });
           cloudData = await res.json();
         } catch (errFetch) {
-          updateCloudBadge('⚠️ Verifique Permissão no Apps Script', false);
+          updateCloudBadge('⚠️ Offline / Fila Local Ativa', false);
           return;
         }
       }
@@ -1463,7 +1675,7 @@
 
       if (cloudData && cloudData.years) {
         const hasChanged = forceRender || (cloudData.updatedAt !== state.updatedAt);
-        state = upgradeDatabaseWeeks(cloudData);
+        state = upgradeDatabaseStructure(cloudData);
         saveLocalCache();
 
         if (hasChanged) {
@@ -1482,6 +1694,14 @@
       isSavingToCloud = true;
       state.updatedAt = Date.now();
       saveLocalCache();
+
+      if (!navigator.onLine) {
+        localStorage.setItem(PENDING_SYNC_KEY, 'true');
+        updateCloudBadge('📦 Salvo Offline (Sincronizará ao voltar a rede)', false);
+        isSavingToCloud = false;
+        return;
+      }
+
       updateCloudBadge('☁️ Gravando para todos os PCs...', true);
 
       const btnProd = document.getElementById('btnLaunchProd');
@@ -1501,10 +1721,12 @@
           body: JSON.stringify({ state, lastLog })
         });
 
+        localStorage.removeItem(PENDING_SYNC_KEY);
         const timeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         updateCloudBadge(`☁️ Salvo na Nuvem (${timeStr})`, true);
       } catch (err) {
-        updateCloudBadge('⚠️ Falha de Rede ao Gravar', false);
+        localStorage.setItem(PENDING_SYNC_KEY, 'true');
+        updateCloudBadge('📦 Salvo na Fila Offline (Sem Rede)', false);
       } finally {
         isSavingToCloud = false;
         if (btnProd) btnProd.disabled = false;
@@ -1587,6 +1809,17 @@
       const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
       ensureYearExists(yr);
       document.getElementById('inputGoalKg').value = state.years[yr][mIdx].goalKg;
+      onBacklogGaugeSelectChange();
+    }
+
+    function onBacklogGaugeSelectChange() {
+      const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
+      const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
+      const g = document.getElementById('backlogGaugeSelect').value;
+      ensureYearExists(yr);
+      const mObj = state.years[yr][mIdx];
+      if (!mObj.backlog) mObj.backlog = createEmptyBacklogMap(0);
+      document.getElementById('backlogDemandInput').value = mObj.backlog[g] || 0;
     }
 
     function onDirectWeekPeriodChange() {
@@ -1615,6 +1848,7 @@
       const mObj = getActiveMonthObj();
       document.getElementById('inputGoalKg').value = mObj.goalKg;
       onDirectWeekPeriodChange();
+      onBacklogGaugeSelectChange();
     }
 
     function switchTab(tabId, btn) {
@@ -1634,11 +1868,20 @@
       const m = getActiveMonthObj();
       const pctMonth = m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0;
 
+      // GAMIFICATION: Destaque e Confete quando bate 100% da meta do mês!
+      const oeeCard = document.getElementById('kpiCardOee');
+      if (pctMonth >= 100 && m.goalKg > 0) {
+        oeeCard.classList.add('goal-achieved');
+        triggerGoalConfettiOnce(`${viewFilter.activeYear}_${viewFilter.activeMonthIndex}`);
+      } else {
+        oeeCard.classList.remove('goal-achieved');
+      }
+
       const totalProd = months.reduce((acc, cur) => acc + cur.producedKg, 0);
       const totalGoal = months.reduce((acc, cur) => acc + cur.goalKg, 0);
       const pctYear = totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0;
 
-      // Cálculo de Ritmo Diário & Projeção de Fechamento (Forecast)
+      // Projeção & Ritmo Diário
       const daysInMonth = new Date(viewFilter.activeYear, viewFilter.activeMonthIndex + 1, 0).getDate();
       const now = new Date();
       const isCurrentMonthAndYear = (now.getFullYear() === viewFilter.activeYear && now.getMonth() === viewFilter.activeMonthIndex);
@@ -1647,6 +1890,12 @@
       const projectedMonthKg = isCurrentMonthAndYear ? (dailyRateKg * daysInMonth) : m.producedKg;
       const remainingDays = Math.max(1, daysInMonth - elapsedDays);
       const neededPerDayKg = Math.max(0, (m.goalKg - m.producedKg) / remainingDays);
+
+      // Cálculo de Disponibilidade (Uptime) e Horas Paradas
+      if (!m.downtimeHours) m.downtimeHours = createEmptyDowntimeMap();
+      const totalDownHours = Object.values(m.downtimeHours).reduce((a, b) => a + Number(b || 0), 0);
+      const plannedPoolHours = 5 * 176; // 5 máquinas x 176h mensais padrão
+      const uptimePct = Math.max(0, Math.min(100, ((plannedPoolHours - totalDownHours) / plannedPoolHours) * 100));
 
       const weeks = m.weeks || [0, 0, 0, 0, 0];
       let bestWIdx = 0;
@@ -1667,11 +1916,12 @@
         ? `Ritmo: ${formatValue(dailyRateKg, 0)}/dia • Falta ${formatValue(neededPerDayKg, 0)}/dia`
         : `Média Diária: ${formatValue(dailyRateKg, 0)}/dia`;
 
+      document.getElementById('kpiUptimeVal').textContent = uptimePct.toFixed(1).replace('.', ',') + '%';
+      document.getElementById('kpiDowntimeSub').textContent = `Horas Paradas no Mês: ${totalDownHours.toFixed(1).replace('.', ',')} h`;
+
       document.getElementById('kpiYearLabel').textContent = viewFilter.activeYear;
       document.getElementById('kpiTotalProd').textContent = formatValue(totalProd, 0);
       document.getElementById('kpiTotalGoal').textContent = `Previsão Anual: ${formatValue(totalGoal, 0)}`;
-      document.getElementById('kpiBestWeek').textContent = `Semana ${bestWIdx + 1}`;
-      document.getElementById('kpiBestWeekSub').textContent = `Volume: ${formatValue(weeks[bestWIdx], 0)}`;
 
       document.getElementById('chartYearTitle').textContent = viewFilter.activeYear;
       document.getElementById('overviewWeekTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
@@ -1683,7 +1933,6 @@
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
 
-      // Cards Semanais na Aba 3 (Mostra Semana 5 apenas se tiver peso > 0)
       const sumWeeks = weeks.reduce((a, b) => a + b, 0);
       const visibleWeeks = weeks[4] > 0 ? weeks : weeks.slice(0, 4);
       const weeklyCardsEl = document.getElementById('weeklyKpiCards');
@@ -1714,9 +1963,17 @@
       listEl.innerHTML = machinesOrder.map(mo => {
         const sumKg = m.items.filter(i => i.machine === mo.name).reduce((a, b) => a + b.kg, 0);
         const widthPct = Math.min(100, (sumKg / maxMachTotal) * 100);
+        const downH = Number((m.downtimeHours && m.downtimeHours[mo.name]) || 0);
+        const machUptime = Math.max(0, Math.min(100, ((176 - downH) / 176) * 100)).toFixed(1).replace('.', ',');
+        const tagClass = downH > 8 ? 'uptime-warn' : 'uptime-ok';
+
         return `
           <div class="status-item">
-            <div class="status-name">${mo.name}<small>${mo.type}</small></div>
+            <div class="status-name">
+              ${mo.name}
+              <small>${mo.type}</small>
+              <span class="uptime-tag ${tagClass}">Uptime ${machUptime}% (${downH.toFixed(1)}h par.)</span>
+            </div>
             <div class="progress-track">
               <div class="progress-fill" style="width: ${widthPct}%"></div>
             </div>
@@ -1729,6 +1986,7 @@
     function renderTables() {
       const months = getActiveYearMonths();
       const m = getActiveMonthObj();
+      if (!m.backlog) m.backlog = createEmptyBacklogMap(0);
       const tbody = document.getElementById('machinesTableBody');
       const isBaseTemplateItem = (item) => BASE_ITEMS_TEMPLATE.some(b => b.machine === item.machine && b.gauge === item.gauge);
 
@@ -1750,6 +2008,14 @@
           .filter(i => i.gauge === item.gauge)
           .reduce((acc, cur) => acc + cur.kg, 0);
 
+        const demandKg = Number(m.backlog[item.gauge] || 0);
+        const pendingKg = Math.max(0, demandKg - gaugeTotal);
+        const backlogHtml = demandKg === 0
+          ? `<span style="color: var(--text-muted);">Sem Pedido</span>`
+          : (pendingKg <= 0
+              ? `<span class="badge-backlog-ok">✅ Atendido (+${formatValue(gaugeTotal - demandKg, 0)})</span>`
+              : `<span class="badge-backlog-pend">⚠️ Falta ${formatValue(pendingKg, 0)}</span>`);
+
         const isZero = item.kg === 0;
         const badgeClass = item.category === 'Estribadeira' ? 'badge-estrib' : 'badge-dobra';
         const isExtraRow = !isBaseTemplateItem(item);
@@ -1762,9 +2028,11 @@
             <td>${formatValue(item.kg, 3)}</td>
             <td>${formatValue(machineTotal, 3)}</td>
             <td style="color: var(--gold); font-weight: 600;">${formatValue(gaugeTotal, 3)}</td>
+            <td>${formatValue(demandKg, 0)}</td>
+            <td>${backlogHtml}</td>
             <td>
               <button class="btn-delete" onclick="removeOrZeroMachineRow(${idx})" title="${isExtraRow ? 'Excluir esta linha extra' : 'Zerar peso desta linha'}">
-                🗑️ ${isExtraRow ? 'Excluir Linha' : 'Zerar'}
+                🗑️ ${isExtraRow ? 'Excluir' : 'Zerar'}
               </button>
             </td>
           </tr>
@@ -1794,27 +2062,32 @@
         `;
       }).join('');
 
-      // Tabela de Logs Diários (Exclusão Segura por ID Único)
+      // Tabela de Auditoria Completa (Operador, Turno, Hora e Paradas)
       const logsBody = document.getElementById('dailyLogsTableBody');
       if (!state.dailyLogs || state.dailyLogs.length === 0) {
-        logsBody.innerHTML = `<tr><td colspan="8" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
+        logsBody.innerHTML = `<tr><td colspan="9" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
       } else {
         logsBody.innerHTML = state.dailyLogs
           .slice()
           .reverse()
           .map((log) => {
             const wLabel = typeof log.weekIndex === 'number' ? `Semana ${log.weekIndex + 1}` : 'Semana 4';
+            const downStr = log.downtimeHours > 0
+              ? `<span class="badge-backlog-pend">${log.downtimeHours}h (${log.downtimeReason || 'Parada'})</span>`
+              : `<span style="color: var(--text-muted);">Normal (0h)</span>`;
+
             return `
               <tr>
-                <td><strong>${formatDateBR(log.date)}</strong></td>
+                <td><strong>${formatDateBR(log.date)}</strong> <small style="color: var(--text-muted);">${log.time || ''}</small></td>
                 <td>${wLabel} • ${MONTH_NAMES[log.monthIndex]} / ${log.year}</td>
+                <td><strong>${log.operator || 'PCP'}</strong><br/><small style="color: var(--text-muted);">${log.shift || ''}</small></td>
                 <td><strong>${log.machine}</strong></td>
-                <td>${log.category}</td>
                 <td>${log.gauge}</td>
                 <td>${log.mode}</td>
                 <td style="color: var(--teal-bright); font-weight: 700;">${formatValue(log.kg, 3)}</td>
+                <td>${downStr}</td>
                 <td>
-                  <button class="btn-delete" onclick="deleteHistoryLogById('${log.id}')" title="Excluir este lançamento pelo ID único e reverter o peso">
+                  <button class="btn-delete" onclick="deleteHistoryLogById('${log.id}')" title="Excluir este lançamento pelo ID único e reverter">
                     🗑️ Excluir
                   </button>
                 </td>
@@ -1828,12 +2101,13 @@
       const factor = viewFilter.unit === 't' ? 0.001 : 1;
       const months = getActiveYearMonths();
       const m = getActiveMonthObj();
+      if (!m.backlog) m.backlog = createEmptyBacklogMap(0);
       const weeksAll = m.weeks || [0, 0, 0, 0, 0];
       const hasWeek5 = weeksAll[4] > 0;
       const activeWeekLabels = hasWeek5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
       const activeWeeksData = hasWeek5 ? weeksAll : weeksAll.slice(0, 4);
 
-      // 1. Gráfico de Evolução Mensal vs Previsão (COM ANTI-SOBREPOSIÇÃO INTELIGENTE)
+      // 1. Gráfico de Evolução Mensal vs Previsão
       const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
       if (monthlyChart) monthlyChart.destroy();
 
@@ -1899,9 +2173,7 @@
           responsive: true,
           maintainAspectRatio: false,
           layout: { padding: { top: 26, bottom: 14 } },
-          plugins: {
-            legend: { labels: { color: '#cbd5e1' } }
-          },
+          plugins: { legend: { labels: { color: '#cbd5e1' } } },
           scales: {
             x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.04)' } },
             y: {
@@ -2014,7 +2286,7 @@
         }
       });
 
-      // 5. Gráfico Consolidado Só por Bitola (Aba 2)
+      // 5. Gráfico Consolidado por Bitola vs. Carteira de Pedidos (Backlog Comercial)
       const ctxGaugeOnly = document.getElementById('gaugeOnlyBarChart').getContext('2d');
       if (gaugeOnlyChart) gaugeOnlyChart.destroy();
 
@@ -2022,35 +2294,47 @@
         const sumKg = m.items
           .filter(i => i.gauge === gName)
           .reduce((acc, cur) => acc + cur.kg, 0);
-        return +(sumKg * factor).toFixed(3);
+        return +(sumKg * factor).toFixed(2);
       });
+
+      const gaugeDemands = ALL_GAUGES.map(gName => +(((m.backlog && m.backlog[gName]) || 0) * factor).toFixed(2));
 
       gaugeOnlyChart = new Chart(ctxGaugeOnly, {
         type: 'bar',
         data: {
           labels: ALL_GAUGES,
-          datasets: [{
-            label: `Total da Bitola (${viewFilter.unit})`,
-            data: gaugeTotals,
-            backgroundColor: 'rgba(52, 211, 153, 0.75)',
-            borderColor: '#34d399',
-            borderWidth: 1.5,
-            borderRadius: 5
-          }]
+          datasets: [
+            {
+              label: `Produzido (${viewFilter.unit})`,
+              data: gaugeTotals,
+              backgroundColor: 'rgba(52, 211, 153, 0.78)',
+              borderColor: '#34d399',
+              borderWidth: 1.5,
+              borderRadius: 5
+            },
+            {
+              label: `Carteira / Pedido (${viewFilter.unit})`,
+              data: gaugeDemands,
+              backgroundColor: 'rgba(168, 85, 247, 0.5)',
+              borderColor: '#a855f7',
+              borderWidth: 1.5,
+              borderRadius: 5
+            }
+          ]
         },
         options: {
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 20 } },
+          layout: { padding: { top: 22 } },
           plugins: {
-            legend: { display: false },
+            legend: { labels: { color: '#cbd5e1' } },
             datalabels: {
               color: '#f8fafc',
               anchor: 'end',
               align: 'top',
-              font: { weight: 'bold', size: 10 },
-              formatter: (val) => val.toLocaleString('pt-BR')
+              font: { weight: 'bold', size: 9.5 },
+              formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
             }
           },
           scales: {
@@ -2135,6 +2419,7 @@
       });
     }
 
+    // LANÇAMENTO COMPLETO: PRODUÇÃO + OPERADOR + TURNO + PARADAS DE MÁQUINA
     async function handleLaunchProduction() {
       if (!requirePcpAuth()) return;
 
@@ -2145,10 +2430,18 @@
 
       const selectedMachine = document.getElementById('inputMachineSelect').value;
       const selectedGauge = document.getElementById('inputGaugeSelect').value;
+      const operatorName = (document.getElementById('inputOperatorName').value || 'Operador PCP').trim();
+      const shiftName = document.getElementById('inputShiftSelect').value;
       const mode = document.getElementById('inputMode').value;
-      const val = parseFloat(document.getElementById('inputWeightKg').value);
 
-      if (isNaN(val) || val < 0) return alert('Informe um peso válido em kg.');
+      const rawWeight = document.getElementById('inputWeightKg').value;
+      const val = rawWeight === '' ? 0 : parseFloat(rawWeight);
+      const downHours = parseFloat(document.getElementById('inputDowntimeHours').value) || 0;
+      const downReason = document.getElementById('inputDowntimeReason').value;
+
+      if ((isNaN(val) || val < 0) || (val === 0 && downHours <= 0)) {
+        return alert('Informe um peso produzido válido (em kg) ou registre o tempo de parada.');
+      }
 
       await syncFromCloud(false);
 
@@ -2160,6 +2453,9 @@
       const monthObj = state.years[yr][mIdx];
       if (!Array.isArray(monthObj.weeks) || monthObj.weeks.length < 5) {
         monthObj.weeks = [0, 0, 0, 0, 0];
+      }
+      if (!monthObj.downtimeHours) {
+        monthObj.downtimeHours = createEmptyDowntimeMap();
       }
 
       let item = monthObj.items.find(i => i.machine === selectedMachine && i.gauge === selectedGauge);
@@ -2181,22 +2477,33 @@
       const prevKg = item.kg;
       const prevWeekKg = monthObj.weeks[wIdx] || 0;
 
-      if (mode === 'add') {
-        item.kg = +(item.kg + val).toFixed(3);
-        monthObj.weeks[wIdx] = +(prevWeekKg + val).toFixed(3);
-      } else {
-        const diff = val - prevKg;
-        item.kg = +val.toFixed(3);
-        monthObj.weeks[wIdx] = Math.max(0, +(prevWeekKg + diff).toFixed(3));
+      if (val > 0 || mode === 'set') {
+        if (mode === 'add') {
+          item.kg = +(item.kg + val).toFixed(3);
+          monthObj.weeks[wIdx] = +(prevWeekKg + val).toFixed(3);
+        } else {
+          const diff = val - prevKg;
+          item.kg = +val.toFixed(3);
+          monthObj.weeks[wIdx] = Math.max(0, +(prevWeekKg + diff).toFixed(3));
+        }
+      }
+
+      if (downHours > 0) {
+        monthObj.downtimeHours[selectedMachine] = +((monthObj.downtimeHours[selectedMachine] || 0) + downHours).toFixed(2);
       }
 
       const sumItems = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
       const sumWeeks = +monthObj.weeks.reduce((acc, cur) => acc + cur, 0).toFixed(3);
       monthObj.producedKg = Math.max(sumItems, sumWeeks);
 
+      const nowTimeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
       const newLog = {
         id: 'log_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
         date: launchDate,
+        time: nowTimeStr,
+        operator: operatorName,
+        shift: shiftName,
         year: yr,
         monthIndex: mIdx,
         weekIndex: wIdx,
@@ -2204,20 +2511,48 @@
         machine: item.machine,
         category: item.category,
         gauge: item.gauge,
-        mode: mode === 'add' ? '+ Lote Somado' : '= Total Substituído',
+        mode: val === 0 && downHours > 0 ? '⚠️ Registro de Parada' : (mode === 'add' ? '+ Lote Somado' : '= Total Substituído'),
         rawMode: mode,
         kg: val,
         prevKg: prevKg,
         prevWeekKg: prevWeekKg,
+        downtimeHours: downHours,
+        downtimeReason: downHours > 0 ? downReason : 'Sem Parada',
         wasCreatedNow: wasCreatedNow
       };
 
       state.dailyLogs.push(newLog);
 
       document.getElementById('inputWeightKg').value = '';
+      document.getElementById('inputDowntimeHours').value = '';
+      document.getElementById('inputDowntimeReason').value = 'Sem Parada';
       syncFilterInputs();
       renderAll();
       await pushToCloud(newLog);
+    }
+
+    // ATUALIZAR CARTEIRA DE PEDIDOS (BACKLOG POR BITOLA)
+    async function handleUpdateBacklogDemand() {
+      if (!requirePcpAuth()) return;
+
+      const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
+      const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
+      const gauge = document.getElementById('backlogGaugeSelect').value;
+      const demandVal = parseFloat(document.getElementById('backlogDemandInput').value) || 0;
+
+      await syncFromCloud(false);
+
+      ensureYearExists(yr);
+      viewFilter.activeYear = yr;
+      viewFilter.activeMonthIndex = mIdx;
+
+      const mObj = state.years[yr][mIdx];
+      if (!mObj.backlog) mObj.backlog = createEmptyBacklogMap(0);
+      mObj.backlog[gauge] = +demandVal.toFixed(2);
+
+      syncFilterInputs();
+      renderAll();
+      await pushToCloud(null);
     }
 
     async function handleUpdateWeeksDirect() {
@@ -2247,7 +2582,6 @@
       await pushToCloud(null);
     }
 
-    // EXCLUSÃO SEGURA BUSCANDO PELO ID ÚNICO DO REGISTRO
     async function deleteHistoryLogById(logId) {
       if (!requirePcpAuth()) return;
 
@@ -2269,7 +2603,7 @@
         const monthObj = state.years[targetLog.year][targetLog.monthIndex];
         const itemIdx = monthObj.items.findIndex(i => i.machine === targetLog.machine && i.gauge === targetLog.gauge);
 
-        if (itemIdx !== -1) {
+        if (itemIdx !== -1 && targetLog.kg > 0) {
           const item = monthObj.items[itemIdx];
           if (targetLog.wasCreatedNow && targetLog.prevKg === 0) {
             const isBase = BASE_ITEMS_TEMPLATE.some(b => b.machine === item.machine && b.gauge === item.gauge);
@@ -2287,12 +2621,16 @@
           }
         }
 
-        if (typeof targetLog.weekIndex === 'number' && Array.isArray(monthObj.weeks)) {
+        if (typeof targetLog.weekIndex === 'number' && Array.isArray(monthObj.weeks) && targetLog.kg > 0) {
           if (targetLog.rawMode === 'add') {
             monthObj.weeks[targetLog.weekIndex] = Math.max(0, +(monthObj.weeks[targetLog.weekIndex] - targetLog.kg).toFixed(3));
           } else if (typeof targetLog.prevWeekKg === 'number') {
             monthObj.weeks[targetLog.weekIndex] = +targetLog.prevWeekKg.toFixed(3);
           }
+        }
+
+        if (targetLog.downtimeHours > 0 && monthObj.downtimeHours) {
+          monthObj.downtimeHours[targetLog.machine] = Math.max(0, +((monthObj.downtimeHours[targetLog.machine] || 0) - targetLog.downtimeHours).toFixed(2));
         }
 
         const sumItems = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
@@ -2365,7 +2703,7 @@
 
     async function resetDefaultData() {
       if (!requirePcpAuth()) return;
-      if (!confirm('Deseja restaurar os dados originais de 2026 (incluindo as semanas de Julho a Outubro) para TODOS os computadores?')) return;
+      if (!confirm('Deseja restaurar os dados originais de 2026 para TODOS os computadores?')) return;
       localStorage.removeItem(STORAGE_KEY);
       state = createDefaultDatabase();
       setTodayDate();
@@ -2377,6 +2715,14 @@
       renderTables();
       renderCharts();
     }
+
+    window.addEventListener('online', () => {
+      syncFromCloud(true);
+    });
+
+    window.addEventListener('offline', () => {
+      updateCloudBadge('📦 Sem Internet (Operando em Cache Offline)', false);
+    });
 
     window.addEventListener('DOMContentLoaded', async () => {
       updateLockButtonUI();
