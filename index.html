@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#060d10" />
-  <title>GRANDE AÇO | Dashboard MES & PCP Industrial</title>
+  <title>GRANDE AÇO | Dashboard MES, PCP & Controle de Sucata</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -105,8 +105,8 @@
       color: var(--text-muted);
       font-family: 'Chakra Petch', sans-serif;
       font-weight: 600;
-      font-size: 0.86rem;
-      padding: 8px 14px;
+      font-size: 0.84rem;
+      padding: 8px 13px;
       border-radius: 7px;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -271,7 +271,6 @@
       transition: all 0.3s ease;
     }
 
-    /* EFEITO ESPECIAL DE META BATIDA (GAMIFICATION) */
     .kpi-card.goal-achieved {
       border-color: var(--emerald);
       box-shadow: 0 0 24px rgba(52, 211, 153, 0.28);
@@ -581,7 +580,7 @@
       border-color: var(--danger);
     }
 
-    /* FORMULÁRIOS DA ABA DE LANÇAMENTOS (PCP) */
+    /* FORMULÁRIOS */
     .pcp-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
@@ -670,6 +669,11 @@
       color: #ffffff;
     }
 
+    .btn-orange {
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: #041014;
+    }
+
     .btn-outline {
       background: transparent;
       border: 1px solid var(--border-teal);
@@ -695,6 +699,33 @@
       border-radius: 8px;
       background: rgba(255, 255, 255, 0.03);
       border: 1px dashed rgba(45, 212, 191, 0.25);
+    }
+
+    /* CAIXA DE PREVIEW DA CONTA DE SUCATA EM TEMPO REAL */
+    .scrap-calc-preview {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.35);
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      text-align: center;
+    }
+
+    .scrap-calc-preview .calc-item small {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .scrap-calc-preview .calc-item strong {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.15rem;
+      color: var(--gold);
     }
 
     @media print {
@@ -730,7 +761,7 @@
       <div class="brand-logo">GA</div>
       <div class="brand-title">
         <h1>Dashboard de Produção</h1>
-        <span>GRANDE AÇO • MES, TELEMETRIA & PCP INDUSTRIAL</span>
+        <span>GRANDE AÇO • MES, TELEMETRIA, PCP & SUCATA</span>
       </div>
     </div>
 
@@ -739,6 +770,7 @@
       <button class="tab-btn" data-tab="maquinas-bitolas" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas, Bitolas & Backlog</button>
       <button class="tab-btn" data-tab="producao-semanal" onclick="switchTab('producao-semanal', this)">3. Produção Semanal</button>
       <button class="tab-btn" data-tab="lancamentos-pcp" onclick="switchTab('lancamentos-pcp', this)">4. Lançamentos, Paradas & Metas</button>
+      <button class="tab-btn" data-tab="controle-sucata" onclick="switchTab('controle-sucata', this)">5. ♻️ Controle de Sucata</button>
     </nav>
 
     <!-- SELETOR DE CALENDÁRIO GLOBAL -->
@@ -793,7 +825,7 @@
     </div>
     <div class="cloud-actions">
       <span id="cloudStatusBadge" class="cloud-badge online">🔄 Conectando à Nuvem...</span>
-      <button class="btn-outline" id="btnTvMode" onclick="toggleTvMode()" title="Alterna automaticamente entre as abas 1, 2 e 3 a cada 25 segundos">📺 Modo Telão: OFF</button>
+      <button class="btn-outline" id="btnTvMode" onclick="toggleTvMode()" title="Alterna automaticamente entre as abas a cada 25 segundos">📺 Modo Telão: OFF</button>
       <button class="btn-outline" id="btnLockPin" onclick="togglePcpLock()" title="Bloqueia ou libera edições com PIN (Padrão: 1234)">🔒 PCP Bloqueado</button>
       <button class="btn-outline" onclick="setTodayDate()">📍 Ir para Hoje</button>
       <button class="btn-outline" onclick="exportActiveMonthCSV()">📥 Exportar CSV</button>
@@ -1028,7 +1060,6 @@
           </div>
         </div>
 
-        <!-- AUDITORIA: OPERADOR E TURNO -->
         <div class="split-2-cols">
           <div class="form-row">
             <label>Operador / Responsável</label>
@@ -1061,7 +1092,6 @@
           </div>
         </div>
 
-        <!-- CONTROLE DE PARADAS DE MÁQUINA -->
         <div class="split-2-cols">
           <div class="form-row">
             <label>Horas Paradas (Opcional)</label>
@@ -1174,7 +1204,6 @@
 
         <hr style="border: none; border-top: 1px solid var(--border-teal); margin: 14px 0;" />
 
-        <!-- DEMANDA COMERCIAL / PEDIDOS POR BITOLA -->
         <div class="split-2-cols">
           <div class="form-row">
             <label>Bitola (Carteira Comercial)</label>
@@ -1231,11 +1260,194 @@
     </div>
   </section>
 
+  <!-- ABA 5: CONTROLE E LANÇAMENTO DE SUCATA (PESO x VALOR = CONTA AUTOMÁTICA) -->
+  <section id="controle-sucata" class="tab-section">
+    <!-- KPIs DE SUCATA NO MÊS / ANO -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Peso Total de Sucata (Mês)</div>
+        <div class="kpi-value orange" id="kpiScrapMonthKg">0 kg</div>
+        <div class="kpi-sub" id="kpiScrapMonthSub">Referência: OUTUBRO / 2026</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Valor Total da Sucata (Mês)</div>
+        <div class="kpi-value gold" id="kpiScrapMonthBrl">R$ 0,00</div>
+        <div class="kpi-sub" id="kpiScrapYearBrlSub">Acumulado no Ano: R$ 0,00</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Preço Médio do Quilo (R$/kg)</div>
+        <div class="kpi-value teal" id="kpiScrapAvgPrice">R$ 0,00 /kg</div>
+        <div class="kpi-sub" id="kpiScrapYearKgSub">Peso Acumulado no Ano: 0 kg</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Índice de Refugo / Sucata (%)</div>
+        <div class="kpi-value sky" id="kpiScrapRatePct">0,00%</div>
+        <div class="kpi-sub">Relação Sucata vs. Produção Boa do Mês</div>
+      </div>
+    </div>
+
+    <!-- FORMULÁRIO COM CALCULADORA DE SUCATA + GRÁFICOS DE SUCATA -->
+    <div class="main-grid" style="grid-template-columns: 1.05fr 1fr 1fr;">
+      <!-- FORMULÁRIO DE LANÇAMENTO DE SUCATA -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">♻️ Lançar Sucata (Cálculo Automático)</span>
+        </div>
+
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Data da Pesagem</label>
+            <input type="date" id="scrapDateInput" />
+          </div>
+
+          <div class="form-row">
+            <label>Tipo de Registro</label>
+            <select id="scrapTypeSelect">
+              <option value="Venda de Sucata">💰 Venda / Faturamento de Sucata</option>
+              <option value="Perda de Processo">⚙️ Perda Interna / Pontas de Processo</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Máquina de Origem</label>
+            <select id="scrapMachineSelect">
+              <option value="GERAL / PÁTIO">GERAL / PÁTIO (Caçamba)</option>
+              <option value="ES02">ES02 (Estribadeira)</option>
+              <option value="EB10">EB10 (Estribadeira)</option>
+              <option value="EB12">EB12 (Estribadeira)</option>
+              <option value="20B">20B (Estribadeira)</option>
+              <option value="PT 32">PT 32 (Dobradeira Manual)</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label>Bitola / Material</label>
+            <select id="scrapGaugeSelect">
+              <option value="Mista (CA-60/CA-50)">Sucata Mista (CA-60 / CA-50)</option>
+              <option value="5,00 mm">Bitola 5,00 mm</option>
+              <option value="6,30 mm">Bitola 6,30 mm</option>
+              <option value="8,00 mm">Bitola 8,00 mm</option>
+              <option value="10,00 mm">Bitola 10,00 mm</option>
+              <option value="12,50 mm">Bitola 12,50 mm</option>
+              <option value="16,00 mm">Bitola 16,00 mm</option>
+              <option value="20,00 mm">Bitola 20,00 mm</option>
+              <option value="25,00 mm">Bitola 25,00 mm</option>
+              <option value="32,00 mm">Bitola 32,00 mm</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Modo de Cálculo do Valor</label>
+          <select id="scrapCalcModeSelect" onchange="onScrapCalcModeChange()">
+            <option value="unit">Informar Peso (kg) + Preço por Quilo (R$/kg) ➔ Calcula Valor Total</option>
+            <option value="total">Informar Peso (kg) + Valor Total da Nota (R$) ➔ Calcula R$/kg</option>
+          </select>
+        </div>
+
+        <div class="split-2-cols">
+          <div class="form-row">
+            <label>Peso da Sucata (em kg)</label>
+            <input type="number" id="scrapWeightKgInput" step="0.01" placeholder="Ex: 850.50" oninput="updateScrapLiveCalculation('weight')" />
+          </div>
+
+          <div class="form-row" id="scrapUnitPriceRow">
+            <label>Valor por Quilo (R$ / kg)</label>
+            <input type="number" id="scrapUnitPriceBrlInput" step="0.01" placeholder="Ex: 1.85" oninput="updateScrapLiveCalculation('unit')" />
+          </div>
+
+          <div class="form-row" id="scrapTotalValueRow" style="display: none;">
+            <label>Valor Total do Lote (R$)</label>
+            <input type="number" id="scrapTotalValueBrlInput" step="0.01" placeholder="Ex: 1573.42" oninput="updateScrapLiveCalculation('total')" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label>Observação / Comprador / Responsável (Opcional)</label>
+          <input type="text" id="scrapNotesInput" placeholder="Ex: Caçamba 02 / Pontas de vergalhão" />
+        </div>
+
+        <!-- RESUMO DA CONTA EM TEMPO REAL -->
+        <div class="scrap-calc-preview">
+          <div class="calc-item">
+            <small>Peso Líquido</small>
+            <strong id="previewScrapKg">0,00 kg</strong>
+          </div>
+          <div class="calc-item">
+            <small>Preço por Quilo</small>
+            <strong id="previewScrapUnitBrl">R$ 0,00 /kg</strong>
+          </div>
+          <div class="calc-item">
+            <small>Total Calculado</small>
+            <strong id="previewScrapTotalBrl" style="color: var(--emerald);">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <button class="btn-action btn-orange" id="btnSaveScrap" onclick="handleLaunchScrap()">Registrar Sucata e Salvar na Nuvem</button>
+      </div>
+
+      <!-- GRÁFICO 1: SUCATA POR MÁQUINA (KG E R$) -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Sucata por Origem / Máquina — <span id="scrapChartMonthTitle">OUTUBRO/2026</span></span>
+        </div>
+        <div class="chart-box" style="height: 350px;">
+          <canvas id="scrapByMachineChart"></canvas>
+        </div>
+      </div>
+
+      <!-- GRÁFICO 2: EVOLUÇÃO MENSAL DE SUCATA NO ANO -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Evolução de Sucata no Ano (<span id="scrapChartYearTitle">2026</span>)</span>
+        </div>
+        <div class="chart-box" style="height: 350px;">
+          <canvas id="scrapMonthlyTrendChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABELA DE REGISTROS DE SUCATA -->
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title">Relatório Detalhado de Lançamentos de Sucata (Peso, R$/kg e Valor Total)</span>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn-outline" onclick="exportScrapCSV()">📥 Exportar Sucata CSV</button>
+          <button class="btn-delete" onclick="clearAllScrapLogs()">🗑️ Limpar Histórico de Sucata</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Mês / Ano</th>
+              <th>Tipo</th>
+              <th>Máquina / Origem</th>
+              <th>Bitola / Material</th>
+              <th>Peso (kg)</th>
+              <th>Preço (R$/kg)</th>
+              <th>Valor Total (R$)</th>
+              <th>Observação</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody id="scrapLogsTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
   <script>
     Chart.register(ChartDataLabels);
 
     const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyK9MD0uW3zPKpn2nFQMMpOE6vJ042rFXrFp7FDNMUfgkwNTWr6HuZBNC7B7zoJJRA8/exec";
-    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V5";
+    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V6";
 
     function getActiveCloudUrl() {
       return localStorage.getItem(CUSTOM_URL_KEY) || DEFAULT_CLOUD_URL;
@@ -1303,7 +1515,7 @@
       9: [16587, 11439, 7189, 3530.622, 0]
     };
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V12';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V13';
     const PENDING_SYNC_KEY = 'GRANDE_ACO_PENDING_OFFLINE_SYNC';
 
     let tvModeInterval = null;
@@ -1326,7 +1538,7 @@
         btn.textContent = '📺 Modo Telão: OFF';
         btn.classList.remove('active-toggle');
       } else {
-        const tabsCycle = ['visao-geral', 'maquinas-bitolas', 'producao-semanal'];
+        const tabsCycle = ['visao-geral', 'maquinas-bitolas', 'producao-semanal', 'controle-sucata'];
         let currentIdx = 0;
         btn.textContent = '📺 Modo Telão: ON (25s)';
         btn.classList.add('active-toggle');
@@ -1382,6 +1594,10 @@
       }
     }
 
+    function formatCurrencyBRL(val) {
+      return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
     function exportActiveMonthCSV() {
       const m = getActiveMonthObj();
       const rows = [
@@ -1411,6 +1627,31 @@
       link.click();
     }
 
+    function exportScrapCSV() {
+      const logs = state.scrapLogs || [];
+      const rows = [
+        ['RELATORIO DE CONTROLE DE SUCATA - GRANDE ACO'],
+        ['DATA', 'MES/ANO', 'TIPO', 'MAQUINA/ORIGEM', 'BITOLA', 'PESO (KG)', 'PRECO UNITARIO (R$/KG)', 'VALOR TOTAL (R$)', 'OBSERVACAO'],
+        ...logs.map(s => [
+          formatDateBR(s.date),
+          `${MONTH_NAMES[s.monthIndex]} / ${s.year}`,
+          s.type,
+          s.machine,
+          s.gauge,
+          String(s.weightKg).replace('.', ','),
+          String(s.unitPriceBrl).replace('.', ','),
+          String(s.totalValueBrl).replace('.', ','),
+          s.notes || ''
+        ])
+      ];
+      const csvContent = '\uFEFF' + rows.map(r => r.join(';')).join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `Relatorio_Sucata_Grande_Aco_${viewFilter.activeYear}.csv`;
+      link.click();
+    }
+
     function getTodayFilterState() {
       const now = new Date();
       const yr = now.getFullYear();
@@ -1428,6 +1669,7 @@
     let viewFilter = getTodayFilterState();
     let isSavingToCloud = false;
     let monthlyChart, overviewWeeklyChart, machineChart, gaugeOnlyChart, weeklyMultiMonthChart, gaugeMonth, gaugeYear;
+    let scrapMachineChart, scrapTrendChart;
 
     function setTodayDate() {
       const today = getTodayFilterState();
@@ -1533,13 +1775,15 @@
             downtimeHours: 0,
             downtimeReason: 'Sem Parada'
           }
-        ]
+        ],
+        scrapLogs: []
       };
     }
 
     function upgradeDatabaseStructure(db) {
       if (!db || !db.years) return createDefaultDatabase();
       if (!db.pcpPin) db.pcpPin = '1234';
+      if (!Array.isArray(db.scrapLogs)) db.scrapLogs = [];
       Object.keys(db.years).forEach(yr => {
         db.years[yr].forEach((mObj, idx) => {
           if (!Array.isArray(mObj.weeks)) {
@@ -1633,7 +1877,6 @@
       });
     }
 
-    // MODO OFFLINE ROBUSTO: VERIFICA FILA PENDENTE ANTES DE PUXAR DA NUVEM
     async function flushOfflineQueueIfNeeded() {
       const pending = localStorage.getItem(PENDING_SYNC_KEY);
       if (pending === 'true' && navigator.onLine) {
@@ -1707,9 +1950,11 @@
       const btnProd = document.getElementById('btnLaunchProd');
       const btnGoal = document.getElementById('btnSaveGoal');
       const btnWeeks = document.getElementById('btnSaveWeeks');
+      const btnScrap = document.getElementById('btnSaveScrap');
       if (btnProd) btnProd.disabled = true;
       if (btnGoal) btnGoal.disabled = true;
       if (btnWeeks) btnWeeks.disabled = true;
+      if (btnScrap) btnScrap.disabled = true;
 
       const url = getActiveCloudUrl();
 
@@ -1732,6 +1977,7 @@
         if (btnProd) btnProd.disabled = false;
         if (btnGoal) btnGoal.disabled = false;
         if (btnWeeks) btnWeeks.disabled = false;
+        if (btnScrap) btnScrap.disabled = false;
       }
     }
 
@@ -1837,6 +2083,7 @@
     function syncFilterInputs() {
       document.getElementById('globalDatePicker').value = viewFilter.selectedDate;
       document.getElementById('launchDateInput').value = viewFilter.selectedDate;
+      document.getElementById('scrapDateInput').value = viewFilter.selectedDate;
       document.getElementById('inputWeekSelect').value = getWeekIndexFromDateStr(viewFilter.selectedDate);
       document.getElementById('monthSelect').value = viewFilter.activeMonthIndex;
       document.getElementById('goalMonthSelect').value = viewFilter.activeMonthIndex;
@@ -1863,12 +2110,135 @@
       renderAll();
     }
 
+    // =========================================================================
+    // CALCULADORA BIDIRECIONAL DE SUCATA EM TEMPO REAL
+    // =========================================================================
+    function onScrapCalcModeChange() {
+      const mode = document.getElementById('scrapCalcModeSelect').value;
+      const unitRow = document.getElementById('scrapUnitPriceRow');
+      const totalRow = document.getElementById('scrapTotalValueRow');
+      if (mode === 'unit') {
+        unitRow.style.display = 'flex';
+        totalRow.style.display = 'none';
+      } else {
+        unitRow.style.display = 'none';
+        totalRow.style.display = 'flex';
+      }
+      updateScrapLiveCalculation();
+    }
+
+    function getCalculatedScrapValues() {
+      const mode = document.getElementById('scrapCalcModeSelect').value;
+      const weightKg = parseFloat(document.getElementById('scrapWeightKgInput').value) || 0;
+      let unitPriceBrl = parseFloat(document.getElementById('scrapUnitPriceBrlInput').value) || 0;
+      let totalValueBrl = parseFloat(document.getElementById('scrapTotalValueBrlInput').value) || 0;
+
+      if (mode === 'unit') {
+        totalValueBrl = +(weightKg * unitPriceBrl).toFixed(2);
+      } else {
+        unitPriceBrl = weightKg > 0 ? +(totalValueBrl / weightKg).toFixed(4) : 0;
+      }
+
+      return { weightKg, unitPriceBrl, totalValueBrl };
+    }
+
+    function updateScrapLiveCalculation() {
+      const { weightKg, unitPriceBrl, totalValueBrl } = getCalculatedScrapValues();
+      document.getElementById('previewScrapKg').textContent = weightKg.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 3 }) + ' kg';
+      document.getElementById('previewScrapUnitBrl').textContent = formatCurrencyBRL(unitPriceBrl) + ' /kg';
+      document.getElementById('previewScrapTotalBrl').textContent = formatCurrencyBRL(totalValueBrl);
+    }
+
+    async function handleLaunchScrap() {
+      if (!requirePcpAuth()) return;
+
+      const scrapDate = document.getElementById('scrapDateInput').value || viewFilter.selectedDate;
+      const [yr, mo] = scrapDate.split('-').map(Number);
+      const mIdx = mo - 1;
+
+      const type = document.getElementById('scrapTypeSelect').value;
+      const machine = document.getElementById('scrapMachineSelect').value;
+      const gauge = document.getElementById('scrapGaugeSelect').value;
+      const notes = (document.getElementById('scrapNotesInput').value || '').trim();
+
+      const { weightKg, unitPriceBrl, totalValueBrl } = getCalculatedScrapValues();
+
+      if (weightKg <= 0) {
+        return alert('Informe um peso de sucata maior que zero (em kg).');
+      }
+      if (totalValueBrl < 0 || unitPriceBrl < 0) {
+        return alert('Informe um valor financeiro válido (R$).');
+      }
+
+      await syncFromCloud(false);
+
+      ensureYearExists(yr);
+      viewFilter.activeYear = yr;
+      viewFilter.activeMonthIndex = mIdx;
+      viewFilter.selectedDate = scrapDate;
+
+      if (!Array.isArray(state.scrapLogs)) state.scrapLogs = [];
+
+      const newScrap = {
+        id: 'scrap_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+        date: scrapDate,
+        year: yr,
+        monthIndex: mIdx,
+        type,
+        machine,
+        gauge,
+        weightKg: +weightKg.toFixed(3),
+        unitPriceBrl: +unitPriceBrl.toFixed(4),
+        totalValueBrl: +totalValueBrl.toFixed(2),
+        notes
+      };
+
+      state.scrapLogs.push(newScrap);
+
+      document.getElementById('scrapWeightKgInput').value = '';
+      document.getElementById('scrapTotalValueBrlInput').value = '';
+      document.getElementById('scrapNotesInput').value = '';
+      updateScrapLiveCalculation();
+      syncFilterInputs();
+      renderAll();
+      await pushToCloud(null);
+    }
+
+    async function deleteScrapLogById(scrapId) {
+      if (!requirePcpAuth()) return;
+      if (!Array.isArray(state.scrapLogs)) return;
+
+      const idx = state.scrapLogs.findIndex(s => s.id === scrapId);
+      if (idx === -1) return;
+      const target = state.scrapLogs[idx];
+
+      if (!confirm(`Deseja excluir o lançamento de sucata de ${formatValue(target.weightKg, 2)} (${formatCurrencyBRL(target.totalValueBrl)})?`)) {
+        return;
+      }
+
+      await syncFromCloud(false);
+      const freshIdx = (state.scrapLogs || []).findIndex(s => s.id === scrapId);
+      if (freshIdx !== -1) {
+        state.scrapLogs.splice(freshIdx, 1);
+        renderAll();
+        await pushToCloud(null);
+      }
+    }
+
+    async function clearAllScrapLogs() {
+      if (!requirePcpAuth()) return;
+      if (!confirm('Deseja limpar todo o histórico de sucata?')) return;
+      await syncFromCloud(false);
+      state.scrapLogs = [];
+      renderAll();
+      await pushToCloud(null);
+    }
+
     function renderKPIsAndStatus() {
       const months = getActiveYearMonths();
       const m = getActiveMonthObj();
       const pctMonth = m.goalKg > 0 ? (m.producedKg / m.goalKg) * 100 : 0;
 
-      // GAMIFICATION: Destaque e Confete quando bate 100% da meta do mês!
       const oeeCard = document.getElementById('kpiCardOee');
       if (pctMonth >= 100 && m.goalKg > 0) {
         oeeCard.classList.add('goal-achieved');
@@ -1881,7 +2251,6 @@
       const totalGoal = months.reduce((acc, cur) => acc + cur.goalKg, 0);
       const pctYear = totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0;
 
-      // Projeção & Ritmo Diário
       const daysInMonth = new Date(viewFilter.activeYear, viewFilter.activeMonthIndex + 1, 0).getDate();
       const now = new Date();
       const isCurrentMonthAndYear = (now.getFullYear() === viewFilter.activeYear && now.getMonth() === viewFilter.activeMonthIndex);
@@ -1891,10 +2260,9 @@
       const remainingDays = Math.max(1, daysInMonth - elapsedDays);
       const neededPerDayKg = Math.max(0, (m.goalKg - m.producedKg) / remainingDays);
 
-      // Cálculo de Disponibilidade (Uptime) e Horas Paradas
       if (!m.downtimeHours) m.downtimeHours = createEmptyDowntimeMap();
       const totalDownHours = Object.values(m.downtimeHours).reduce((a, b) => a + Number(b || 0), 0);
-      const plannedPoolHours = 5 * 176; // 5 máquinas x 176h mensais padrão
+      const plannedPoolHours = 5 * 176;
       const uptimePct = Math.max(0, Math.min(100, ((plannedPoolHours - totalDownHours) / plannedPoolHours) * 100));
 
       const weeks = m.weeks || [0, 0, 0, 0, 0];
@@ -1929,9 +2297,32 @@
       document.getElementById('machChartPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
       document.getElementById('gaugeOnlyChartPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
       document.getElementById('weeklyCompareYearTitle').textContent = viewFilter.activeYear;
+      document.getElementById('scrapChartMonthTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
+      document.getElementById('scrapChartYearTitle').textContent = viewFilter.activeYear;
 
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
+
+      // KPIs da Aba 5 (Sucata)
+      const allScrap = state.scrapLogs || [];
+      const monthScrap = allScrap.filter(s => Number(s.year) === viewFilter.activeYear && Number(s.monthIndex) === viewFilter.activeMonthIndex);
+      const yearScrap = allScrap.filter(s => Number(s.year) === viewFilter.activeYear);
+
+      const monthScrapKg = monthScrap.reduce((a, b) => a + Number(b.weightKg || 0), 0);
+      const monthScrapBrl = monthScrap.reduce((a, b) => a + Number(b.totalValueBrl || 0), 0);
+      const yearScrapKg = yearScrap.reduce((a, b) => a + Number(b.weightKg || 0), 0);
+      const yearScrapBrl = yearScrap.reduce((a, b) => a + Number(b.totalValueBrl || 0), 0);
+
+      const avgPriceKg = monthScrapKg > 0 ? (monthScrapBrl / monthScrapKg) : (yearScrapKg > 0 ? yearScrapBrl / yearScrapKg : 0);
+      const scrapRatePct = m.producedKg > 0 ? (monthScrapKg / m.producedKg) * 100 : 0;
+
+      document.getElementById('kpiScrapMonthKg').textContent = formatValue(monthScrapKg, 2);
+      document.getElementById('kpiScrapMonthSub').textContent = `Referência: ${m.name} / ${viewFilter.activeYear}`;
+      document.getElementById('kpiScrapMonthBrl').textContent = formatCurrencyBRL(monthScrapBrl);
+      document.getElementById('kpiScrapYearBrlSub').textContent = `Acumulado no Ano (${viewFilter.activeYear}): ${formatCurrencyBRL(yearScrapBrl)}`;
+      document.getElementById('kpiScrapAvgPrice').textContent = `${formatCurrencyBRL(avgPriceKg)} /kg`;
+      document.getElementById('kpiScrapYearKgSub').textContent = `Peso Acumulado no Ano: ${formatValue(yearScrapKg, 2)}`;
+      document.getElementById('kpiScrapRatePct').textContent = scrapRatePct.toFixed(2).replace('.', ',') + '%';
 
       const sumWeeks = weeks.reduce((a, b) => a + b, 0);
       const visibleWeeks = weeks[4] > 0 ? weeks : weeks.slice(0, 4);
@@ -2062,7 +2453,6 @@
         `;
       }).join('');
 
-      // Tabela de Auditoria Completa (Operador, Turno, Hora e Paradas)
       const logsBody = document.getElementById('dailyLogsTableBody');
       if (!state.dailyLogs || state.dailyLogs.length === 0) {
         logsBody.innerHTML = `<tr><td colspan="9" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
@@ -2088,6 +2478,41 @@
                 <td>${downStr}</td>
                 <td>
                   <button class="btn-delete" onclick="deleteHistoryLogById('${log.id}')" title="Excluir este lançamento pelo ID único e reverter">
+                    🗑️ Excluir
+                  </button>
+                </td>
+              </tr>
+            `;
+          }).join('');
+      }
+
+      // Tabela de Lançamentos de Sucata (Aba 5)
+      const scrapBody = document.getElementById('scrapLogsTableBody');
+      const scrapList = state.scrapLogs || [];
+      if (scrapList.length === 0) {
+        scrapBody.innerHTML = `<tr><td colspan="10" style="color: var(--text-muted);">Nenhum lançamento de sucata registrado ainda. Use o formulário acima para calcular e lançar.</td></tr>`;
+      } else {
+        scrapBody.innerHTML = scrapList
+          .slice()
+          .reverse()
+          .map(s => {
+            const isSale = s.type === 'Venda de Sucata';
+            const badgeHtml = isSale
+              ? `<span class="badge-backlog-ok">💰 Venda</span>`
+              : `<span class="badge-backlog-pend">⚙️ Perda</span>`;
+            return `
+              <tr>
+                <td><strong>${formatDateBR(s.date)}</strong></td>
+                <td>${MONTH_NAMES[s.monthIndex]} / ${s.year}</td>
+                <td>${badgeHtml}</td>
+                <td><strong>${s.machine}</strong></td>
+                <td>${s.gauge}</td>
+                <td style="color: var(--orange); font-weight: 700;">${formatValue(s.weightKg, 2)}</td>
+                <td>${formatCurrencyBRL(s.unitPriceBrl)} /kg</td>
+                <td style="color: var(--emerald); font-weight: 700;">${formatCurrencyBRL(s.totalValueBrl)}</td>
+                <td style="color: var(--text-muted);">${s.notes || '-'}</td>
+                <td>
+                  <button class="btn-delete" onclick="deleteScrapLogById('${s.id}')" title="Excluir este registro de sucata">
                     🗑️ Excluir
                   </button>
                 </td>
@@ -2391,6 +2816,96 @@
           }
         }
       });
+
+      // 7. GRÁFICOS DA ABA 5: CONTROLE DE SUCATA
+      const scrapOrigins = ['GERAL / PÁTIO', 'ES02', 'EB10', 'EB12', '20B', 'PT 32'];
+      const monthScrapList = (state.scrapLogs || []).filter(s => Number(s.year) === viewFilter.activeYear && Number(s.monthIndex) === viewFilter.activeMonthIndex);
+
+      const scrapByOriginKg = scrapOrigins.map(orig => {
+        const sumKg = monthScrapList.filter(s => s.machine === orig).reduce((a, b) => a + Number(b.weightKg || 0), 0);
+        return +(sumKg * factor).toFixed(2);
+      });
+
+      const ctxScrapMach = document.getElementById('scrapByMachineChart').getContext('2d');
+      if (scrapMachineChart) scrapMachineChart.destroy();
+
+      scrapMachineChart = new Chart(ctxScrapMach, {
+        type: 'bar',
+        data: {
+          labels: scrapOrigins,
+          datasets: [{
+            label: `Peso de Sucata (${viewFilter.unit})`,
+            data: scrapByOriginKg,
+            backgroundColor: 'rgba(249, 115, 22, 0.78)',
+            borderColor: '#f97316',
+            borderWidth: 1.5,
+            borderRadius: 6
+          }]
+        },
+        options: {
+          animation: false,
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 22 } },
+          plugins: {
+            legend: { display: false },
+            datalabels: {
+              color: '#f8fafc',
+              anchor: 'end',
+              align: 'top',
+              font: { weight: 'bold', size: 10 },
+              formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+          }
+        }
+      });
+
+      const yearScrapList = (state.scrapLogs || []).filter(s => Number(s.year) === viewFilter.activeYear);
+      const monthlyScrapBrlSeries = MONTH_NAMES.map((_, mIdx) => {
+        return +yearScrapList.filter(s => Number(s.monthIndex) === mIdx).reduce((a, b) => a + Number(b.totalValueBrl || 0), 0).toFixed(2);
+      });
+
+      const ctxScrapTrend = document.getElementById('scrapMonthlyTrendChart').getContext('2d');
+      if (scrapTrendChart) scrapTrendChart.destroy();
+
+      scrapTrendChart = new Chart(ctxScrapTrend, {
+        type: 'bar',
+        data: {
+          labels: MONTH_NAMES.map(n => n.slice(0, 3)),
+          datasets: [{
+            label: 'Valor Total em Sucata (R$)',
+            data: monthlyScrapBrlSeries,
+            backgroundColor: 'rgba(245, 158, 11, 0.75)',
+            borderColor: '#f59e0b',
+            borderWidth: 1.5,
+            borderRadius: 5
+          }]
+        },
+        options: {
+          animation: false,
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 22 } },
+          plugins: {
+            legend: { labels: { color: '#cbd5e1' } },
+            datalabels: {
+              color: '#fbbf24',
+              anchor: 'end',
+              align: 'top',
+              font: { weight: 'bold', size: 9.5 },
+              formatter: (val) => val > 0 ? 'R$ ' + Math.round(val).toLocaleString('pt-BR') : ''
+            }
+          },
+          scales: {
+            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+          }
+        }
+      });
     }
 
     function createGauge(canvasEl, pct, colorHex) {
@@ -2419,7 +2934,6 @@
       });
     }
 
-    // LANÇAMENTO COMPLETO: PRODUÇÃO + OPERADOR + TURNO + PARADAS DE MÁQUINA
     async function handleLaunchProduction() {
       if (!requirePcpAuth()) return;
 
@@ -2531,7 +3045,6 @@
       await pushToCloud(newLog);
     }
 
-    // ATUALIZAR CARTEIRA DE PEDIDOS (BACKLOG POR BITOLA)
     async function handleUpdateBacklogDemand() {
       if (!requirePcpAuth()) return;
 
@@ -2727,6 +3240,7 @@
     window.addEventListener('DOMContentLoaded', async () => {
       updateLockButtonUI();
       setTodayDate();
+      updateScrapLiveCalculation();
       await syncFromCloud(true);
 
       setInterval(() => {
