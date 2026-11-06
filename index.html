@@ -1260,7 +1260,7 @@
     </div>
   </section>
 
-  <!-- ABA 5: CONTROLE E LANÇAMENTO DE SUCATA (PESO x VALOR = CONTA AUTOMÁTICA) -->
+  <!-- ABA 5: CONTROLE E LANÇAMENTO DE SUCATA (PESO x VALOR = SOMA E GRAVAÇÃO PERSISTENTE) -->
   <section id="controle-sucata" class="tab-section">
     <!-- KPIs DE SUCATA NO MÊS / ANO -->
     <div class="kpi-grid">
@@ -1294,7 +1294,7 @@
       <!-- FORMULÁRIO DE LANÇAMENTO DE SUCATA -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">♻️ Lançar Sucata (Cálculo Automático)</span>
+          <span class="panel-title">♻️ Lançar Sucata (+ Soma ao Saldo do Mês)</span>
         </div>
 
         <div class="split-2-cols">
@@ -1352,7 +1352,7 @@
 
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Peso da Sucata (em kg)</label>
+            <label>Peso da Sucata a Somar (em kg)</label>
             <input type="number" id="scrapWeightKgInput" step="0.01" placeholder="Ex: 850.50" oninput="updateScrapLiveCalculation('weight')" />
           </div>
 
@@ -1375,7 +1375,7 @@
         <!-- RESUMO DA CONTA EM TEMPO REAL -->
         <div class="scrap-calc-preview">
           <div class="calc-item">
-            <small>Peso Líquido</small>
+            <small>Peso do Lote</small>
             <strong id="previewScrapKg">0,00 kg</strong>
           </div>
           <div class="calc-item">
@@ -1383,18 +1383,18 @@
             <strong id="previewScrapUnitBrl">R$ 0,00 /kg</strong>
           </div>
           <div class="calc-item">
-            <small>Total Calculado</small>
+            <small>Total a Somar</small>
             <strong id="previewScrapTotalBrl" style="color: var(--emerald);">R$ 0,00</strong>
           </div>
         </div>
 
-        <button class="btn-action btn-orange" id="btnSaveScrap" onclick="handleLaunchScrap()">Registrar Sucata e Salvar na Nuvem</button>
+        <button class="btn-action btn-orange" id="btnSaveScrap" onclick="handleLaunchScrap()">+ Somar Lote de Sucata e Salvar na Nuvem</button>
       </div>
 
-      <!-- GRÁFICO 1: SUCATA POR MÁQUINA (KG E R$) -->
+      <!-- GRÁFICO 1: SUCATA POR MÁQUINA (KG) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Sucata por Origem / Máquina — <span id="scrapChartMonthTitle">OUTUBRO/2026</span></span>
+          <span class="panel-title">Sucata Acumulada por Origem — <span id="scrapChartMonthTitle">OUTUBRO/2026</span></span>
         </div>
         <div class="chart-box" style="height: 350px;">
           <canvas id="scrapByMachineChart"></canvas>
@@ -1415,17 +1415,17 @@
     <!-- TABELA DE REGISTROS DE SUCATA -->
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Relatório Detalhado de Lançamentos de Sucata (Peso, R$/kg e Valor Total)</span>
+        <span class="panel-title">Relatório Detalhado de Lançamentos de Sucata (Todos os Lotes Somados)</span>
         <div style="display: flex; gap: 8px;">
           <button class="btn-outline" onclick="exportScrapCSV()">📥 Exportar Sucata CSV</button>
-          <button class="btn-delete" onclick="clearAllScrapLogs()">🗑️ Limpar Histórico de Sucata</button>
+          <button class="btn-delete" onclick="clearAllScrapLogs()">🗑️ Limpar Histórico de Sucata do Mês</button>
         </div>
       </div>
       <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>Data</th>
+              <th>Data & Hora</th>
               <th>Mês / Ano</th>
               <th>Tipo</th>
               <th>Máquina / Origem</th>
@@ -1515,12 +1515,13 @@
       9: [16587, 11439, 7189, 3530.622, 0]
     };
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V13';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V14';
     const PENDING_SYNC_KEY = 'GRANDE_ACO_PENDING_OFFLINE_SYNC';
 
     let tvModeInterval = null;
     let pcpUnlockedSession = false;
     let lastCelebratedKey = '';
+    let lastLocalSaveTime = 0; // Proteção contra atraso de escrita do Google Sheets
 
     function triggerGoalConfettiOnce(periodKey) {
       if (lastCelebratedKey === periodKey) return;
@@ -1598,6 +1599,39 @@
       return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
+    // =========================================================================
+    // FUNÇÕES AUXILIARES DE SUCATA (GRAVADA DENTRO DE state.years[yr][mIdx])
+    // =========================================================================
+    function getMonthScrapList(yr, mIdx) {
+      ensureYearExists(yr);
+      const mObj = state.years[yr][mIdx];
+      if (!Array.isArray(mObj.scrapLogs)) mObj.scrapLogs = [];
+      return mObj.scrapLogs;
+    }
+
+    function getYearScrapList(yr) {
+      ensureYearExists(yr);
+      const list = [];
+      state.years[yr].forEach((mObj, mIdx) => {
+        if (Array.isArray(mObj.scrapLogs)) {
+          mObj.scrapLogs.forEach(s => list.push({ ...s, year: Number(yr), monthIndex: mIdx }));
+        }
+      });
+      return list;
+    }
+
+    function getAllScrapLogsFlat() {
+      const list = [];
+      Object.keys(state.years || {}).forEach(yr => {
+        state.years[yr].forEach((mObj, mIdx) => {
+          if (Array.isArray(mObj.scrapLogs)) {
+            mObj.scrapLogs.forEach(s => list.push({ ...s, year: Number(yr), monthIndex: mIdx }));
+          }
+        });
+      });
+      return list;
+    }
+
     function exportActiveMonthCSV() {
       const m = getActiveMonthObj();
       const rows = [
@@ -1628,12 +1662,13 @@
     }
 
     function exportScrapCSV() {
-      const logs = state.scrapLogs || [];
+      const logs = getAllScrapLogsFlat();
       const rows = [
         ['RELATORIO DE CONTROLE DE SUCATA - GRANDE ACO'],
-        ['DATA', 'MES/ANO', 'TIPO', 'MAQUINA/ORIGEM', 'BITOLA', 'PESO (KG)', 'PRECO UNITARIO (R$/KG)', 'VALOR TOTAL (R$)', 'OBSERVACAO'],
+        ['DATA', 'HORA', 'MES/ANO', 'TIPO', 'MAQUINA/ORIGEM', 'BITOLA', 'PESO (KG)', 'PRECO UNITARIO (R$/KG)', 'VALOR TOTAL (R$)', 'OBSERVACAO'],
         ...logs.map(s => [
           formatDateBR(s.date),
+          s.time || '',
           `${MONTH_NAMES[s.monthIndex]} / ${s.year}`,
           s.type,
           s.machine,
@@ -1718,6 +1753,8 @@
         weeks: [0, 0, 0, 0, 0],
         backlog: createEmptyBacklogMap(0),
         downtimeHours: createEmptyDowntimeMap(),
+        scrapLogs: [],
+        deletedScrapIds: [],
         items: cloneItemsWithTotal(0)
       }));
     }
@@ -1725,10 +1762,10 @@
     function createDefaultDatabase() {
       const todayIso = getTodayFilterState().selectedDate;
       const year2026 = createEmptyYearData();
-      year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[5]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(8277) };
-      year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[6]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(7216) };
-      year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, weeks: [...DEFAULT_2026_WEEKS[7]], backlog: createEmptyBacklogMap(1200), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(20246) };
-      year2026[8] = { name: 'SETEMBRO', producedKg: 30980, goalKg: 30000, weeks: [...DEFAULT_2026_WEEKS[8]], backlog: createEmptyBacklogMap(3400), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(30980) };
+      year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[5]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(8277) };
+      year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[6]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(7216) };
+      year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, weeks: [...DEFAULT_2026_WEEKS[7]], backlog: createEmptyBacklogMap(1200), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(20246) };
+      year2026[8] = { name: 'SETEMBRO', producedKg: 30980, goalKg: 30000, weeks: [...DEFAULT_2026_WEEKS[8]], backlog: createEmptyBacklogMap(3400), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(30980) };
       year2026[9] = {
         name: 'OUTUBRO',
         producedKg: 38745.622,
@@ -1736,6 +1773,8 @@
         weeks: [...DEFAULT_2026_WEEKS[9]],
         backlog: { ...DEFAULT_OCT_BACKLOG },
         downtimeHours: { 'ES02': 1.5, 'EB10': 2.0, 'EB12': 1.0, '20B': 0.5, 'PT 32': 0.0 },
+        scrapLogs: [],
+        deletedScrapIds: [],
         items: [
           { id: 'ES02_5,00 mm', machine: 'ES02', category: 'Estribadeira', gauge: '5,00 mm', kg: 3467.856 },
           { id: 'EB10_6,30 mm', machine: 'EB10', category: 'Estribadeira', gauge: '6,30 mm', kg: 5977.857 },
@@ -1748,8 +1787,8 @@
           { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
         ]
       };
-      year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(3300), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(0) };
-      year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(2200), downtimeHours: createEmptyDowntimeMap(), items: cloneItemsWithTotal(0) };
+      year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(3300), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(0) };
+      year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(2200), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(0) };
 
       return {
         updatedAt: Date.now(),
@@ -1775,15 +1814,15 @@
             downtimeHours: 0,
             downtimeReason: 'Sem Parada'
           }
-        ],
-        scrapLogs: []
+        ]
       };
     }
 
-    function upgradeDatabaseStructure(db) {
+    // Garante que qualquer sucata na raiz ou dentro dos meses seja preservada e nunca sobrescrita
+    function upgradeDatabaseStructure(db, currentLocalState = null) {
       if (!db || !db.years) return createDefaultDatabase();
       if (!db.pcpPin) db.pcpPin = '1234';
-      if (!Array.isArray(db.scrapLogs)) db.scrapLogs = [];
+
       Object.keys(db.years).forEach(yr => {
         db.years[yr].forEach((mObj, idx) => {
           if (!Array.isArray(mObj.weeks)) {
@@ -1802,8 +1841,52 @@
               ? { 'ES02': 1.5, 'EB10': 2.0, 'EB12': 1.0, '20B': 0.5, 'PT 32': 0.0 }
               : createEmptyDowntimeMap();
           }
+          if (!Array.isArray(mObj.scrapLogs)) mObj.scrapLogs = [];
+          if (!Array.isArray(mObj.deletedScrapIds)) mObj.deletedScrapIds = [];
         });
       });
+
+      // Migra eventuais logs de sucata antigos que estavam na raiz `db.scrapLogs` para dentro do mês correto
+      if (Array.isArray(db.scrapLogs) && db.scrapLogs.length > 0) {
+        db.scrapLogs.forEach(s => {
+          const yr = Number(s.year || 2026);
+          const mIdx = Number(s.monthIndex ?? 9);
+          if (!db.years[yr]) db.years[yr] = createEmptyYearData();
+          const mObj = db.years[yr][mIdx];
+          if (mObj && !mObj.deletedScrapIds.includes(s.id) && !mObj.scrapLogs.some(x => x.id === s.id)) {
+            mObj.scrapLogs.push(s);
+          }
+        });
+      }
+
+      // Mescla com os logs de sucata locais para garantir que nenhum lançamento local seja perdido por atraso da nuvem
+      if (currentLocalState && currentLocalState.years) {
+        Object.keys(currentLocalState.years).forEach(yr => {
+          if (!db.years[yr]) db.years[yr] = createEmptyYearData();
+          currentLocalState.years[yr].forEach((localMonth, mIdx) => {
+            const targetMonth = db.years[yr][mIdx];
+            if (!targetMonth) return;
+
+            // Une IDs deletados
+            const deletedSet = new Set([
+              ...(targetMonth.deletedScrapIds || []),
+              ...(localMonth.deletedScrapIds || [])
+            ]);
+            targetMonth.deletedScrapIds = Array.from(deletedSet);
+
+            // Une lançamentos de sucata por ID único (sem duplicar e sem apagar lançamentos anteriores)
+            const mapById = new Map();
+            (targetMonth.scrapLogs || []).forEach(s => {
+              if (!deletedSet.has(s.id)) mapById.set(s.id, s);
+            });
+            (localMonth.scrapLogs || []).forEach(s => {
+              if (!deletedSet.has(s.id)) mapById.set(s.id, s);
+            });
+            targetMonth.scrapLogs = Array.from(mapById.values());
+          });
+        });
+      }
+
       if (Array.isArray(db.dailyLogs)) {
         db.dailyLogs.forEach((l, i) => {
           if (!l.id) l.id = 'log_legacy_' + i + '_' + (l.date || '');
@@ -1887,6 +1970,11 @@
     async function syncFromCloud(forceRender = false) {
       if (isSavingToCloud) return;
 
+      // Se este PC acabou de gravar há menos de 6 segundos, aguarda o Google Sheets terminar de gravar
+      if (!forceRender && (Date.now() - lastLocalSaveTime < 6000)) {
+        return;
+      }
+
       if (!navigator.onLine) {
         updateCloudBadge('📦 Modo Offline Ativo (Cache Local)', false);
         return;
@@ -1918,7 +2006,7 @@
 
       if (cloudData && cloudData.years) {
         const hasChanged = forceRender || (cloudData.updatedAt !== state.updatedAt);
-        state = upgradeDatabaseStructure(cloudData);
+        state = upgradeDatabaseStructure(cloudData, state);
         saveLocalCache();
 
         if (hasChanged) {
@@ -1935,7 +2023,8 @@
 
     async function pushToCloud(lastLog = null) {
       isSavingToCloud = true;
-      state.updatedAt = Date.now();
+      lastLocalSaveTime = Date.now();
+      state.updatedAt = lastLocalSaveTime;
       saveLocalCache();
 
       if (!navigator.onLine) {
@@ -2111,7 +2200,7 @@
     }
 
     // =========================================================================
-    // CALCULADORA BIDIRECIONAL DE SUCATA EM TEMPO REAL
+    // CALCULADORA BIDIRECIONAL DE SUCATA EM TEMPO REAL (+ SOMA CUMULATIVA)
     // =========================================================================
     function onScrapCalcModeChange() {
       const mode = document.getElementById('scrapCalcModeSelect').value;
@@ -2170,18 +2259,20 @@
         return alert('Informe um valor financeiro válido (R$).');
       }
 
-      await syncFromCloud(false);
-
       ensureYearExists(yr);
       viewFilter.activeYear = yr;
       viewFilter.activeMonthIndex = mIdx;
       viewFilter.selectedDate = scrapDate;
 
-      if (!Array.isArray(state.scrapLogs)) state.scrapLogs = [];
+      const monthObj = state.years[yr][mIdx];
+      if (!Array.isArray(monthObj.scrapLogs)) monthObj.scrapLogs = [];
+
+      const nowTimeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
       const newScrap = {
-        id: 'scrap_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+        id: 'scrap_' + Date.now() + '_' + Math.floor(Math.random() * 10000),
         date: scrapDate,
+        time: nowTimeStr,
         year: yr,
         monthIndex: mIdx,
         type,
@@ -2193,43 +2284,62 @@
         notes
       };
 
-      state.scrapLogs.push(newScrap);
+      // SOMA AO HISTÓRICO DO MÊS (NUNCA SUBSTITUI OS ANTERIORES)
+      monthObj.scrapLogs.push(newScrap);
 
+      // Limpa apenas o Peso e a Observação (mantém o preço R$/kg preenchido para agilizar vários lançamentos seguidos!)
       document.getElementById('scrapWeightKgInput').value = '';
       document.getElementById('scrapTotalValueBrlInput').value = '';
       document.getElementById('scrapNotesInput').value = '';
       updateScrapLiveCalculation();
       syncFilterInputs();
       renderAll();
-      await pushToCloud(null);
+
+      await pushToCloud({
+        id: newScrap.id,
+        date: newScrap.date,
+        year: yr,
+        monthIndex: mIdx,
+        monthName: MONTH_NAMES[mIdx],
+        machine: newScrap.machine,
+        category: 'Sucata (' + newScrap.type + ')',
+        gauge: newScrap.gauge,
+        mode: '+ Sucata (' + formatCurrencyBRL(newScrap.totalValueBrl) + ')',
+        kg: newScrap.weightKg
+      });
     }
 
-    async function deleteScrapLogById(scrapId) {
+    async function deleteScrapLogById(yr, mIdx, scrapId) {
       if (!requirePcpAuth()) return;
-      if (!Array.isArray(state.scrapLogs)) return;
+      ensureYearExists(yr);
+      const monthObj = state.years[yr][mIdx];
+      if (!monthObj || !Array.isArray(monthObj.scrapLogs)) return;
 
-      const idx = state.scrapLogs.findIndex(s => s.id === scrapId);
+      const idx = monthObj.scrapLogs.findIndex(s => s.id === scrapId);
       if (idx === -1) return;
-      const target = state.scrapLogs[idx];
+      const target = monthObj.scrapLogs[idx];
 
       if (!confirm(`Deseja excluir o lançamento de sucata de ${formatValue(target.weightKg, 2)} (${formatCurrencyBRL(target.totalValueBrl)})?`)) {
         return;
       }
 
-      await syncFromCloud(false);
-      const freshIdx = (state.scrapLogs || []).findIndex(s => s.id === scrapId);
-      if (freshIdx !== -1) {
-        state.scrapLogs.splice(freshIdx, 1);
-        renderAll();
-        await pushToCloud(null);
-      }
+      if (!Array.isArray(monthObj.deletedScrapIds)) monthObj.deletedScrapIds = [];
+      monthObj.deletedScrapIds.push(scrapId);
+      monthObj.scrapLogs.splice(idx, 1);
+
+      renderAll();
+      await pushToCloud(null);
     }
 
     async function clearAllScrapLogs() {
       if (!requirePcpAuth()) return;
-      if (!confirm('Deseja limpar todo o histórico de sucata?')) return;
-      await syncFromCloud(false);
-      state.scrapLogs = [];
+      const m = getActiveMonthObj();
+      if (!confirm(`Deseja limpar todos os lançamentos de sucata de ${m.name}/${viewFilter.activeYear}?`)) return;
+
+      if (!Array.isArray(m.deletedScrapIds)) m.deletedScrapIds = [];
+      (m.scrapLogs || []).forEach(s => m.deletedScrapIds.push(s.id));
+      m.scrapLogs = [];
+
       renderAll();
       await pushToCloud(null);
     }
@@ -2303,10 +2413,9 @@
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
 
-      // KPIs da Aba 5 (Sucata)
-      const allScrap = state.scrapLogs || [];
-      const monthScrap = allScrap.filter(s => Number(s.year) === viewFilter.activeYear && Number(s.monthIndex) === viewFilter.activeMonthIndex);
-      const yearScrap = allScrap.filter(s => Number(s.year) === viewFilter.activeYear);
+      // KPIs da Aba 5 (Sucata Somada no Mês e no Ano)
+      const monthScrap = getMonthScrapList(viewFilter.activeYear, viewFilter.activeMonthIndex);
+      const yearScrap = getYearScrapList(viewFilter.activeYear);
 
       const monthScrapKg = monthScrap.reduce((a, b) => a + Number(b.weightKg || 0), 0);
       const monthScrapBrl = monthScrap.reduce((a, b) => a + Number(b.totalValueBrl || 0), 0);
@@ -2317,7 +2426,7 @@
       const scrapRatePct = m.producedKg > 0 ? (monthScrapKg / m.producedKg) * 100 : 0;
 
       document.getElementById('kpiScrapMonthKg').textContent = formatValue(monthScrapKg, 2);
-      document.getElementById('kpiScrapMonthSub').textContent = `Referência: ${m.name} / ${viewFilter.activeYear}`;
+      document.getElementById('kpiScrapMonthSub').textContent = `Referência: ${m.name} / ${viewFilter.activeYear} (${monthScrap.length} lotes)`;
       document.getElementById('kpiScrapMonthBrl').textContent = formatCurrencyBRL(monthScrapBrl);
       document.getElementById('kpiScrapYearBrlSub').textContent = `Acumulado no Ano (${viewFilter.activeYear}): ${formatCurrencyBRL(yearScrapBrl)}`;
       document.getElementById('kpiScrapAvgPrice').textContent = `${formatCurrencyBRL(avgPriceKg)} /kg`;
@@ -2488,11 +2597,15 @@
 
       // Tabela de Lançamentos de Sucata (Aba 5)
       const scrapBody = document.getElementById('scrapLogsTableBody');
-      const scrapList = state.scrapLogs || [];
+      const scrapList = getYearScrapList(viewFilter.activeYear);
       if (scrapList.length === 0) {
-        scrapBody.innerHTML = `<tr><td colspan="10" style="color: var(--text-muted);">Nenhum lançamento de sucata registrado ainda. Use o formulário acima para calcular e lançar.</td></tr>`;
+        scrapBody.innerHTML = `<tr><td colspan="10" style="color: var(--text-muted);">Nenhum lançamento de sucata registrado em ${viewFilter.activeYear}. Use o formulário acima para somar lotes.</td></tr>`;
       } else {
-        scrapBody.innerHTML = scrapList
+        const totalKgAll = scrapList.reduce((a, b) => a + Number(b.weightKg || 0), 0);
+        const totalBrlAll = scrapList.reduce((a, b) => a + Number(b.totalValueBrl || 0), 0);
+        const avgUnitAll = totalKgAll > 0 ? totalBrlAll / totalKgAll : 0;
+
+        const rowsHtml = scrapList
           .slice()
           .reverse()
           .map(s => {
@@ -2502,7 +2615,7 @@
               : `<span class="badge-backlog-pend">⚙️ Perda</span>`;
             return `
               <tr>
-                <td><strong>${formatDateBR(s.date)}</strong></td>
+                <td><strong>${formatDateBR(s.date)}</strong> <small style="color: var(--text-muted);">${s.time || ''}</small></td>
                 <td>${MONTH_NAMES[s.monthIndex]} / ${s.year}</td>
                 <td>${badgeHtml}</td>
                 <td><strong>${s.machine}</strong></td>
@@ -2512,13 +2625,25 @@
                 <td style="color: var(--emerald); font-weight: 700;">${formatCurrencyBRL(s.totalValueBrl)}</td>
                 <td style="color: var(--text-muted);">${s.notes || '-'}</td>
                 <td>
-                  <button class="btn-delete" onclick="deleteScrapLogById('${s.id}')" title="Excluir este registro de sucata">
+                  <button class="btn-delete" onclick="deleteScrapLogById(${s.year}, ${s.monthIndex}, '${s.id}')" title="Excluir este registro de sucata">
                     🗑️ Excluir
                   </button>
                 </td>
               </tr>
             `;
           }).join('');
+
+        const footerRow = `
+          <tr class="total-highlight">
+            <td colspan="5"><strong>TOTAL ACUMULADO (${scrapList.length} LANÇAMENTOS NO ANO)</strong></td>
+            <td><strong>${formatValue(totalKgAll, 2)}</strong></td>
+            <td><strong>Média: ${formatCurrencyBRL(avgUnitAll)} /kg</strong></td>
+            <td><strong>${formatCurrencyBRL(totalBrlAll)}</strong></td>
+            <td colspan="2"></td>
+          </tr>
+        `;
+
+        scrapBody.innerHTML = rowsHtml + footerRow;
       }
     }
 
@@ -2817,9 +2942,9 @@
         }
       });
 
-      // 7. GRÁFICOS DA ABA 5: CONTROLE DE SUCATA
+      // 7. GRÁFICOS DA ABA 5: CONTROLE DE SUCATA (SOMANDO TODOS OS LOTES DO MÊS E ANO)
       const scrapOrigins = ['GERAL / PÁTIO', 'ES02', 'EB10', 'EB12', '20B', 'PT 32'];
-      const monthScrapList = (state.scrapLogs || []).filter(s => Number(s.year) === viewFilter.activeYear && Number(s.monthIndex) === viewFilter.activeMonthIndex);
+      const monthScrapList = getMonthScrapList(viewFilter.activeYear, viewFilter.activeMonthIndex);
 
       const scrapByOriginKg = scrapOrigins.map(orig => {
         const sumKg = monthScrapList.filter(s => s.machine === orig).reduce((a, b) => a + Number(b.weightKg || 0), 0);
@@ -2834,7 +2959,7 @@
         data: {
           labels: scrapOrigins,
           datasets: [{
-            label: `Peso de Sucata (${viewFilter.unit})`,
+            label: `Peso Acumulado de Sucata (${viewFilter.unit})`,
             data: scrapByOriginKg,
             backgroundColor: 'rgba(249, 115, 22, 0.78)',
             borderColor: '#f97316',
@@ -2864,9 +2989,9 @@
         }
       });
 
-      const yearScrapList = (state.scrapLogs || []).filter(s => Number(s.year) === viewFilter.activeYear);
-      const monthlyScrapBrlSeries = MONTH_NAMES.map((_, mIdx) => {
-        return +yearScrapList.filter(s => Number(s.monthIndex) === mIdx).reduce((a, b) => a + Number(b.totalValueBrl || 0), 0).toFixed(2);
+      const monthlyScrapBrlSeries = months.map((mObj) => {
+        const list = mObj.scrapLogs || [];
+        return +list.reduce((a, b) => a + Number(b.totalValueBrl || 0), 0).toFixed(2);
       });
 
       const ctxScrapTrend = document.getElementById('scrapMonthlyTrendChart').getContext('2d');
@@ -2877,7 +3002,7 @@
         data: {
           labels: MONTH_NAMES.map(n => n.slice(0, 3)),
           datasets: [{
-            label: 'Valor Total em Sucata (R$)',
+            label: 'Valor Acumulado em Sucata (R$)',
             data: monthlyScrapBrlSeries,
             backgroundColor: 'rgba(245, 158, 11, 0.75)',
             borderColor: '#f59e0b',
@@ -2956,8 +3081,6 @@
       if ((isNaN(val) || val < 0) || (val === 0 && downHours <= 0)) {
         return alert('Informe um peso produzido válido (em kg) ou registre o tempo de parada.');
       }
-
-      await syncFromCloud(false);
 
       ensureYearExists(yr);
       viewFilter.activeYear = yr;
@@ -3053,8 +3176,6 @@
       const gauge = document.getElementById('backlogGaugeSelect').value;
       const demandVal = parseFloat(document.getElementById('backlogDemandInput').value) || 0;
 
-      await syncFromCloud(false);
-
       ensureYearExists(yr);
       viewFilter.activeYear = yr;
       viewFilter.activeMonthIndex = mIdx;
@@ -3080,8 +3201,6 @@
       const w4 = parseFloat(document.getElementById('w4Input').value) || 0;
       const w5 = parseFloat(document.getElementById('w5Input').value) || 0;
 
-      await syncFromCloud(false);
-
       ensureYearExists(yr);
       viewFilter.activeYear = yr;
       viewFilter.activeMonthIndex = mIdx;
@@ -3106,12 +3225,7 @@
         return;
       }
 
-      await syncFromCloud(false);
-
-      const freshIndex = state.dailyLogs.findIndex(l => l.id === logId);
-      if (freshIndex === -1) return alert('Este registro já foi removido por outro computador.');
-
-      const targetLog = state.dailyLogs[freshIndex];
+      const targetLog = state.dailyLogs[logIndex];
       if (targetLog && state.years[targetLog.year] && state.years[targetLog.year][targetLog.monthIndex]) {
         const monthObj = state.years[targetLog.year][targetLog.monthIndex];
         const itemIdx = monthObj.items.findIndex(i => i.machine === targetLog.machine && i.gauge === targetLog.gauge);
@@ -3151,7 +3265,7 @@
         monthObj.producedKg = Math.max(sumItems, sumWeeks);
       }
 
-      state.dailyLogs.splice(freshIndex, 1);
+      state.dailyLogs.splice(logIndex, 1);
       syncFilterInputs();
       renderAll();
       await pushToCloud(null);
@@ -3171,7 +3285,6 @@
 
       if (!confirm(msg)) return;
 
-      await syncFromCloud(false);
       const activeMonth = getActiveMonthObj();
       if (activeMonth.items[itemIdx]) {
         if (isBase) {
@@ -3188,7 +3301,6 @@
     async function clearAllHistoryLogs() {
       if (!requirePcpAuth()) return;
       if (!confirm('Deseja limpar toda a lista de histórico de lançamentos diários?')) return;
-      await syncFromCloud(false);
       state.dailyLogs = [];
       renderAll();
       await pushToCloud(null);
@@ -3201,8 +3313,6 @@
       const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
       const val = parseFloat(document.getElementById('inputGoalKg').value);
       if (isNaN(val) || val < 0) return alert('Informe uma meta válida em kg.');
-
-      await syncFromCloud(false);
 
       ensureYearExists(yr);
       viewFilter.activeYear = yr;
