@@ -550,8 +550,9 @@
     }
 
     .badge-backlog-pend {
-      background: rgba(239, 68, 68, 0.16);
-      color: #fca5a5;
+      background: rgba(168, 85, 247, 0.18);
+      color: #d8b4fe;
+      border: 1px solid rgba(168, 85, 247, 0.4);
       padding: 3px 7px;
       border-radius: 5px;
       font-weight: 600;
@@ -728,6 +729,24 @@
       color: var(--gold);
     }
 
+    .backlog-current-box {
+      background: rgba(168, 85, 247, 0.1);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 8px;
+      padding: 8px 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+    }
+
+    .backlog-current-box strong {
+      font-family: 'Chakra Petch', sans-serif;
+      color: #d8b4fe;
+      font-size: 1rem;
+    }
+
     @media print {
       body {
         background: #ffffff !important;
@@ -767,9 +786,9 @@
 
     <nav class="nav-tabs">
       <button class="tab-btn active" data-tab="visao-geral" onclick="switchTab('visao-geral', this)">1. Visão Geral (Telão)</button>
-      <button class="tab-btn" data-tab="maquinas-bitolas" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas, Bitolas & Backlog</button>
+      <button class="tab-btn" data-tab="maquinas-bitolas" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas, Bitolas & Carteira</button>
       <button class="tab-btn" data-tab="producao-semanal" onclick="switchTab('producao-semanal', this)">3. Produção Semanal</button>
-      <button class="tab-btn" data-tab="lancamentos-pcp" onclick="switchTab('lancamentos-pcp', this)">4. Lançamentos, Paradas & Metas</button>
+      <button class="tab-btn" data-tab="lancamentos-pcp" onclick="switchTab('lancamentos-pcp', this)">4. Lançamentos, Carteira & Metas</button>
       <button class="tab-btn" data-tab="controle-sucata" onclick="switchTab('controle-sucata', this)">5. ♻️ Controle de Sucata</button>
     </nav>
 
@@ -919,7 +938,7 @@
     </div>
   </section>
 
-  <!-- ABA 2: MÁQUINAS, BITOLAS & BACKLOG DE PEDIDOS -->
+  <!-- ABA 2: MÁQUINAS, BITOLAS & CARTEIRA DE PEDIDOS -->
   <section id="maquinas-bitolas" class="tab-section">
     <div class="bottom-grid" style="margin-bottom: 16px;">
       <div class="panel">
@@ -943,7 +962,7 @@
 
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Tabela Oficial de Produção, Uptime e Backlog Comercial por Bitola</span>
+        <span class="panel-title">Tabela Oficial de Produção e Carteira Restante por Bitola</span>
         <div class="reconcile-note" id="reconcileBanner"></div>
       </div>
       <div class="table-container">
@@ -955,9 +974,9 @@
               <th>Bitola</th>
               <th>Produzido no Mês</th>
               <th>Subtotal Máq.</th>
-              <th>Total da Bitola</th>
-              <th>Carteira / Pedido</th>
-              <th>Saldo / Backlog</th>
+              <th>Total Produzido da Bitola</th>
+              <th>Carteira Restante (A Produzir)</th>
+              <th>Status da Carteira</th>
               <th>Ação</th>
             </tr>
           </thead>
@@ -1005,13 +1024,13 @@
     </div>
   </section>
 
-  <!-- ABA 4: LANÇAMENTOS PCP, PARADAS, BACKLOG E AUDITORIA -->
+  <!-- ABA 4: LANÇAMENTOS PCP, PARADAS, CARTEIRA E AUDITORIA -->
   <section id="lancamentos-pcp" class="tab-section">
     <div class="pcp-grid">
-      <!-- 1. LANÇAR PRODUÇÃO + PARADA + OPERADOR/TURNO -->
+      <!-- 1. LANÇAR PRODUÇÃO (ABATE AUTOMATICAMENTE DA CARTEIRA DA BITOLA) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">1. Apontar Produção & Paradas (Chão de Fábrica)</span>
+          <span class="panel-title">1. Apontar Produção (Abate da Carteira Automaticamente)</span>
         </div>
 
         <div class="split-2-cols">
@@ -1081,7 +1100,7 @@
           <div class="form-row">
             <label>Modo de Apontamento</label>
             <select id="inputMode">
-              <option value="add">+ Somar Lote na Máquina/Semana</option>
+              <option value="add">+ Somar Lote (E Diminuir da Carteira)</option>
               <option value="set">= Substituir Total no Mês</option>
             </select>
           </div>
@@ -1110,7 +1129,7 @@
           </div>
         </div>
 
-        <button class="btn-action" id="btnLaunchProd" onclick="handleLaunchProduction()">Registrar Apontamento na Nuvem</button>
+        <button class="btn-action" id="btnLaunchProd" onclick="handleLaunchProduction()">Registrar Produção e Abater da Carteira</button>
       </div>
 
       <!-- 2. AJUSTE DIRETO DE PRODUÇÃO SEMANAL -->
@@ -1168,18 +1187,18 @@
         <button class="btn-action btn-sky" id="btnSaveWeeks" onclick="handleUpdateWeeksDirect()">Salvar Semanas do Mês</button>
       </div>
 
-      <!-- 3. METAS MENSAIS & CARTEIRA DE PEDIDOS (BACKLOG POR BITOLA) -->
+      <!-- 3. METAS MENSAIS & CARTEIRA DE PEDIDOS (COM OPÇÃO DE SOMAR OU SUBSTITUIR) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">3. Meta Mensal & Carteira de Pedidos (Backlog)</span>
+          <span class="panel-title">3. Meta Mensal & Carteira de Pedidos (A Produzir)</span>
         </div>
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Ano da Meta</label>
+            <label>Ano de Referência</label>
             <input type="number" id="goalYearInput" min="2000" max="2100" onchange="onGoalPeriodSelectChange()" />
           </div>
           <div class="form-row">
-            <label>Mês da Meta</label>
+            <label>Mês de Referência</label>
             <select id="goalMonthSelect" onchange="onGoalPeriodSelectChange()">
               <option value="0">JANEIRO</option>
               <option value="1">FEVEREIRO</option>
@@ -1204,9 +1223,15 @@
 
         <hr style="border: none; border-top: 1px solid var(--border-teal); margin: 14px 0;" />
 
+        <!-- VISOR DO SALDO ATUAL NA CARTEIRA DA BITOLA -->
+        <div class="backlog-current-box">
+          <span>Saldo Atual na Carteira (<span id="currentBacklogGaugeLabel">5,00 mm</span>):</span>
+          <strong id="currentBacklogValueDisplay">0,00 kg</strong>
+        </div>
+
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Bitola (Carteira Comercial)</label>
+            <label>Escolher Bitola da Carteira</label>
             <select id="backlogGaugeSelect" onchange="onBacklogGaugeSelectChange()">
               <option value="5,00 mm">Bitola 5,00 mm</option>
               <option value="6,30 mm">Bitola 6,30 mm</option>
@@ -1219,12 +1244,21 @@
               <option value="32,00 mm">Bitola 32,00 mm</option>
             </select>
           </div>
+
           <div class="form-row">
-            <label>Pedido / Demanda no Mês (kg)</label>
-            <input type="number" id="backlogDemandInput" step="100" placeholder="Ex: 8000" />
+            <label>Modo de Lançamento na Carteira</label>
+            <select id="backlogModeSelect">
+              <option value="add" selected>+ Somar ao que já tem na Carteira</option>
+              <option value="set">= Substituir Total da Carteira</option>
+            </select>
           </div>
         </div>
-        <button class="btn-action btn-purple" onclick="handleUpdateBacklogDemand()">Definir Demanda de Pedidos da Bitola</button>
+
+        <div class="form-row">
+          <label>Peso do Pedido / Carteira (em kg)</label>
+          <input type="number" id="backlogDemandInput" step="0.01" placeholder="Digite o peso do pedido para somar ou substituir" />
+        </div>
+        <button class="btn-action btn-purple" onclick="handleUpdateBacklogDemand()">Lançar na Carteira de Pedidos</button>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
           <span style="font-size: 0.74rem; color: var(--text-muted);">Segurança de Edição (PIN PCP)</span>
@@ -1260,9 +1294,8 @@
     </div>
   </section>
 
-  <!-- ABA 5: CONTROLE E LANÇAMENTO DE SUCATA (PESO x VALOR = SOMA E GRAVAÇÃO PERSISTENTE) -->
+  <!-- ABA 5: CONTROLE E LANÇAMENTO DE SUCATA -->
   <section id="controle-sucata" class="tab-section">
-    <!-- KPIs DE SUCATA NO MÊS / ANO -->
     <div class="kpi-grid">
       <div class="kpi-card">
         <div class="kpi-label">Peso Total de Sucata (Mês)</div>
@@ -1289,9 +1322,7 @@
       </div>
     </div>
 
-    <!-- FORMULÁRIO COM CALCULADORA DE SUCATA + GRÁFICOS DE SUCATA -->
     <div class="main-grid" style="grid-template-columns: 1.05fr 1fr 1fr;">
-      <!-- FORMULÁRIO DE LANÇAMENTO DE SUCATA -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">♻️ Lançar Sucata (+ Soma ao Saldo do Mês)</span>
@@ -1372,7 +1403,6 @@
           <input type="text" id="scrapNotesInput" placeholder="Ex: Caçamba 02 / Pontas de vergalhão" />
         </div>
 
-        <!-- RESUMO DA CONTA EM TEMPO REAL -->
         <div class="scrap-calc-preview">
           <div class="calc-item">
             <small>Peso do Lote</small>
@@ -1412,7 +1442,6 @@
       </div>
     </div>
 
-    <!-- TABELA DE REGISTROS DE SUCATA -->
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Relatório Detalhado de Lançamentos de Sucata (Todos os Lotes Somados)</span>
@@ -1446,7 +1475,7 @@
   <script>
     Chart.register(ChartDataLabels);
 
-    const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyK9MD0uW3zPKpn2nFQMMpOE6vJ042rFXrFp7FDNMUfgkwNTWr6HuZBNC7B7zoJJRA8/exec";
+    const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycby3X2Ho0H7BM1iwm204huX_e-ONEeApfL3JNFEDPilEo25QdwnVW2PlPPw2tpHENH5M/exec";
     const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V6";
 
     function getActiveCloudUrl() {
@@ -1515,13 +1544,13 @@
       9: [16587, 11439, 7189, 3530.622, 0]
     };
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V14';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V15';
     const PENDING_SYNC_KEY = 'GRANDE_ACO_PENDING_OFFLINE_SYNC';
 
     let tvModeInterval = null;
     let pcpUnlockedSession = false;
     let lastCelebratedKey = '';
-    let lastLocalSaveTime = 0; // Proteção contra atraso de escrita do Google Sheets
+    let lastLocalSaveTime = 0;
 
     function triggerGoalConfettiOnce(periodKey) {
       if (lastCelebratedKey === periodKey) return;
@@ -1599,9 +1628,6 @@
       return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     }
 
-    // =========================================================================
-    // FUNÇÕES AUXILIARES DE SUCATA (GRAVADA DENTRO DE state.years[yr][mIdx])
-    // =========================================================================
     function getMonthScrapList(yr, mIdx) {
       ensureYearExists(yr);
       const mObj = state.years[yr][mIdx];
@@ -1640,7 +1666,7 @@
         ['Produzido Total (kg)', m.producedKg],
         ['Meta Prevista (kg)', m.goalKg],
         [],
-        ['MAQUINA', 'CATEGORIA', 'BITOLA', 'PESO PRODUZIDO (KG)', 'DEMANDA CARTEIRA (KG)'],
+        ['MAQUINA', 'CATEGORIA', 'BITOLA', 'PESO PRODUZIDO (KG)', 'CARTEIRA RESTANTE A PRODUZIR (KG)'],
         ...m.items.map(i => [
           i.machine,
           i.category,
@@ -1762,10 +1788,10 @@
     function createDefaultDatabase() {
       const todayIso = getTodayFilterState().selectedDate;
       const year2026 = createEmptyYearData();
-      year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[5]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(8277) };
-      year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[6]], backlog: createEmptyBacklogMap(900), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(7216) };
-      year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, weeks: [...DEFAULT_2026_WEEKS[7]], backlog: createEmptyBacklogMap(1200), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(20246) };
-      year2026[8] = { name: 'SETEMBRO', producedKg: 30980, goalKg: 30000, weeks: [...DEFAULT_2026_WEEKS[8]], backlog: createEmptyBacklogMap(3400), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(30980) };
+      year2026[5] = { name: 'JUNHO', producedKg: 8277, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[5]], backlog: createEmptyBacklogMap(0), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(8277) };
+      year2026[6] = { name: 'JULHO', producedKg: 7216, goalKg: 8000, weeks: [...DEFAULT_2026_WEEKS[6]], backlog: createEmptyBacklogMap(0), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(7216) };
+      year2026[7] = { name: 'AGOSTO', producedKg: 20246, goalKg: 10000, weeks: [...DEFAULT_2026_WEEKS[7]], backlog: createEmptyBacklogMap(0), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(20246) };
+      year2026[8] = { name: 'SETEMBRO', producedKg: 30980, goalKg: 30000, weeks: [...DEFAULT_2026_WEEKS[8]], backlog: createEmptyBacklogMap(0), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(30980) };
       year2026[9] = {
         name: 'OUTUBRO',
         producedKg: 38745.622,
@@ -1787,8 +1813,8 @@
           { id: 'PT 32_32,00 mm', machine: 'PT 32', category: 'Dobradeira Manual', gauge: '32,00 mm', kg: 0.000 }
         ]
       };
-      year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(3300), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(0) };
-      year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(2200), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(0) };
+      year2026[10] = { name: 'NOVEMBRO', producedKg: 0, goalKg: 30000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(0), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(0) };
+      year2026[11] = { name: 'DEZEMBRO', producedKg: 0, goalKg: 20000, weeks: [0, 0, 0, 0, 0], backlog: createEmptyBacklogMap(0), downtimeHours: createEmptyDowntimeMap(), scrapLogs: [], deletedScrapIds: [], items: cloneItemsWithTotal(0) };
 
       return {
         updatedAt: Date.now(),
@@ -1811,6 +1837,7 @@
             rawMode: 'init',
             kg: 7552.335,
             prevKg: 7552.335,
+            deductedBacklogKg: 0,
             downtimeHours: 0,
             downtimeReason: 'Sem Parada'
           }
@@ -1818,7 +1845,6 @@
       };
     }
 
-    // Garante que qualquer sucata na raiz ou dentro dos meses seja preservada e nunca sobrescrita
     function upgradeDatabaseStructure(db, currentLocalState = null) {
       if (!db || !db.years) return createDefaultDatabase();
       if (!db.pcpPin) db.pcpPin = '1234';
@@ -1846,7 +1872,6 @@
         });
       });
 
-      // Migra eventuais logs de sucata antigos que estavam na raiz `db.scrapLogs` para dentro do mês correto
       if (Array.isArray(db.scrapLogs) && db.scrapLogs.length > 0) {
         db.scrapLogs.forEach(s => {
           const yr = Number(s.year || 2026);
@@ -1859,7 +1884,6 @@
         });
       }
 
-      // Mescla com os logs de sucata locais para garantir que nenhum lançamento local seja perdido por atraso da nuvem
       if (currentLocalState && currentLocalState.years) {
         Object.keys(currentLocalState.years).forEach(yr => {
           if (!db.years[yr]) db.years[yr] = createEmptyYearData();
@@ -1867,14 +1891,12 @@
             const targetMonth = db.years[yr][mIdx];
             if (!targetMonth) return;
 
-            // Une IDs deletados
             const deletedSet = new Set([
               ...(targetMonth.deletedScrapIds || []),
               ...(localMonth.deletedScrapIds || [])
             ]);
             targetMonth.deletedScrapIds = Array.from(deletedSet);
 
-            // Une lançamentos de sucata por ID único (sem duplicar e sem apagar lançamentos anteriores)
             const mapById = new Map();
             (targetMonth.scrapLogs || []).forEach(s => {
               if (!deletedSet.has(s.id)) mapById.set(s.id, s);
@@ -1970,7 +1992,6 @@
     async function syncFromCloud(forceRender = false) {
       if (isSavingToCloud) return;
 
-      // Se este PC acabou de gravar há menos de 6 segundos, aguarda o Google Sheets terminar de gravar
       if (!forceRender && (Date.now() - lastLocalSaveTime < 6000)) {
         return;
       }
@@ -2147,6 +2168,7 @@
       onBacklogGaugeSelectChange();
     }
 
+    // ATUALIZA O VISOR DO SALDO ATUAL DA CARTEIRA DA BITOLA SELECIONADA
     function onBacklogGaugeSelectChange() {
       const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
       const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
@@ -2154,7 +2176,9 @@
       ensureYearExists(yr);
       const mObj = state.years[yr][mIdx];
       if (!mObj.backlog) mObj.backlog = createEmptyBacklogMap(0);
-      document.getElementById('backlogDemandInput').value = mObj.backlog[g] || 0;
+      const currentVal = Number(mObj.backlog[g] || 0);
+      document.getElementById('currentBacklogGaugeLabel').textContent = g;
+      document.getElementById('currentBacklogValueDisplay').textContent = formatValue(currentVal, 2);
     }
 
     function onDirectWeekPeriodChange() {
@@ -2284,10 +2308,8 @@
         notes
       };
 
-      // SOMA AO HISTÓRICO DO MÊS (NUNCA SUBSTITUI OS ANTERIORES)
       monthObj.scrapLogs.push(newScrap);
 
-      // Limpa apenas o Peso e a Observação (mantém o preço R$/kg preenchido para agilizar vários lançamentos seguidos!)
       document.getElementById('scrapWeightKgInput').value = '';
       document.getElementById('scrapTotalValueBrlInput').value = '';
       document.getElementById('scrapNotesInput').value = '';
@@ -2413,7 +2435,6 @@
       document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
       document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
 
-      // KPIs da Aba 5 (Sucata Somada no Mês e no Ano)
       const monthScrap = getMonthScrapList(viewFilter.activeYear, viewFilter.activeMonthIndex);
       const yearScrap = getYearScrapList(viewFilter.activeYear);
 
@@ -2508,15 +2529,15 @@
           .filter(i => i.gauge === item.gauge)
           .reduce((acc, cur) => acc + cur.kg, 0);
 
-        const demandKg = Number(m.backlog[item.gauge] || 0);
-        const pendingKg = Math.max(0, demandKg - gaugeTotal);
-        const backlogHtml = demandKg === 0
-          ? `<span style="color: var(--text-muted);">Sem Pedido</span>`
-          : (pendingKg <= 0
-              ? `<span class="badge-backlog-ok">✅ Atendido (+${formatValue(gaugeTotal - demandKg, 0)})</span>`
-              : `<span class="badge-backlog-pend">⚠️ Falta ${formatValue(pendingKg, 0)}</span>`);
+        // m.backlog[item.gauge] já é o saldo restante na carteira (abatido automaticamente a cada produção)
+        const remainingCarteiraKg = Number(m.backlog[item.gauge] || 0);
+        const backlogHtml = (remainingCarteiraKg <= 0 && gaugeTotal === 0)
+          ? `<span style="color: var(--text-muted);">Sem Carteira</span>`
+          : (remainingCarteiraKg <= 0
+              ? `<span class="badge-backlog-ok">✅ Carteira Zerada / Concluída</span>`
+              : `<span class="badge-backlog-pend">⏳ Falta Produzir ${formatValue(remainingCarteiraKg, 2)}</span>`);
 
-        const isZero = item.kg === 0;
+        const isZero = item.kg === 0 && remainingCarteiraKg === 0;
         const badgeClass = item.category === 'Estribadeira' ? 'badge-estrib' : 'badge-dobra';
         const isExtraRow = !isBaseTemplateItem(item);
 
@@ -2528,7 +2549,7 @@
             <td>${formatValue(item.kg, 3)}</td>
             <td>${formatValue(machineTotal, 3)}</td>
             <td style="color: var(--gold); font-weight: 600;">${formatValue(gaugeTotal, 3)}</td>
-            <td>${formatValue(demandKg, 0)}</td>
+            <td style="color: #d8b4fe; font-weight: 700;">${formatValue(remainingCarteiraKg, 2)}</td>
             <td>${backlogHtml}</td>
             <td>
               <button class="btn-delete" onclick="removeOrZeroMachineRow(${idx})" title="${isExtraRow ? 'Excluir esta linha extra' : 'Zerar peso desta linha'}">
@@ -2595,7 +2616,6 @@
           }).join('');
       }
 
-      // Tabela de Lançamentos de Sucata (Aba 5)
       const scrapBody = document.getElementById('scrapLogsTableBody');
       const scrapList = getYearScrapList(viewFilter.activeYear);
       if (scrapList.length === 0) {
@@ -2836,7 +2856,7 @@
         }
       });
 
-      // 5. Gráfico Consolidado por Bitola vs. Carteira de Pedidos (Backlog Comercial)
+      // 5. Gráfico Consolidado por Bitola vs. Carteira de Pedidos (Restante a Produzir)
       const ctxGaugeOnly = document.getElementById('gaugeOnlyBarChart').getContext('2d');
       if (gaugeOnlyChart) gaugeOnlyChart.destroy();
 
@@ -2865,7 +2885,7 @@
             {
               label: `Carteira / Pedido (${viewFilter.unit})`,
               data: gaugeDemands,
-              backgroundColor: 'rgba(168, 85, 247, 0.5)',
+              backgroundColor: 'rgba(168, 85, 247, 0.55)',
               borderColor: '#a855f7',
               borderWidth: 1.5,
               borderRadius: 5
@@ -2942,7 +2962,7 @@
         }
       });
 
-      // 7. GRÁFICOS DA ABA 5: CONTROLE DE SUCATA (SOMANDO TODOS OS LOTES DO MÊS E ANO)
+      // 7. GRÁFICOS DA ABA 5: CONTROLE DE SUCATA
       const scrapOrigins = ['GERAL / PÁTIO', 'ES02', 'EB10', 'EB12', '20B', 'PT 32'];
       const monthScrapList = getMonthScrapList(viewFilter.activeYear, viewFilter.activeMonthIndex);
 
@@ -3059,6 +3079,9 @@
       });
     }
 
+    // =========================================================================
+    // LANÇAR PRODUÇÃO (DIMINUI AUTOMATICAMENTE O SALDO DA CARTEIRA DA BITOLA)
+    // =========================================================================
     async function handleLaunchProduction() {
       if (!requirePcpAuth()) return;
 
@@ -3094,6 +3117,9 @@
       if (!monthObj.downtimeHours) {
         monthObj.downtimeHours = createEmptyDowntimeMap();
       }
+      if (!monthObj.backlog) {
+        monthObj.backlog = createEmptyBacklogMap(0);
+      }
 
       let item = monthObj.items.find(i => i.machine === selectedMachine && i.gauge === selectedGauge);
       let wasCreatedNow = false;
@@ -3113,15 +3139,25 @@
 
       const prevKg = item.kg;
       const prevWeekKg = monthObj.weeks[wIdx] || 0;
+      const prevBacklogKg = Number(monthObj.backlog[selectedGauge] || 0);
+      let deductedBacklogKg = 0;
 
       if (val > 0 || mode === 'set') {
         if (mode === 'add') {
           item.kg = +(item.kg + val).toFixed(3);
           monthObj.weeks[wIdx] = +(prevWeekKg + val).toFixed(3);
+          // Abate automaticamente da Carteira daquela bitola
+          const newBacklog = Math.max(0, +(prevBacklogKg - val).toFixed(3));
+          deductedBacklogKg = +(prevBacklogKg - newBacklog).toFixed(3);
+          monthObj.backlog[selectedGauge] = newBacklog;
         } else {
           const diff = val - prevKg;
           item.kg = +val.toFixed(3);
           monthObj.weeks[wIdx] = Math.max(0, +(prevWeekKg + diff).toFixed(3));
+          // Se substituiu por um peso maior, desconta a diferença da carteira
+          const newBacklog = Math.max(0, +(prevBacklogKg - diff).toFixed(3));
+          deductedBacklogKg = +(prevBacklogKg - newBacklog).toFixed(3);
+          monthObj.backlog[selectedGauge] = newBacklog;
         }
       }
 
@@ -3148,11 +3184,12 @@
         machine: item.machine,
         category: item.category,
         gauge: item.gauge,
-        mode: val === 0 && downHours > 0 ? '⚠️ Registro de Parada' : (mode === 'add' ? '+ Lote Somado' : '= Total Substituído'),
+        mode: val === 0 && downHours > 0 ? '⚠️ Registro de Parada' : (mode === 'add' ? '+ Lote Somado (Abateu Carteira)' : '= Total Substituído'),
         rawMode: mode,
         kg: val,
         prevKg: prevKg,
         prevWeekKg: prevWeekKg,
+        deductedBacklogKg: deductedBacklogKg,
         downtimeHours: downHours,
         downtimeReason: downHours > 0 ? downReason : 'Sem Parada',
         wasCreatedNow: wasCreatedNow
@@ -3168,13 +3205,21 @@
       await pushToCloud(newLog);
     }
 
+    // =========================================================================
+    // LANÇAR NA CARTEIRA DE PEDIDOS (OPÇÃO DE SOMAR AO QUE JÁ TEM OU SUBSTITUIR)
+    // =========================================================================
     async function handleUpdateBacklogDemand() {
       if (!requirePcpAuth()) return;
 
       const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
       const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
       const gauge = document.getElementById('backlogGaugeSelect').value;
-      const demandVal = parseFloat(document.getElementById('backlogDemandInput').value) || 0;
+      const mode = document.getElementById('backlogModeSelect').value;
+      const demandVal = parseFloat(document.getElementById('backlogDemandInput').value);
+
+      if (isNaN(demandVal) || demandVal < 0) {
+        return alert('Informe um peso válido (em kg) para a Carteira de Pedidos.');
+      }
 
       ensureYearExists(yr);
       viewFilter.activeYear = yr;
@@ -3182,8 +3227,15 @@
 
       const mObj = state.years[yr][mIdx];
       if (!mObj.backlog) mObj.backlog = createEmptyBacklogMap(0);
-      mObj.backlog[gauge] = +demandVal.toFixed(2);
 
+      const currentVal = Number(mObj.backlog[gauge] || 0);
+      if (mode === 'add') {
+        mObj.backlog[gauge] = +(currentVal + demandVal).toFixed(3);
+      } else {
+        mObj.backlog[gauge] = +demandVal.toFixed(3);
+      }
+
+      document.getElementById('backlogDemandInput').value = '';
       syncFilterInputs();
       renderAll();
       await pushToCloud(null);
@@ -3221,7 +3273,7 @@
       if (logIndex === -1) return;
       const log = state.dailyLogs[logIndex];
 
-      if (!confirm(`Deseja excluir o registro de ${formatValue(log.kg, 3)} (${log.machine} - Bitola ${log.gauge}) e reverter esse valor?`)) {
+      if (!confirm(`Deseja excluir o registro de ${formatValue(log.kg, 3)} (${log.machine} - Bitola ${log.gauge}) e reverter esse valor na produção e na carteira?`)) {
         return;
       }
 
@@ -3246,6 +3298,12 @@
           } else {
             item.kg = 0;
           }
+        }
+
+        // Restaura na Carteira o peso que havia sido abatido por este lançamento
+        if (typeof targetLog.deductedBacklogKg === 'number' && targetLog.deductedBacklogKg !== 0) {
+          if (!monthObj.backlog) monthObj.backlog = createEmptyBacklogMap(0);
+          monthObj.backlog[targetLog.gauge] = Math.max(0, +((monthObj.backlog[targetLog.gauge] || 0) + targetLog.deductedBacklogKg).toFixed(3));
         }
 
         if (typeof targetLog.weekIndex === 'number' && Array.isArray(monthObj.weeks) && targetLog.kg > 0) {
