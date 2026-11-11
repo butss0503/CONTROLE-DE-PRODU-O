@@ -945,7 +945,7 @@
         <div class="panel-header">
           <span class="panel-title">Produção por Máquina e Bitola — <span id="machChartPeriod">OUTUBRO/2026</span></span>
         </div>
-        <div class="chart-box" style="height: 330px;">
+        <div class="chart-box" style="height: 340px;">
           <canvas id="machineBarChart"></canvas>
         </div>
       </div>
@@ -954,7 +954,7 @@
         <div class="panel-header">
           <span class="panel-title">Produzido vs. Carteira de Pedidos por Bitola — <span id="gaugeOnlyChartPeriod">OUTUBRO/2026</span></span>
         </div>
-        <div class="chart-box" style="height: 330px;">
+        <div class="chart-box" style="height: 340px;">
           <canvas id="gaugeOnlyBarChart"></canvas>
         </div>
       </div>
@@ -1475,8 +1475,23 @@
   <script>
     Chart.register(ChartDataLabels);
 
+    // =========================================================================
+    // URL CORRETA DO GOOGLE APPS SCRIPT RESTAURADA E FORÇADA COMO PADRÃO
+    // =========================================================================
     const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyK9MD0uW3zPKpn2nFQMMpOE6vJ042rFXrFp7FDNMUfgkwNTWr6HuZBNC7B7zoJJRA8/exec";
-    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V6";
+    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V8";
+
+    // Remove qualquer URL antiga que tenha ficado salva no cache do navegador
+    [
+      "GRANDE_ACO_CLOUD_URL",
+      "GRANDE_ACO_CUSTOM_GAS_URL",
+      "GRANDE_ACO_CUSTOM_GAS_URL_V2",
+      "GRANDE_ACO_CUSTOM_GAS_URL_V3",
+      "GRANDE_ACO_CUSTOM_GAS_URL_V4",
+      "GRANDE_ACO_CUSTOM_GAS_URL_V5",
+      "GRANDE_ACO_CUSTOM_GAS_URL_V6",
+      "GRANDE_ACO_CUSTOM_GAS_URL_V7"
+    ].forEach(k => localStorage.removeItem(k));
 
     function getActiveCloudUrl() {
       return localStorage.getItem(CUSTOM_URL_KEY) || DEFAULT_CLOUD_URL;
@@ -1544,7 +1559,7 @@
       9: [16587, 11439, 7189, 3530.622, 0]
     };
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V15';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V17';
     const PENDING_SYNC_KEY = 'GRANDE_ACO_PENDING_OFFLINE_SYNC';
 
     let tvModeInterval = null;
@@ -1958,7 +1973,7 @@
         let timer = setTimeout(() => {
           cleanup();
           reject(new Error('Timeout JSONP'));
-        }, 10000);
+        }, 7000);
 
         function cleanup() {
           clearTimeout(timer);
@@ -2012,31 +2027,32 @@
         cloudData = await fetchCloudJSONP(url);
       } catch (errJsonp) {
         try {
-          const res = await fetch(`${url}?t=${Date.now()}`, { method: 'GET', redirect: 'follow', cache: 'no-store' });
+          const sep = url.includes('?') ? '&' : '?';
+          const res = await fetch(`${url}${sep}t=${Date.now()}`, {
+            method: 'GET',
+            redirect: 'follow',
+            cache: 'no-store'
+          });
           cloudData = await res.json();
         } catch (errFetch) {
-          updateCloudBadge('⚠️ Offline / Fila Local Ativa', false);
+          updateCloudBadge('⚠️ Verifique a conexão ou o Apps Script', false);
           return;
         }
       }
 
       if (cloudData && cloudData.status === 'error') {
-        updateCloudBadge('⚠️ Erro no Apps Script', false);
+        updateCloudBadge('⚠️ Erro no Apps Script: ' + (cloudData.message || ''), false);
         return;
       }
 
       if (cloudData && cloudData.years) {
-        const hasChanged = forceRender || (cloudData.updatedAt !== state.updatedAt);
         state = upgradeDatabaseStructure(cloudData, state);
         saveLocalCache();
-
-        if (hasChanged) {
-          syncFilterInputs();
-          renderAll();
-        }
+        syncFilterInputs();
+        renderAll();
 
         const timeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        updateCloudBadge(`☁️ Nuvem OK (${timeStr})`, true);
+        updateCloudBadge(`☁️ Nuvem Sincronizada (${timeStr})`, true);
       } else if (cloudData && cloudData.empty) {
         await pushToCloud(null);
       }
@@ -2067,13 +2083,14 @@
       if (btnScrap) btnScrap.disabled = true;
 
       const url = getActiveCloudUrl();
+      const payloadStr = JSON.stringify({ state, lastLog });
 
       try {
         await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify({ state, lastLog })
+          body: payloadStr
         });
 
         localStorage.removeItem(PENDING_SYNC_KEY);
@@ -2168,7 +2185,6 @@
       onBacklogGaugeSelectChange();
     }
 
-    // ATUALIZA O VISOR DO SALDO ATUAL DA CARTEIRA DA BITOLA SELECIONADA
     function onBacklogGaugeSelectChange() {
       const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
       const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
@@ -2223,9 +2239,6 @@
       renderAll();
     }
 
-    // =========================================================================
-    // CALCULADORA BIDIRECIONAL DE SUCATA EM TEMPO REAL (+ SOMA CUMULATIVA)
-    // =========================================================================
     function onScrapCalcModeChange() {
       const mode = document.getElementById('scrapCalcModeSelect').value;
       const unitRow = document.getElementById('scrapUnitPriceRow');
@@ -2529,7 +2542,6 @@
           .filter(i => i.gauge === item.gauge)
           .reduce((acc, cur) => acc + cur.kg, 0);
 
-        // m.backlog[item.gauge] já é o saldo restante na carteira (abatido automaticamente a cada produção)
         const remainingCarteiraKg = Number(m.backlog[item.gauge] || 0);
         const backlogHtml = (remainingCarteiraKg <= 0 && gaugeTotal === 0)
           ? `<span style="color: var(--text-muted);">Sem Carteira</span>`
@@ -2750,7 +2762,7 @@
               ticks: { color: '#94a3b8' },
               grid: { color: 'rgba(255,255,255,0.06)' },
               beginAtZero: true,
-              suggestedMax: maxValMonthly * 1.24
+              suggestedMax: maxValMonthly * 1.25
             }
           }
         }
@@ -2760,13 +2772,16 @@
       const ctxOverWeek = document.getElementById('overviewWeeklyChart').getContext('2d');
       if (overviewWeeklyChart) overviewWeeklyChart.destroy();
 
+      const weekPlotData = activeWeeksData.map(w => +(w * factor).toFixed(2));
+      const maxOverWeek = Math.max(...weekPlotData, 10);
+
       overviewWeeklyChart = new Chart(ctxOverWeek, {
         type: 'bar',
         data: {
           labels: activeWeekLabels,
           datasets: [{
             label: `Produção Semanal (${viewFilter.unit})`,
-            data: activeWeeksData.map(w => +(w * factor).toFixed(2)),
+            data: weekPlotData,
             backgroundColor: [
               'rgba(56, 189, 248, 0.78)',
               'rgba(45, 212, 191, 0.78)',
@@ -2783,7 +2798,7 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 20 } },
+          layout: { padding: { top: 24 } },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -2796,7 +2811,12 @@
           },
           scales: {
             x: { ticks: { color: '#cbd5e1', font: { weight: '600' } }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            y: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              beginAtZero: true,
+              suggestedMax: maxOverWeek * 1.24
+            }
           }
         }
       });
@@ -2817,13 +2837,16 @@
       const ctxMach = document.getElementById('machineBarChart').getContext('2d');
       if (machineChart) machineChart.destroy();
 
+      const machPlotData = m.items.map(i => +(i.kg * factor).toFixed(3));
+      const maxMachVal = Math.max(...machPlotData, 10);
+
       machineChart = new Chart(ctxMach, {
         type: 'bar',
         data: {
           labels: m.items.map(i => `${i.machine} (${i.gauge})`),
           datasets: [{
             label: `Peso Produzido (${viewFilter.unit})`,
-            data: m.items.map(i => +(i.kg * factor).toFixed(3)),
+            data: machPlotData,
             backgroundColor: m.items.map(i =>
               i.category === 'Estribadeira' ? 'rgba(45, 212, 191, 0.75)' : 'rgba(245, 158, 11, 0.8)'
             ),
@@ -2838,7 +2861,7 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 20 } },
+          layout: { padding: { top: 24 } },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -2851,12 +2874,17 @@
           },
           scales: {
             x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            y: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              beginAtZero: true,
+              suggestedMax: maxMachVal * 1.24
+            }
           }
         }
       });
 
-      // 5. Gráfico Consolidado por Bitola vs. Carteira de Pedidos (Restante a Produzir)
+      // 5. Gráfico Consolidado por Bitola vs. Carteira de Pedidos (COM MARGEM ANTI-COLISÃO NA LEGENDA)
       const ctxGaugeOnly = document.getElementById('gaugeOnlyBarChart').getContext('2d');
       if (gaugeOnlyChart) gaugeOnlyChart.destroy();
 
@@ -2868,6 +2896,7 @@
       });
 
       const gaugeDemands = ALL_GAUGES.map(gName => +(((m.backlog && m.backlog[gName]) || 0) * factor).toFixed(2));
+      const maxGaugeOrBacklog = Math.max(...gaugeTotals, ...gaugeDemands, 10);
 
       gaugeOnlyChart = new Chart(ctxGaugeOnly, {
         type: 'bar',
@@ -2880,15 +2909,37 @@
               backgroundColor: 'rgba(52, 211, 153, 0.78)',
               borderColor: '#34d399',
               borderWidth: 1.5,
-              borderRadius: 5
+              borderRadius: 5,
+              datalabels: {
+                color: '#34d399',
+                backgroundColor: 'rgba(6, 13, 16, 0.88)',
+                borderRadius: 4,
+                padding: { top: 2, bottom: 2, left: 4, right: 4 },
+                anchor: 'end',
+                align: 'top',
+                offset: 3,
+                font: { weight: 'bold', size: 9.5 },
+                formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
+              }
             },
             {
               label: `Carteira / Pedido (${viewFilter.unit})`,
               data: gaugeDemands,
-              backgroundColor: 'rgba(168, 85, 247, 0.55)',
+              backgroundColor: 'rgba(168, 85, 247, 0.58)',
               borderColor: '#a855f7',
               borderWidth: 1.5,
-              borderRadius: 5
+              borderRadius: 5,
+              datalabels: {
+                color: '#e9d5ff',
+                backgroundColor: 'rgba(6, 13, 16, 0.88)',
+                borderRadius: 4,
+                padding: { top: 2, bottom: 2, left: 4, right: 4 },
+                anchor: 'end',
+                align: 'top',
+                offset: 3,
+                font: { weight: 'bold', size: 9.5 },
+                formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
+              }
             }
           ]
         },
@@ -2896,20 +2947,22 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 22 } },
+          layout: { padding: { top: 10 } },
           plugins: {
-            legend: { labels: { color: '#cbd5e1' } },
-            datalabels: {
-              color: '#f8fafc',
-              anchor: 'end',
-              align: 'top',
-              font: { weight: 'bold', size: 9.5 },
-              formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
+            legend: {
+              position: 'top',
+              labels: { color: '#cbd5e1', padding: 16, font: { weight: '600' } }
             }
           },
           scales: {
             x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            y: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              beginAtZero: true,
+              // Garante sempre 26% de folga acima da maior barra para nunca encostar na legenda!
+              suggestedMax: maxGaugeOrBacklog * 1.26
+            }
           }
         }
       });
@@ -2925,6 +2978,12 @@
       const anyMonthHasW5 = listToPlot.some(item => item.weeks && item.weeks[4] > 0);
       const multiWeekLabels = anyMonthHasW5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
       const weekColors = ['#38bdf8', '#2dd4bf', '#34d399', '#f59e0b', '#a855f7'];
+
+      const allMultiValues = [];
+      listToPlot.forEach(item => {
+        (item.weeks || []).forEach(w => allMultiValues.push(+(w * factor).toFixed(1)));
+      });
+      const maxMultiWeekVal = Math.max(...allMultiValues, 10);
 
       weeklyMultiMonthChart = new Chart(ctxWeekMulti, {
         type: 'bar',
@@ -2943,9 +3002,9 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 24 } },
+          layout: { padding: { top: 20 } },
           plugins: {
-            legend: { labels: { color: '#cbd5e1', font: { size: 12, weight: '600' } } },
+            legend: { labels: { color: '#cbd5e1', padding: 14, font: { size: 12, weight: '600' } } },
             datalabels: {
               color: '#f8fafc',
               anchor: 'end',
@@ -2957,7 +3016,12 @@
           },
           scales: {
             x: { ticks: { color: '#e2e8f0', font: { size: 12, weight: '600' } }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            y: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              beginAtZero: true,
+              suggestedMax: maxMultiWeekVal * 1.24
+            }
           }
         }
       });
@@ -2970,6 +3034,7 @@
         const sumKg = monthScrapList.filter(s => s.machine === orig).reduce((a, b) => a + Number(b.weightKg || 0), 0);
         return +(sumKg * factor).toFixed(2);
       });
+      const maxScrapOriginVal = Math.max(...scrapByOriginKg, 10);
 
       const ctxScrapMach = document.getElementById('scrapByMachineChart').getContext('2d');
       if (scrapMachineChart) scrapMachineChart.destroy();
@@ -2991,7 +3056,7 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 22 } },
+          layout: { padding: { top: 24 } },
           plugins: {
             legend: { display: false },
             datalabels: {
@@ -3004,7 +3069,12 @@
           },
           scales: {
             x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            y: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              beginAtZero: true,
+              suggestedMax: maxScrapOriginVal * 1.24
+            }
           }
         }
       });
@@ -3013,6 +3083,7 @@
         const list = mObj.scrapLogs || [];
         return +list.reduce((a, b) => a + Number(b.totalValueBrl || 0), 0).toFixed(2);
       });
+      const maxScrapBrlVal = Math.max(...monthlyScrapBrlSeries, 10);
 
       const ctxScrapTrend = document.getElementById('scrapMonthlyTrendChart').getContext('2d');
       if (scrapTrendChart) scrapTrendChart.destroy();
@@ -3036,7 +3107,7 @@
           maintainAspectRatio: false,
           layout: { padding: { top: 22 } },
           plugins: {
-            legend: { labels: { color: '#cbd5e1' } },
+            legend: { labels: { color: '#cbd5e1', padding: 14 } },
             datalabels: {
               color: '#fbbf24',
               anchor: 'end',
@@ -3047,7 +3118,12 @@
           },
           scales: {
             x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.06)' }, beginAtZero: true }
+            y: {
+              ticks: { color: '#94a3b8' },
+              grid: { color: 'rgba(255,255,255,0.06)' },
+              beginAtZero: true,
+              suggestedMax: maxScrapBrlVal * 1.25
+            }
           }
         }
       });
@@ -3079,9 +3155,6 @@
       });
     }
 
-    // =========================================================================
-    // LANÇAR PRODUÇÃO (DIMINUI AUTOMATICAMENTE O SALDO DA CARTEIRA DA BITOLA)
-    // =========================================================================
     async function handleLaunchProduction() {
       if (!requirePcpAuth()) return;
 
@@ -3146,7 +3219,6 @@
         if (mode === 'add') {
           item.kg = +(item.kg + val).toFixed(3);
           monthObj.weeks[wIdx] = +(prevWeekKg + val).toFixed(3);
-          // Abate automaticamente da Carteira daquela bitola
           const newBacklog = Math.max(0, +(prevBacklogKg - val).toFixed(3));
           deductedBacklogKg = +(prevBacklogKg - newBacklog).toFixed(3);
           monthObj.backlog[selectedGauge] = newBacklog;
@@ -3154,7 +3226,6 @@
           const diff = val - prevKg;
           item.kg = +val.toFixed(3);
           monthObj.weeks[wIdx] = Math.max(0, +(prevWeekKg + diff).toFixed(3));
-          // Se substituiu por um peso maior, desconta a diferença da carteira
           const newBacklog = Math.max(0, +(prevBacklogKg - diff).toFixed(3));
           deductedBacklogKg = +(prevBacklogKg - newBacklog).toFixed(3);
           monthObj.backlog[selectedGauge] = newBacklog;
@@ -3205,9 +3276,6 @@
       await pushToCloud(newLog);
     }
 
-    // =========================================================================
-    // LANÇAR NA CARTEIRA DE PEDIDOS (OPÇÃO DE SOMAR AO QUE JÁ TEM OU SUBSTITUIR)
-    // =========================================================================
     async function handleUpdateBacklogDemand() {
       if (!requirePcpAuth()) return;
 
@@ -3300,7 +3368,6 @@
           }
         }
 
-        // Restaura na Carteira o peso que havia sido abatido por este lançamento
         if (typeof targetLog.deductedBacklogKg === 'number' && targetLog.deductedBacklogKg !== 0) {
           if (!monthObj.backlog) monthObj.backlog = createEmptyBacklogMap(0);
           monthObj.backlog[targetLog.gauge] = Math.max(0, +((monthObj.backlog[targetLog.gauge] || 0) + targetLog.deductedBacklogKg).toFixed(3));
