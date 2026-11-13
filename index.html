@@ -3,28 +3,52 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#060d10" />
+  <meta name="theme-color" content="#000000" />
   <title>GRANDE AÇO | Dashboard MES, PCP & Controle de Sucata</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-main: #060d10;
-      --bg-card: #0c181d;
-      --bg-card-grad: linear-gradient(145deg, rgba(16, 36, 44, 0.88) 0%, rgba(9, 20, 24, 0.96) 100%);
-      --border-teal: rgba(45, 212, 191, 0.24);
-      --teal-bright: #2dd4bf;
-      --teal-glow: rgba(45, 212, 191, 0.16);
-      --emerald: #34d399;
-      --gold: #f59e0b;
-      --orange: #f97316;
-      --sky: #38bdf8;
-      --purple: #a855f7;
-      --danger: #ef4444;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
+      /* REVOLUT DESIGN TOKENS */
+      --primary: #494fdf;
+      --primary-bright: #4f55f1;
+      --primary-deep: #3a40c4;
+      --on-primary: #ffffff;
+
+      --canvas-dark: #000000;
+      --canvas-light: #ffffff;
+      --surface-deep: #0a0a0a;
+      --surface-elevated: #16181a;
+      --surface-soft: #f4f4f4;
+
+      --ink: #191c1f;
+      --on-dark: #ffffff;
+      --on-dark-mute: rgba(255, 255, 255, 0.72);
+      --stone: #8d969e;
+      --faint: #c9c9cd;
+
+      --hairline-dark: rgba(255, 255, 255, 0.12);
+      --hairline-strong: rgba(255, 255, 255, 0.28);
+      --divider-soft: rgba(255, 255, 255, 0.06);
+
+      /* SEMANTIC & ILLUSTRATION PALETTE */
+      --accent-teal: #00a87e;
+      --accent-light-blue: #007bc2;
+      --accent-light-green: #428619;
+      --accent-yellow: #b09000;
+      --accent-warning: #ec7e00;
+      --accent-pink: #e61e49;
+      --accent-danger: #e23b4a;
+      --accent-brown: #936d62;
+
+      /* SHAPES */
+      --rounded-sm: 8px;
+      --rounded-md: 12px;
+      --rounded-lg: 20px;
+      --rounded-xl: 28px;
+      --rounded-full: 9999px;
     }
 
     * {
@@ -34,96 +58,104 @@
     }
 
     body {
-      background-color: var(--bg-main);
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(45, 212, 191, 0.06), transparent 35%),
-        radial-gradient(circle at 85% 80%, rgba(245, 158, 11, 0.05), transparent 35%);
-      color: var(--text-main);
-      font-family: 'Inter', sans-serif;
+      background-color: var(--canvas-dark);
+      color: var(--on-dark);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 400;
+      font-size: 15px;
+      line-height: 1.5;
+      letter-spacing: 0.24px;
       min-height: 100vh;
-      padding: 16px 22px;
+      padding: 20px 28px;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* TOPBAR */
+    /* TOPBAR (NAV-BAR) */
     .topbar {
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 14px;
-      padding-bottom: 16px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid var(--border-teal);
+      gap: 16px;
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--hairline-dark);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
     }
 
     .brand-logo {
-      background: linear-gradient(135deg, #0ea5e9, #2dd4bf);
-      color: #041014;
-      font-family: 'Chakra Petch', sans-serif;
-      font-weight: 700;
-      font-size: 1.45rem;
-      padding: 8px 13px;
-      border-radius: 8px;
-      letter-spacing: 1px;
-      box-shadow: 0 0 18px rgba(45, 212, 191, 0.3);
+      background: var(--primary);
+      color: var(--on-primary);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 1.25rem;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--rounded-md);
+      letter-spacing: -0.02em;
     }
 
     .brand-title h1 {
-      font-family: 'Chakra Petch', sans-serif;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 500;
       font-size: 1.35rem;
-      letter-spacing: 1.5px;
-      color: var(--gold);
-      text-transform: uppercase;
+      line-height: 1.1;
+      letter-spacing: -0.32px;
+      color: var(--on-dark);
     }
 
     .brand-title span {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      letter-spacing: 0.5px;
+      display: block;
+      font-size: 0.75rem;
+      color: var(--on-dark-mute);
+      letter-spacing: 0.24px;
+      margin-top: 2px;
     }
 
-    /* TABS DE NAVEGAÇÃO */
+    /* SUB-NAV PILLS (TABS) */
     .nav-tabs {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
-      background: rgba(12, 24, 29, 0.9);
-      padding: 5px;
-      border-radius: 10px;
-      border: 1px solid var(--border-teal);
+      gap: 8px;
+      background: var(--surface-deep);
+      padding: 6px;
+      border-radius: var(--rounded-full);
+      border: 1px solid var(--hairline-dark);
     }
 
     .tab-btn {
       background: transparent;
       border: none;
-      color: var(--text-muted);
-      font-family: 'Chakra Petch', sans-serif;
+      color: var(--on-dark-mute);
+      font-family: 'Inter', sans-serif;
       font-weight: 600;
       font-size: 0.84rem;
-      padding: 8px 13px;
-      border-radius: 7px;
+      letter-spacing: 0.16px;
+      padding: 8px 16px;
+      border-radius: var(--rounded-full);
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: background 0.18s ease, color 0.18s ease;
     }
 
     .tab-btn:hover {
-      color: var(--text-main);
+      color: var(--on-dark);
+      background: var(--surface-elevated);
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, rgba(45, 212, 191, 0.22), rgba(16, 185, 129, 0.15));
-      color: var(--teal-bright);
-      border: 1px solid rgba(45, 212, 191, 0.45);
-      box-shadow: 0 0 12px var(--teal-glow);
+      background: var(--canvas-light);
+      color: var(--canvas-dark);
     }
 
-    /* BARRA DE CALENDÁRIO GLOBAL E FILTROS */
+    /* FILTROS DE CALENDÁRIO */
     .top-filters {
       display: flex;
       flex-wrap: wrap;
@@ -134,18 +166,19 @@
     .filter-group {
       display: flex;
       flex-direction: column;
-      background: var(--bg-card);
-      border: 1px solid var(--border-teal);
-      padding: 4px 10px;
-      border-radius: 8px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline-dark);
+      padding: 6px 14px;
+      border-radius: var(--rounded-md);
     }
 
     .filter-group label {
-      font-size: 0.62rem;
+      font-size: 0.65rem;
       text-transform: uppercase;
-      color: var(--teal-bright);
-      letter-spacing: 0.5px;
-      margin-bottom: 1px;
+      color: var(--stone);
+      letter-spacing: 0.4px;
+      font-weight: 600;
+      margin-bottom: 2px;
     }
 
     .filter-group select,
@@ -153,44 +186,49 @@
     .filter-group input[type="number"] {
       background: transparent;
       border: none;
-      color: var(--text-main);
-      font-family: 'Chakra Petch', sans-serif;
+      color: var(--on-dark);
+      font-family: 'Inter', sans-serif;
       font-weight: 600;
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       outline: none;
       cursor: pointer;
       color-scheme: dark;
     }
 
     .filter-group select option {
-      background: #0c181d;
-      color: #fff;
+      background: var(--surface-elevated);
+      color: var(--on-dark);
     }
 
     .year-stepper {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
 
     .year-btn {
-      background: rgba(45, 212, 191, 0.12);
-      border: 1px solid rgba(45, 212, 191, 0.3);
-      color: var(--teal-bright);
-      border-radius: 4px;
-      padding: 1px 6px;
-      font-size: 0.75rem;
+      background: var(--canvas-dark);
+      border: 1px solid var(--hairline-dark);
+      color: var(--on-dark);
+      border-radius: var(--rounded-full);
+      width: 22px;
+      height: 22px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
       cursor: pointer;
     }
 
     .year-btn:hover {
-      background: rgba(45, 212, 191, 0.28);
+      background: var(--canvas-light);
+      color: var(--canvas-dark);
     }
 
-    /* SEÇÕES DE ABAS */
+    /* SEÇÕES */
     .tab-section {
       display: none;
-      animation: fadeIn 0.25s ease;
+      animation: fadeIn 0.2s ease;
     }
 
     .tab-section.active {
@@ -198,142 +236,135 @@
     }
 
     @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(4px); }
+      from { opacity: 0; transform: translateY(3px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* FAIXA DE PERÍODO ATIVO + STATUS DA NUVEM + FERRAMENTAS */
+    /* FAIXA DE PERÍODO & FERRAMENTAS */
     .period-banner {
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
-      background: rgba(45, 212, 191, 0.07);
-      border: 1px solid var(--border-teal);
-      border-radius: 10px;
-      padding: 8px 16px;
-      margin-bottom: 16px;
-      font-size: 0.84rem;
+      gap: 12px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline-dark);
+      border-radius: var(--rounded-lg);
+      padding: 12px 20px;
+      margin-bottom: 20px;
+      font-size: 0.86rem;
     }
 
     .period-banner strong {
-      color: var(--gold);
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 0.95rem;
+      color: var(--on-dark);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
     }
 
     .cloud-actions {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
-    .cloud-badge {
+    .badge-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.74rem;
+      padding: 5px 12px;
+      border-radius: var(--rounded-full);
+      font-size: 0.76rem;
       font-weight: 600;
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: var(--surface-deep);
+      border: 1px solid var(--hairline-dark);
+      color: var(--on-dark);
     }
 
-    .cloud-badge.online {
-      background: rgba(52, 211, 153, 0.15);
-      color: var(--emerald);
-      border-color: rgba(52, 211, 153, 0.4);
+    .badge-pill.online {
+      border-color: rgba(0, 168, 126, 0.45);
+      color: #34d399;
     }
 
-    .cloud-badge.local {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--gold);
-      border-color: rgba(245, 158, 11, 0.4);
+    .badge-pill.local {
+      border-color: rgba(236, 126, 0, 0.5);
+      color: #fbbf24;
     }
 
-    /* KPI BIG NUMBERS */
+    /* KPI CARDS (PLAN-CARD & PLAN-CARD-FEATURED) */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(195px, 1fr));
-      gap: 14px;
-      margin-bottom: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
     }
 
     .kpi-card {
-      background: var(--bg-card-grad);
-      border: 1px solid var(--border-teal);
-      border-radius: 12px;
-      padding: 15px 18px;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.3s ease;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline-dark);
+      border-radius: var(--rounded-lg);
+      padding: 22px 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* ÚNICO CARTÃO COBALTO-VIOLETA POR VIEWPORT (FEATURED PLAN CARD) */
+    .kpi-card.featured {
+      background: var(--primary);
+      border-color: var(--primary-bright);
+      color: var(--on-primary);
+    }
+
+    .kpi-card.featured .kpi-label,
+    .kpi-card.featured .kpi-sub {
+      color: rgba(255, 255, 255, 0.85);
     }
 
     .kpi-card.goal-achieved {
-      border-color: var(--emerald);
-      box-shadow: 0 0 24px rgba(52, 211, 153, 0.28);
-      background: linear-gradient(145deg, rgba(6, 78, 59, 0.45) 0%, rgba(9, 20, 24, 0.96) 100%);
+      border-color: var(--accent-teal);
     }
 
     .goal-badge-trophy {
       display: none;
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 12px;
-      background: rgba(52, 211, 153, 0.2);
-      color: var(--emerald);
-      border: 1px solid rgba(52, 211, 153, 0.5);
-      margin-left: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: var(--rounded-full);
+      background: var(--canvas-light);
+      color: var(--canvas-dark);
     }
 
     .kpi-card.goal-achieved .goal-badge-trophy {
       display: inline-block;
     }
 
-    .kpi-card::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      width: 85px;
-      height: 85px;
-      background: radial-gradient(circle, rgba(45, 212, 191, 0.14), transparent 70%);
-      pointer-events: none;
-    }
-
     .kpi-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-      margin-bottom: 6px;
+      font-size: 0.76rem;
+      color: var(--on-dark-mute);
+      font-weight: 600;
+      letter-spacing: 0.24px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 6px;
     }
 
     .kpi-value {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1.05;
-      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-size: 2.35rem;
+      font-weight: 500;
+      line-height: 1.02;
+      letter-spacing: -0.64px;
+      color: var(--on-dark);
     }
 
-    .kpi-value.teal { color: var(--emerald); }
-    .kpi-value.gold { color: var(--gold); }
-    .kpi-value.orange { color: var(--orange); }
-    .kpi-value.sky { color: var(--sky); }
-    .kpi-value.purple { color: var(--purple); }
-    .kpi-value.danger { color: var(--danger); }
-
     .kpi-sub {
-      font-size: 0.74rem;
-      color: var(--text-muted);
-      margin-top: 6px;
+      font-size: 0.78rem;
+      color: var(--stone);
+      margin-top: 10px;
     }
 
     /* LAYOUT PRINCIPAL */
@@ -351,40 +382,37 @@
     }
 
     @media (max-width: 1200px) {
-      .main-grid {
-        grid-template-columns: 1fr 1fr;
-      }
+      .main-grid { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 900px) {
-      .main-grid, .bottom-grid {
-        grid-template-columns: 1fr;
-      }
+      .main-grid, .bottom-grid { grid-template-columns: 1fr; }
     }
 
+    /* FEATURE-CARD-DARK */
     .panel {
-      background: var(--bg-card-grad);
-      border: 1px solid var(--border-teal);
-      border-radius: 12px;
-      padding: 18px 20px;
+      background: var(--surface-elevated);
+      border: 1px solid var(--hairline-dark);
+      border-radius: var(--rounded-lg);
+      padding: 24px;
     }
 
     .panel-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
-      gap: 8px;
+      margin-bottom: 18px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
     .panel-title {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 600;
-      letter-spacing: 0.6px;
-      color: var(--text-main);
-      text-transform: uppercase;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      line-height: 1.3;
+      letter-spacing: -0.15px;
+      color: var(--on-dark);
     }
 
     .chart-box {
@@ -393,75 +421,77 @@
       width: 100%;
     }
 
-    /* BARRAS DE STATUS DE MÁQUINAS + PARADAS / UPTIME */
+    /* LISTA DE MÁQUINAS & UPTIME */
     .status-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
-      margin-top: 6px;
+      gap: 14px;
+      margin-top: 4px;
     }
 
     .status-item {
       display: grid;
-      grid-template-columns: 112px 1fr 92px;
+      grid-template-columns: 118px 1fr 92px;
       align-items: center;
-      gap: 10px;
-      font-size: 0.83rem;
+      gap: 12px;
+      font-size: 0.85rem;
     }
 
     .status-name {
       font-weight: 600;
-      color: var(--text-main);
+      color: var(--on-dark);
     }
 
     .status-name small {
       display: block;
-      font-size: 0.68rem;
-      color: var(--text-muted);
+      font-size: 0.72rem;
+      color: var(--stone);
       font-weight: 400;
     }
 
     .uptime-tag {
       display: inline-block;
-      font-size: 0.65rem;
-      padding: 1px 5px;
-      border-radius: 4px;
-      margin-top: 2px;
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: var(--rounded-full);
+      margin-top: 4px;
       font-weight: 600;
     }
 
     .uptime-ok {
-      background: rgba(52, 211, 153, 0.14);
-      color: var(--emerald);
+      background: rgba(0, 168, 126, 0.16);
+      color: #34d399;
     }
 
     .uptime-warn {
-      background: rgba(239, 68, 68, 0.16);
+      background: rgba(226, 59, 74, 0.18);
       color: #fca5a5;
     }
 
     .progress-track {
-      height: 12px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 6px;
+      height: 10px;
+      background: var(--canvas-dark);
+      border-radius: var(--rounded-full);
       overflow: hidden;
+      border: 1px solid var(--divider-soft);
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #0d9488, #2dd4bf);
-      border-radius: 6px;
-      transition: width 0.4s ease;
+      background: var(--accent-teal);
+      border-radius: var(--rounded-full);
+      transition: width 0.35s ease;
     }
 
     .status-val {
       text-align: right;
-      font-family: 'Chakra Petch', sans-serif;
-      font-weight: 700;
-      color: var(--teal-bright);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: var(--on-dark);
     }
 
-    /* GAUGES SEMICIRCULARES */
+    /* GAUGES */
     .gauge-wrap {
       position: relative;
       height: 185px;
@@ -474,10 +504,11 @@
     .gauge-number {
       position: absolute;
       bottom: 18px;
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 2.1rem;
-      font-weight: 700;
-      color: var(--text-main);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-size: 2.25rem;
+      font-weight: 500;
+      letter-spacing: -0.48px;
+      color: var(--on-dark);
     }
 
     /* TABELAS */
@@ -488,103 +519,161 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.84rem;
+      font-size: 0.85rem;
     }
 
     th {
       text-align: left;
-      padding: 10px 12px;
-      background: rgba(45, 212, 191, 0.1);
-      color: var(--teal-bright);
-      font-family: 'Chakra Petch', sans-serif;
-      text-transform: uppercase;
+      padding: 12px 14px;
+      background: var(--surface-deep);
+      color: var(--on-dark-mute);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
       font-size: 0.74rem;
-      letter-spacing: 0.6px;
-      border-bottom: 1px solid var(--border-teal);
+      letter-spacing: 0.24px;
+      border-bottom: 1px solid var(--hairline-dark);
     }
 
     td {
-      padding: 9px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 11px 14px;
+      border-bottom: 1px solid var(--divider-soft);
       vertical-align: middle;
     }
 
     tr.zero-row td {
-      color: var(--text-muted);
+      color: var(--stone);
     }
 
     tr.total-highlight td {
-      background: rgba(245, 158, 11, 0.14);
-      color: var(--gold);
-      font-weight: 700;
-      font-family: 'Chakra Petch', sans-serif;
+      background: rgba(73, 79, 223, 0.22);
+      color: var(--on-dark);
+      font-weight: 600;
     }
 
     .badge-type {
-      padding: 3px 8px;
-      border-radius: 5px;
-      font-size: 0.69rem;
+      padding: 4px 10px;
+      border-radius: var(--rounded-full);
+      font-size: 0.7rem;
       font-weight: 600;
-      text-transform: uppercase;
     }
 
     .badge-estrib {
-      background: rgba(45, 212, 191, 0.14);
-      color: var(--teal-bright);
-      border: 1px solid rgba(45, 212, 191, 0.3);
+      background: rgba(0, 168, 126, 0.16);
+      color: #34d399;
     }
 
     .badge-dobra {
-      background: rgba(245, 158, 11, 0.15);
-      color: var(--gold);
-      border: 1px solid rgba(245, 158, 11, 0.35);
+      background: rgba(236, 126, 0, 0.18);
+      color: #fdba74;
     }
 
     .badge-backlog-ok {
-      background: rgba(52, 211, 153, 0.15);
-      color: var(--emerald);
-      padding: 3px 7px;
-      border-radius: 5px;
+      background: rgba(0, 168, 126, 0.16);
+      color: #34d399;
+      padding: 4px 10px;
+      border-radius: var(--rounded-full);
       font-weight: 600;
       font-size: 0.72rem;
     }
 
     .badge-backlog-pend {
-      background: rgba(168, 85, 247, 0.18);
-      color: #d8b4fe;
-      border: 1px solid rgba(168, 85, 247, 0.4);
-      padding: 3px 7px;
-      border-radius: 5px;
+      background: rgba(230, 30, 73, 0.18);
+      color: #fda4af;
+      padding: 4px 10px;
+      border-radius: var(--rounded-full);
       font-weight: 600;
       font-size: 0.72rem;
     }
 
-    /* BOTÕES DE EXCLUIR / ZERAR REGISTRO */
+    /* BOTÕES PILL-SHAPED (REVOLUT COMPONENT SPEC) */
+    .btn-action {
+      width: 100%;
+      height: 48px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--rounded-full);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.24px;
+      cursor: pointer;
+      background: var(--canvas-light);
+      color: var(--canvas-dark);
+      transition: background 0.15s ease, transform 0.12s ease;
+    }
+
+    .btn-action:hover {
+      background: var(--faint);
+    }
+
+    .btn-action:active {
+      transform: scale(0.99);
+    }
+
+    .btn-action:disabled {
+      opacity: 0.45;
+      cursor: wait;
+    }
+
+    .btn-cobalt {
+      background: var(--primary);
+      color: var(--on-primary);
+    }
+
+    .btn-cobalt:hover {
+      background: var(--primary-bright);
+    }
+
+    .btn-outline {
+      background: var(--canvas-dark);
+      border: 1px solid var(--hairline-strong);
+      color: var(--on-dark);
+      padding: 6px 14px;
+      height: 34px;
+      border-radius: var(--rounded-full);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.16px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+
+    .btn-outline:hover,
+    .btn-outline.active-toggle {
+      background: var(--canvas-light);
+      color: var(--canvas-dark);
+      border-color: var(--canvas-light);
+    }
+
     .btn-delete {
-      background: rgba(239, 68, 68, 0.14);
-      border: 1px solid rgba(239, 68, 68, 0.4);
+      background: var(--canvas-dark);
+      border: 1px solid rgba(226, 59, 74, 0.45);
       color: #fca5a5;
-      padding: 5px 10px;
-      border-radius: 6px;
+      padding: 5px 12px;
+      border-radius: var(--rounded-full);
       font-size: 0.74rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.15s ease;
       display: inline-flex;
       align-items: center;
       gap: 4px;
+      transition: all 0.15s ease;
     }
 
     .btn-delete:hover {
-      background: rgba(239, 68, 68, 0.32);
-      color: #fff;
-      border-color: var(--danger);
+      background: var(--accent-danger);
+      color: var(--on-dark);
+      border-color: var(--accent-danger);
     }
 
-    /* FORMULÁRIOS */
+    /* FORMULÁRIOS E INPUTS (ROUNDED-MD 12PX) */
     .pcp-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
       gap: 16px;
       margin-bottom: 18px;
     }
@@ -592,123 +681,65 @@
     .split-2-cols {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
     }
 
     @media (max-width: 600px) {
-      .split-2-cols {
-        grid-template-columns: 1fr;
-      }
+      .split-2-cols { grid-template-columns: 1fr; }
     }
 
     .form-row {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      margin-bottom: 11px;
+      gap: 6px;
+      margin-bottom: 12px;
     }
 
     .form-row label {
-      font-size: 0.76rem;
-      color: var(--text-muted);
-      font-weight: 500;
+      font-size: 0.78rem;
+      color: var(--on-dark-mute);
+      font-weight: 600;
+      letter-spacing: 0.16px;
     }
 
-    .form-row input, .form-row select {
-      background: rgba(6, 13, 16, 0.92);
-      border: 1px solid var(--border-teal);
-      color: var(--text-main);
-      padding: 9px 11px;
-      border-radius: 8px;
-      font-size: 0.88rem;
+    .form-row input,
+    .form-row select {
+      background: var(--surface-deep);
+      border: 1px solid var(--hairline-dark);
+      color: var(--on-dark);
+      padding: 11px 14px;
+      height: 46px;
+      border-radius: var(--rounded-md);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
       outline: none;
       color-scheme: dark;
     }
 
-    .form-row input:focus, .form-row select:focus {
-      border-color: var(--teal-bright);
-      box-shadow: 0 0 10px var(--teal-glow);
-    }
-
-    .btn-action {
-      width: 100%;
-      padding: 11px 16px;
-      border: none;
-      border-radius: 8px;
-      font-family: 'Chakra Petch', sans-serif;
-      font-weight: 700;
-      font-size: 0.89rem;
-      text-transform: uppercase;
-      cursor: pointer;
-      background: linear-gradient(135deg, #14b8a6, #0d9488);
-      color: #041014;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-    }
-
-    .btn-action:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 15px rgba(45, 212, 191, 0.35);
-    }
-
-    .btn-action:disabled {
-      opacity: 0.5;
-      cursor: wait;
-    }
-
-    .btn-gold {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: #041014;
-    }
-
-    .btn-sky {
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #041014;
-    }
-
-    .btn-purple {
-      background: linear-gradient(135deg, #a855f7, #7e22ce);
-      color: #ffffff;
-    }
-
-    .btn-orange {
-      background: linear-gradient(135deg, #f97316, #ea580c);
-      color: #041014;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid var(--border-teal);
-      color: var(--text-muted);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.74rem;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.15s ease;
-    }
-
-    .btn-outline:hover, .btn-outline.active-toggle {
-      color: var(--teal-bright);
-      border-color: var(--teal-bright);
-      background: rgba(45, 212, 191, 0.12);
+    .form-row input:focus,
+    .form-row select:focus {
+      border-color: var(--on-dark);
     }
 
     .reconcile-note {
-      font-size: 0.77rem;
-      color: var(--text-muted);
-      padding: 7px 12px;
-      border-radius: 8px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px dashed rgba(45, 212, 191, 0.25);
+      font-size: 0.78rem;
+      color: var(--on-dark-mute);
+      padding: 6px 14px;
+      border-radius: var(--rounded-full);
+      background: var(--surface-deep);
+      border: 1px solid var(--hairline-dark);
     }
 
-    /* CAIXA DE PREVIEW DA CONTA DE SUCATA EM TEMPO REAL */
-    .scrap-calc-preview {
-      background: rgba(245, 158, 11, 0.08);
-      border: 1px solid rgba(245, 158, 11, 0.35);
-      border-radius: 10px;
+    .scrap-calc-preview,
+    .backlog-current-box {
+      background: var(--surface-deep);
+      border: 1px solid var(--hairline-dark);
+      border-radius: var(--rounded-md);
       padding: 12px 14px;
       margin-bottom: 14px;
+    }
+
+    .scrap-calc-preview {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
@@ -717,40 +748,36 @@
 
     .scrap-calc-preview .calc-item small {
       display: block;
-      font-size: 0.68rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
+      font-size: 0.7rem;
+      color: var(--stone);
       margin-bottom: 3px;
     }
 
     .scrap-calc-preview .calc-item strong {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 1.15rem;
-      color: var(--gold);
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--on-dark);
     }
 
     .backlog-current-box {
-      background: rgba(168, 85, 247, 0.1);
-      border: 1px solid rgba(168, 85, 247, 0.35);
-      border-radius: 8px;
-      padding: 8px 12px;
-      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
     }
 
     .backlog-current-box strong {
-      font-family: 'Chakra Petch', sans-serif;
-      color: #d8b4fe;
-      font-size: 1rem;
+      font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
+      color: var(--on-dark);
+      font-size: 1.05rem;
+      font-weight: 500;
     }
 
     @media print {
       body {
         background: #ffffff !important;
-        color: #0f172a !important;
+        color: #191c1f !important;
         padding: 0 !important;
       }
       .nav-tabs, .top-filters, .cloud-actions, .btn-delete, #lancamentos-pcp {
@@ -762,12 +789,11 @@
       }
       .panel, .kpi-card, .period-banner {
         background: #ffffff !important;
-        border: 1px solid #cbd5e1 !important;
-        color: #0f172a !important;
-        box-shadow: none !important;
+        border: 1px solid #e2e2e7 !important;
+        color: #191c1f !important;
       }
       .panel-title, .kpi-value, td, th {
-        color: #0f172a !important;
+        color: #191c1f !important;
       }
     }
   </style>
@@ -780,22 +806,21 @@
       <div class="brand-logo">GA</div>
       <div class="brand-title">
         <h1>Dashboard de Produção</h1>
-        <span>GRANDE AÇO • MES, TELEMETRIA, PCP & SUCATA</span>
+        <span>Grande Aço • MES, Telemetria, PCP & Sucata</span>
       </div>
     </div>
 
     <nav class="nav-tabs">
-      <button class="tab-btn active" data-tab="visao-geral" onclick="switchTab('visao-geral', this)">1. Visão Geral (Telão)</button>
-      <button class="tab-btn" data-tab="maquinas-bitolas" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas, Bitolas & Carteira</button>
+      <button class="tab-btn active" data-tab="visao-geral" onclick="switchTab('visao-geral', this)">1. Visão Geral</button>
+      <button class="tab-btn" data-tab="maquinas-bitolas" onclick="switchTab('maquinas-bitolas', this)">2. Máquinas & Carteira</button>
       <button class="tab-btn" data-tab="producao-semanal" onclick="switchTab('producao-semanal', this)">3. Produção Semanal</button>
-      <button class="tab-btn" data-tab="lancamentos-pcp" onclick="switchTab('lancamentos-pcp', this)">4. Lançamentos, Carteira & Metas</button>
-      <button class="tab-btn" data-tab="controle-sucata" onclick="switchTab('controle-sucata', this)">5. ♻️ Controle de Sucata</button>
+      <button class="tab-btn" data-tab="lancamentos-pcp" onclick="switchTab('lancamentos-pcp', this)">4. Lançamentos & Metas</button>
+      <button class="tab-btn" data-tab="controle-sucata" onclick="switchTab('controle-sucata', this)">5. Controle de Sucata</button>
     </nav>
 
-    <!-- SELETOR DE CALENDÁRIO GLOBAL -->
     <div class="top-filters">
       <div class="filter-group">
-        <label>Calendário (Dia/Mês/Ano)</label>
+        <label>Calendário</label>
         <input type="date" id="globalDatePicker" onchange="onGlobalDateChange(this.value)" />
       </div>
 
@@ -818,10 +843,10 @@
       </div>
 
       <div class="filter-group">
-        <label>Ano Ativo</label>
+        <label>Ano</label>
         <div class="year-stepper">
           <button class="year-btn" onclick="stepYear(-1)" title="Ano Anterior">◀</button>
-          <input type="number" id="yearInput" min="2000" max="2100" style="width: 62px; text-align: center;" onchange="changeActiveYear(this.value)" />
+          <input type="number" id="yearInput" min="2000" max="2100" style="width: 56px; text-align: center;" onchange="changeActiveYear(this.value)" />
           <button class="year-btn" onclick="stepYear(1)" title="Próximo Ano">▶</button>
         </div>
       </div>
@@ -836,21 +861,21 @@
     </div>
   </header>
 
-  <!-- FAIXA DE PERÍODO ATIVO + STATUS DA NUVEM + FERRAMENTAS -->
+  <!-- FAIXA DE PERÍODO ATIVO -->
   <div class="period-banner">
     <div>
-      📅 Período: <strong id="bannerPeriodText">OUTUBRO / 2026</strong>
-      <span style="color: var(--text-muted); margin-left: 8px;" id="bannerDateText"></span>
+      Período ativo: <strong id="bannerPeriodText">NOVEMBRO / 2026</strong>
+      <span style="color: var(--stone); margin-left: 8px;" id="bannerDateText"></span>
     </div>
     <div class="cloud-actions">
-      <span id="cloudStatusBadge" class="cloud-badge online">🔄 Conectando à Nuvem...</span>
-      <button class="btn-outline" id="btnTvMode" onclick="toggleTvMode()" title="Alterna automaticamente entre as abas a cada 25 segundos">📺 Modo Telão: OFF</button>
-      <button class="btn-outline" id="btnLockPin" onclick="togglePcpLock()" title="Bloqueia ou libera edições com PIN (Padrão: 1234)">🔒 PCP Bloqueado</button>
-      <button class="btn-outline" onclick="setTodayDate()">📍 Ir para Hoje</button>
-      <button class="btn-outline" onclick="exportActiveMonthCSV()">📥 Exportar CSV</button>
-      <button class="btn-outline" onclick="window.print()">🖨️ Imprimir</button>
-      <button class="btn-outline" onclick="syncFromCloud(true)">🔄 Sincronizar</button>
-      <button class="btn-outline" onclick="changeCloudUrlPrompt()">🔗 URL Nuvem</button>
+      <span id="cloudStatusBadge" class="badge-pill online">Conectando à nuvem...</span>
+      <button class="btn-outline" id="btnTvMode" onclick="toggleTvMode()">Modo Telão: OFF</button>
+      <button class="btn-outline" id="btnLockPin" onclick="togglePcpLock()">PCP Bloqueado</button>
+      <button class="btn-outline" onclick="setTodayDate()">Hoje</button>
+      <button class="btn-outline" onclick="exportActiveMonthCSV()">Exportar CSV</button>
+      <button class="btn-outline" onclick="window.print()">Imprimir</button>
+      <button class="btn-outline" onclick="syncFromCloud(true)">Sincronizar</button>
+      <button class="btn-outline" onclick="changeCloudUrlPrompt()">URL Nuvem</button>
       <button class="btn-outline" onclick="resetDefaultData()">Restaurar Padrão</button>
     </div>
   </div>
@@ -858,32 +883,32 @@
   <!-- ABA 1: VISÃO GERAL -->
   <section id="visao-geral" class="tab-section active">
     <div class="kpi-grid">
-      <div class="kpi-card" id="kpiCardOee">
+      <div class="kpi-card featured" id="kpiCardOee">
         <div class="kpi-label">
           <span>Atingimento (OEE Meta)</span>
-          <span class="goal-badge-trophy">🏆 META BATIDA!</span>
+          <span class="goal-badge-trophy">META BATIDA</span>
         </div>
-        <div class="kpi-value teal" id="kpiAttainment">96,9%</div>
-        <div class="kpi-sub" id="kpiMonthSub">Referência: OUTUBRO / 2026</div>
+        <div class="kpi-value" id="kpiAttainment">0,0%</div>
+        <div class="kpi-sub" id="kpiMonthSub">Referência: NOVEMBRO / 2026</div>
       </div>
       <div class="kpi-card">
-        <div class="kpi-label">Quant. Produzida no Mês</div>
-        <div class="kpi-value" id="kpiMonthProd">38.746 kg</div>
-        <div class="kpi-sub" id="kpiMonthGoal">Meta Prevista: 40.000 kg</div>
+        <div class="kpi-label">Produzido no Mês</div>
+        <div class="kpi-value" id="kpiMonthProd">0 kg</div>
+        <div class="kpi-sub" id="kpiMonthGoal">Meta Prevista: 30.000 kg</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Projeção & Ritmo Diário</div>
-        <div class="kpi-value purple" id="kpiForecastVal">40.037 kg</div>
-        <div class="kpi-sub" id="kpiForecastSub">Ritmo: 1.336 kg/dia</div>
+        <div class="kpi-value" id="kpiForecastVal">0 kg</div>
+        <div class="kpi-sub" id="kpiForecastSub">Ritmo: 0 kg/dia</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Disponibilidade Máquinas</div>
-        <div class="kpi-value sky" id="kpiUptimeVal">98,5%</div>
+        <div class="kpi-value" id="kpiUptimeVal">100,0%</div>
         <div class="kpi-sub" id="kpiDowntimeSub">Horas Paradas no Mês: 0,0 h</div>
       </div>
       <div class="kpi-card">
         <div class="kpi-label">Acumulado no Ano (<span id="kpiYearLabel">2026</span>)</div>
-        <div class="kpi-value gold" id="kpiTotalProd">105.465 kg</div>
+        <div class="kpi-value" id="kpiTotalProd">0 kg</div>
         <div class="kpi-sub" id="kpiTotalGoal">Previsão Anual: 146.000 kg</div>
       </div>
     </div>
@@ -891,7 +916,7 @@
     <div class="main-grid">
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Evolução de Produção Mensal vs. Previsão (<span id="chartYearTitle">2026</span>)</span>
+          <span class="panel-title">Evolução Mensal vs. Previsão (<span id="chartYearTitle">2026</span>)</span>
         </div>
         <div class="chart-box">
           <canvas id="monthlyStepChart"></canvas>
@@ -900,7 +925,7 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Produção Semanal (<span id="overviewWeekTitle">OUTUBRO/2026</span>)</span>
+          <span class="panel-title">Produção Semanal (<span id="overviewWeekTitle">NOVEMBRO/2026</span>)</span>
         </div>
         <div class="chart-box">
           <canvas id="overviewWeeklyChart"></canvas>
@@ -909,7 +934,7 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Carga & Uptime por Máquina (<span id="statusMonthTitle">OUTUBRO/2026</span>)</span>
+          <span class="panel-title">Carga & Uptime (<span id="statusMonthTitle">NOVEMBRO/2026</span>)</span>
         </div>
         <div class="status-list" id="machineStatusList"></div>
       </div>
@@ -922,7 +947,7 @@
         </div>
         <div class="gauge-wrap">
           <canvas id="gaugeMonthChart"></canvas>
-          <div class="gauge-number" id="gaugeMonthText">96,9%</div>
+          <div class="gauge-number" id="gaugeMonthText">0,0%</div>
         </div>
       </div>
 
@@ -932,7 +957,7 @@
         </div>
         <div class="gauge-wrap">
           <canvas id="gaugeYearChart"></canvas>
-          <div class="gauge-number" id="gaugeYearText">72,2%</div>
+          <div class="gauge-number" id="gaugeYearText">0,0%</div>
         </div>
       </div>
     </div>
@@ -943,7 +968,7 @@
     <div class="bottom-grid" style="margin-bottom: 16px;">
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Produção por Máquina e Bitola — <span id="machChartPeriod">OUTUBRO/2026</span></span>
+          <span class="panel-title">Produção por Máquina e Bitola — <span id="machChartPeriod">NOVEMBRO/2026</span></span>
         </div>
         <div class="chart-box" style="height: 340px;">
           <canvas id="machineBarChart"></canvas>
@@ -952,7 +977,7 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Produzido vs. Carteira de Pedidos por Bitola (4,20mm a 32,00mm) — <span id="gaugeOnlyChartPeriod">OUTUBRO/2026</span></span>
+          <span class="panel-title">Produzido vs. Carteira por Bitola (4,20mm a 32,00mm) — <span id="gaugeOnlyChartPeriod">NOVEMBRO/2026</span></span>
         </div>
         <div class="chart-box" style="height: 340px;">
           <canvas id="gaugeOnlyBarChart"></canvas>
@@ -962,7 +987,7 @@
 
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Tabela Oficial de Produção e Carteira Restante por Bitola (4,20mm a 32,00mm)</span>
+        <span class="panel-title">Tabela Oficial de Produção e Carteira Restante (4,20mm a 32,00mm)</span>
         <div class="reconcile-note" id="reconcileBanner"></div>
       </div>
       <div class="table-container">
@@ -974,8 +999,8 @@
               <th>Bitola</th>
               <th>Produzido no Mês</th>
               <th>Subtotal Máq.</th>
-              <th>Total Produzido da Bitola</th>
-              <th>Carteira Restante (A Produzir)</th>
+              <th>Total da Bitola</th>
+              <th>Carteira Restante</th>
               <th>Status da Carteira</th>
               <th>Ação</th>
             </tr>
@@ -1012,7 +1037,7 @@
               <th>Semana 2</th>
               <th>Semana 3</th>
               <th>Semana 4</th>
-              <th>Semana 5 (Extra)</th>
+              <th>Semana 5</th>
               <th>Total Semanal</th>
               <th>Meta do Mês</th>
               <th>% Atingimento</th>
@@ -1027,10 +1052,9 @@
   <!-- ABA 4: LANÇAMENTOS PCP, PARADAS, CARTEIRA E AUDITORIA -->
   <section id="lancamentos-pcp" class="tab-section">
     <div class="pcp-grid">
-      <!-- 1. LANÇAR PRODUÇÃO (ABATE AUTOMATICAMENTE DA CARTEIRA DA BITOLA) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">1. Apontar Produção (Abate da Carteira Automaticamente)</span>
+          <span class="panel-title">1. Apontar Produção (Abate da Carteira)</span>
         </div>
 
         <div class="split-2-cols">
@@ -1053,7 +1077,7 @@
 
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Escolher Máquina</label>
+            <label>Máquina</label>
             <select id="inputMachineSelect">
               <option value="ES02">ES02 (Estribadeira)</option>
               <option value="EB10">EB10 (Estribadeira)</option>
@@ -1064,7 +1088,7 @@
           </div>
 
           <div class="form-row">
-            <label>Escolher Bitola</label>
+            <label>Bitola</label>
             <select id="inputGaugeSelect">
               <option value="4,20 mm">Bitola 4,20 mm</option>
               <option value="5,00 mm">Bitola 5,00 mm</option>
@@ -1087,7 +1111,7 @@
           </div>
 
           <div class="form-row">
-            <label>Turno de Trabalho</label>
+            <label>Turno</label>
             <select id="inputShiftSelect">
               <option value="1º Turno (Manhã)">1º Turno (Manhã)</option>
               <option value="2º Turno (Tarde)">2º Turno (Tarde)</option>
@@ -1101,39 +1125,38 @@
           <div class="form-row">
             <label>Modo de Apontamento</label>
             <select id="inputMode">
-              <option value="add">+ Somar Lote (E Diminuir da Carteira)</option>
+              <option value="add">+ Somar Lote (Abate Carteira)</option>
               <option value="set">= Substituir Total no Mês</option>
             </select>
           </div>
 
           <div class="form-row">
             <label>Peso Produzido (kg)</label>
-            <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500 (ou 0 se só parada)" />
+            <input type="number" id="inputWeightKg" step="0.001" placeholder="Ex: 1250.500" />
           </div>
         </div>
 
         <div class="split-2-cols">
           <div class="form-row">
             <label>Horas Paradas (Opcional)</label>
-            <input type="number" id="inputDowntimeHours" step="0.1" placeholder="Ex: 1.5 (em horas)" />
+            <input type="number" id="inputDowntimeHours" step="0.1" placeholder="Ex: 1.5" />
           </div>
 
           <div class="form-row">
             <label>Motivo da Parada</label>
             <select id="inputDowntimeReason">
-              <option value="Sem Parada">Sem Parada (Operação Normal)</option>
-              <option value="Manutenção Corretiva">🔧 Manutenção Corretiva</option>
-              <option value="Setup / Troca de Bitola">⚙️ Setup / Troca de Bitola</option>
-              <option value="Falta de Matéria-Prima (CA-60/CA-50)">📦 Falta de Matéria-Prima</option>
-              <option value="Ajuste Elétrico / Rolo">⚡ Ajuste Elétrico / Rolo</option>
+              <option value="Sem Parada">Sem Parada (Normal)</option>
+              <option value="Manutenção Corretiva">Manutenção Corretiva</option>
+              <option value="Setup / Troca de Bitola">Setup / Troca de Bitola</option>
+              <option value="Falta de Matéria-Prima">Falta de Matéria-Prima</option>
+              <option value="Ajuste Elétrico / Rolo">Ajuste Elétrico / Rolo</option>
             </select>
           </div>
         </div>
 
-        <button class="btn-action" id="btnLaunchProd" onclick="handleLaunchProduction()">Registrar Produção e Abater da Carteira</button>
+        <button class="btn-action" id="btnLaunchProd" onclick="handleLaunchProduction()">Registrar Produção e Abater Carteira</button>
       </div>
 
-      <!-- 2. AJUSTE DIRETO DE PRODUÇÃO SEMANAL -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">2. Fechamento Semanal Direto</span>
@@ -1182,24 +1205,23 @@
           </div>
         </div>
         <div class="form-row">
-          <label>Semana 5 / Fechamento Extra (kg)</label>
+          <label>Semana 5 / Extra (kg)</label>
           <input type="number" id="w5Input" step="0.001" />
         </div>
-        <button class="btn-action btn-sky" id="btnSaveWeeks" onclick="handleUpdateWeeksDirect()">Salvar Semanas do Mês</button>
+        <button class="btn-action" id="btnSaveWeeks" onclick="handleUpdateWeeksDirect()">Salvar Semanas do Mês</button>
       </div>
 
-      <!-- 3. METAS MENSAIS & CARTEIRA DE PEDIDOS (COM OPÇÃO DE SOMAR OU SUBSTITUIR) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">3. Meta Mensal & Carteira de Pedidos (A Produzir)</span>
+          <span class="panel-title">3. Meta Mensal & Carteira de Pedidos</span>
         </div>
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Ano de Referência</label>
+            <label>Ano</label>
             <input type="number" id="goalYearInput" min="2000" max="2100" onchange="onGoalPeriodSelectChange()" />
           </div>
           <div class="form-row">
-            <label>Mês de Referência</label>
+            <label>Mês</label>
             <select id="goalMonthSelect" onchange="onGoalPeriodSelectChange()">
               <option value="0">JANEIRO</option>
               <option value="1">FEVEREIRO</option>
@@ -1218,21 +1240,20 @@
         </div>
         <div class="form-row">
           <label>Meta Global do Mês (kg)</label>
-          <input type="number" id="inputGoalKg" step="100" value="40000" />
+          <input type="number" id="inputGoalKg" step="100" value="30000" />
         </div>
-        <button class="btn-action btn-gold" id="btnSaveGoal" onclick="handleUpdateGoal()">Salvar Meta Global</button>
+        <button class="btn-action" id="btnSaveGoal" onclick="handleUpdateGoal()">Salvar Meta Global</button>
 
-        <hr style="border: none; border-top: 1px solid var(--border-teal); margin: 14px 0;" />
+        <hr style="border: none; border-top: 1px solid var(--hairline-dark); margin: 16px 0;" />
 
-        <!-- VISOR DO SALDO ATUAL NA CARTEIRA DA BITOLA -->
         <div class="backlog-current-box">
-          <span>Saldo Atual na Carteira (<span id="currentBacklogGaugeLabel">4,20 mm</span>):</span>
+          <span>Saldo na Carteira (<span id="currentBacklogGaugeLabel">4,20 mm</span>):</span>
           <strong id="currentBacklogValueDisplay">0,00 kg</strong>
         </div>
 
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Escolher Bitola da Carteira</label>
+            <label>Bitola da Carteira</label>
             <select id="backlogGaugeSelect" onchange="onBacklogGaugeSelectChange()">
               <option value="4,20 mm">Bitola 4,20 mm</option>
               <option value="5,00 mm">Bitola 5,00 mm</option>
@@ -1248,32 +1269,31 @@
           </div>
 
           <div class="form-row">
-            <label>Modo de Lançamento na Carteira</label>
+            <label>Modo na Carteira</label>
             <select id="backlogModeSelect">
-              <option value="add" selected>+ Somar ao que já tem na Carteira</option>
-              <option value="set">= Substituir Total da Carteira</option>
+              <option value="add" selected>+ Somar à Carteira Atual</option>
+              <option value="set">= Substituir Total</option>
             </select>
           </div>
         </div>
 
         <div class="form-row">
-          <label>Peso do Pedido / Carteira (em kg)</label>
-          <input type="number" id="backlogDemandInput" step="0.01" placeholder="Digite o peso do pedido para somar ou substituir" />
+          <label>Peso do Pedido (kg)</label>
+          <input type="number" id="backlogDemandInput" step="0.01" placeholder="Digite o peso do pedido" />
         </div>
-        <button class="btn-action btn-purple" onclick="handleUpdateBacklogDemand()">Lançar na Carteira de Pedidos</button>
+        <button class="btn-action btn-cobalt" onclick="handleUpdateBacklogDemand()">Lançar na Carteira</button>
 
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-          <span style="font-size: 0.74rem; color: var(--text-muted);">Segurança de Edição (PIN PCP)</span>
-          <button class="btn-outline" onclick="changePinPrompt()">🔑 Alterar PIN</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+          <span style="font-size: 0.76rem; color: var(--stone);">Segurança de Edição (PIN PCP)</span>
+          <button class="btn-outline" onclick="changePinPrompt()">Alterar PIN</button>
         </div>
       </div>
     </div>
 
-    <!-- HISTÓRICO DE AUDITORIA COMPLETO -->
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Trilha de Auditoria & Histórico de Lançamentos (Operador, Turno, Paradas e Horário)</span>
-        <button class="btn-delete" onclick="clearAllHistoryLogs()">🗑️ Limpar Todo o Histórico</button>
+        <span class="panel-title">Trilha de Auditoria & Histórico de Lançamentos</span>
+        <button class="btn-delete" onclick="clearAllHistoryLogs()">Limpar Histórico</button>
       </div>
       <div class="table-container">
         <table>
@@ -1296,38 +1316,38 @@
     </div>
   </section>
 
-  <!-- ABA 5: CONTROLE E LANÇAMENTO DE SUCATA -->
+  <!-- ABA 5: CONTROLE DE SUCATA -->
   <section id="controle-sucata" class="tab-section">
     <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Peso Total de Sucata (Mês)</div>
-        <div class="kpi-value orange" id="kpiScrapMonthKg">0 kg</div>
-        <div class="kpi-sub" id="kpiScrapMonthSub">Referência: OUTUBRO / 2026</div>
-      </div>
-
-      <div class="kpi-card">
+      <div class="kpi-card featured">
         <div class="kpi-label">Valor Total da Sucata (Mês)</div>
-        <div class="kpi-value gold" id="kpiScrapMonthBrl">R$ 0,00</div>
+        <div class="kpi-value" id="kpiScrapMonthBrl">R$ 0,00</div>
         <div class="kpi-sub" id="kpiScrapYearBrlSub">Acumulado no Ano: R$ 0,00</div>
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-label">Preço Médio do Quilo (R$/kg)</div>
-        <div class="kpi-value teal" id="kpiScrapAvgPrice">R$ 0,00 /kg</div>
+        <div class="kpi-label">Peso Total de Sucata (Mês)</div>
+        <div class="kpi-value" id="kpiScrapMonthKg">0 kg</div>
+        <div class="kpi-sub" id="kpiScrapMonthSub">Referência: NOVEMBRO / 2026</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">Preço Médio do Quilo</div>
+        <div class="kpi-value" id="kpiScrapAvgPrice">R$ 0,00 /kg</div>
         <div class="kpi-sub" id="kpiScrapYearKgSub">Peso Acumulado no Ano: 0 kg</div>
       </div>
 
       <div class="kpi-card">
-        <div class="kpi-label">Índice de Refugo / Sucata (%)</div>
-        <div class="kpi-value sky" id="kpiScrapRatePct">0,00%</div>
-        <div class="kpi-sub">Relação Sucata vs. Produção Boa do Mês</div>
+        <div class="kpi-label">Índice de Refugo (%)</div>
+        <div class="kpi-value" id="kpiScrapRatePct">0,00%</div>
+        <div class="kpi-sub">Relação Sucata vs. Produção Boa</div>
       </div>
     </div>
 
     <div class="main-grid" style="grid-template-columns: 1.05fr 1fr 1fr;">
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">♻️ Lançar Sucata (+ Soma ao Saldo do Mês)</span>
+          <span class="panel-title">Lançar Sucata (+ Soma ao Saldo)</span>
         </div>
 
         <div class="split-2-cols">
@@ -1339,8 +1359,8 @@
           <div class="form-row">
             <label>Tipo de Registro</label>
             <select id="scrapTypeSelect">
-              <option value="Venda de Sucata">💰 Venda / Faturamento de Sucata</option>
-              <option value="Perda de Processo">⚙️ Perda Interna / Pontas de Processo</option>
+              <option value="Venda de Sucata">Venda / Faturamento de Sucata</option>
+              <option value="Perda de Processo">Perda Interna / Pontas</option>
             </select>
           </div>
         </div>
@@ -1377,33 +1397,33 @@
         </div>
 
         <div class="form-row">
-          <label>Modo de Cálculo do Valor</label>
+          <label>Modo de Cálculo</label>
           <select id="scrapCalcModeSelect" onchange="onScrapCalcModeChange()">
-            <option value="unit">Informar Peso (kg) + Preço por Quilo (R$/kg) ➔ Calcula Valor Total</option>
-            <option value="total">Informar Peso (kg) + Valor Total da Nota (R$) ➔ Calcula R$/kg</option>
+            <option value="unit">Peso (kg) + Preço por Quilo (R$/kg) ➔ Valor Total</option>
+            <option value="total">Peso (kg) + Valor Total da Nota (R$) ➔ Preço R$/kg</option>
           </select>
         </div>
 
         <div class="split-2-cols">
           <div class="form-row">
-            <label>Peso da Sucata a Somar (em kg)</label>
-            <input type="number" id="scrapWeightKgInput" step="0.01" placeholder="Ex: 850.50" oninput="updateScrapLiveCalculation('weight')" />
+            <label>Peso da Sucata (kg)</label>
+            <input type="number" id="scrapWeightKgInput" step="0.01" placeholder="Ex: 850.50" oninput="updateScrapLiveCalculation()" />
           </div>
 
           <div class="form-row" id="scrapUnitPriceRow">
-            <label>Valor por Quilo (R$ / kg)</label>
-            <input type="number" id="scrapUnitPriceBrlInput" step="0.01" placeholder="Ex: 1.85" oninput="updateScrapLiveCalculation('unit')" />
+            <label>Valor por Quilo (R$/kg)</label>
+            <input type="number" id="scrapUnitPriceBrlInput" step="0.01" placeholder="Ex: 1.85" oninput="updateScrapLiveCalculation()" />
           </div>
 
           <div class="form-row" id="scrapTotalValueRow" style="display: none;">
             <label>Valor Total do Lote (R$)</label>
-            <input type="number" id="scrapTotalValueBrlInput" step="0.01" placeholder="Ex: 1573.42" oninput="updateScrapLiveCalculation('total')" />
+            <input type="number" id="scrapTotalValueBrlInput" step="0.01" placeholder="Ex: 1573.42" oninput="updateScrapLiveCalculation()" />
           </div>
         </div>
 
         <div class="form-row">
-          <label>Observação / Comprador / Responsável (Opcional)</label>
-          <input type="text" id="scrapNotesInput" placeholder="Ex: Caçamba 02 / Pontas de vergalhão" />
+          <label>Observação / Comprador (Opcional)</label>
+          <input type="text" id="scrapNotesInput" placeholder="Ex: Caçamba 02" />
         </div>
 
         <div class="scrap-calc-preview">
@@ -1417,24 +1437,22 @@
           </div>
           <div class="calc-item">
             <small>Total a Somar</small>
-            <strong id="previewScrapTotalBrl" style="color: var(--emerald);">R$ 0,00</strong>
+            <strong id="previewScrapTotalBrl" style="color: var(--accent-teal);">R$ 0,00</strong>
           </div>
         </div>
 
-        <button class="btn-action btn-orange" id="btnSaveScrap" onclick="handleLaunchScrap()">+ Somar Lote de Sucata e Salvar na Nuvem</button>
+        <button class="btn-action" id="btnSaveScrap" onclick="handleLaunchScrap()">+ Somar Lote de Sucata</button>
       </div>
 
-      <!-- GRÁFICO 1: SUCATA POR MÁQUINA (KG) -->
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Sucata Acumulada por Origem — <span id="scrapChartMonthTitle">OUTUBRO/2026</span></span>
+          <span class="panel-title">Sucata por Origem — <span id="scrapChartMonthTitle">NOVEMBRO/2026</span></span>
         </div>
         <div class="chart-box" style="height: 350px;">
           <canvas id="scrapByMachineChart"></canvas>
         </div>
       </div>
 
-      <!-- GRÁFICO 2: EVOLUÇÃO MENSAL DE SUCATA NO ANO -->
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Evolução de Sucata no Ano (<span id="scrapChartYearTitle">2026</span>)</span>
@@ -1447,10 +1465,10 @@
 
     <div class="panel">
       <div class="panel-header">
-        <span class="panel-title">Relatório Detalhado de Lançamentos de Sucata (Todos os Lotes Somados)</span>
+        <span class="panel-title">Relatório Detalhado de Lançamentos de Sucata</span>
         <div style="display: flex; gap: 8px;">
-          <button class="btn-outline" onclick="exportScrapCSV()">📥 Exportar Sucata CSV</button>
-          <button class="btn-delete" onclick="clearAllScrapLogs()">🗑️ Limpar Histórico de Sucata do Mês</button>
+          <button class="btn-outline" onclick="exportScrapCSV()">Exportar Sucata CSV</button>
+          <button class="btn-delete" onclick="clearAllScrapLogs()">Limpar Sucata do Mês</button>
         </div>
       </div>
       <div class="table-container">
@@ -1461,7 +1479,7 @@
               <th>Mês / Ano</th>
               <th>Tipo</th>
               <th>Máquina / Origem</th>
-              <th>Bitola / Material</th>
+              <th>Bitola</th>
               <th>Peso (kg)</th>
               <th>Preço (R$/kg)</th>
               <th>Valor Total (R$)</th>
@@ -1479,7 +1497,7 @@
     Chart.register(ChartDataLabels);
 
     const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbyK9MD0uW3zPKpn2nFQMMpOE6vJ042rFXrFp7FDNMUfgkwNTWr6HuZBNC7B7zoJJRA8/exec";
-    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V8";
+    const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V9";
 
     [
       "GRANDE_ACO_CLOUD_URL",
@@ -1489,7 +1507,8 @@
       "GRANDE_ACO_CUSTOM_GAS_URL_V4",
       "GRANDE_ACO_CUSTOM_GAS_URL_V5",
       "GRANDE_ACO_CUSTOM_GAS_URL_V6",
-      "GRANDE_ACO_CUSTOM_GAS_URL_V7"
+      "GRANDE_ACO_CUSTOM_GAS_URL_V7",
+      "GRANDE_ACO_CUSTOM_GAS_URL_V8"
     ].forEach(k => localStorage.removeItem(k));
 
     function getActiveCloudUrl() {
@@ -1513,7 +1532,6 @@
 
     const WEEK_LABELS = ['SEMANA 1', 'SEMANA 2', 'SEMANA 3', 'SEMANA 4', 'SEMANA 5'];
 
-    // BITOLA 4,20 MM ADICIONADA AO CATÁLOGO OFICIAL
     const ALL_GAUGES = [
       '4,20 mm', '5,00 mm', '6,30 mm', '8,00 mm', '10,00 mm',
       '12,50 mm', '16,00 mm', '20,00 mm', '25,00 mm', '32,00 mm'
@@ -1561,7 +1579,7 @@
       9: [16587, 11439, 7189, 3530.622, 0]
     };
 
-    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V18';
+    const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V19';
     const PENDING_SYNC_KEY = 'GRANDE_ACO_PENDING_OFFLINE_SYNC';
 
     let tvModeInterval = null;
@@ -1582,12 +1600,12 @@
       if (tvModeInterval) {
         clearInterval(tvModeInterval);
         tvModeInterval = null;
-        btn.textContent = '📺 Modo Telão: OFF';
+        btn.textContent = 'Modo Telão: OFF';
         btn.classList.remove('active-toggle');
       } else {
         const tabsCycle = ['visao-geral', 'maquinas-bitolas', 'producao-semanal', 'controle-sucata'];
         let currentIdx = 0;
-        btn.textContent = '📺 Modo Telão: ON (25s)';
+        btn.textContent = 'Modo Telão: ON (25s)';
         btn.classList.add('active-toggle');
         tvModeInterval = setInterval(() => {
           currentIdx = (currentIdx + 1) % tabsCycle.length;
@@ -1601,10 +1619,10 @@
     function updateLockButtonUI() {
       const btn = document.getElementById('btnLockPin');
       if (pcpUnlockedSession) {
-        btn.textContent = '🔓 PCP Liberado';
+        btn.textContent = 'PCP Liberado';
         btn.classList.add('active-toggle');
       } else {
-        btn.textContent = '🔒 PCP Bloqueado';
+        btn.textContent = 'PCP Bloqueado';
         btn.classList.remove('active-toggle');
       }
     }
@@ -1612,7 +1630,7 @@
     function requirePcpAuth() {
       if (pcpUnlockedSession) return true;
       const currentPin = state.pcpPin || '1234';
-      const typed = prompt('🔒 Digite o PIN do PCP para liberar lançamentos e exclusões nesta sessão (Padrão: 1234):');
+      const typed = prompt('Digite o PIN do PCP para liberar lançamentos e exclusões nesta sessão (Padrão: 1234):');
       if (typed === currentPin) {
         pcpUnlockedSession = true;
         updateLockButtonUI();
@@ -1643,6 +1661,55 @@
 
     function formatCurrencyBRL(val) {
       return Number(val || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function getGaugeNumericValue(gaugeStr) {
+      return parseFloat(String(gaugeStr || '0').replace(',', '.')) || 0;
+    }
+
+    function reconcileMonthConsistency(mObj, preferredWeekIdx = null) {
+      if (!mObj) return;
+      if (!Array.isArray(mObj.items)) mObj.items = cloneItemsWithTotal(0);
+      if (!Array.isArray(mObj.weeks)) mObj.weeks = [0, 0, 0, 0, 0];
+      while (mObj.weeks.length < 5) mObj.weeks.push(0);
+
+      mObj.items.sort((a, b) => getGaugeNumericValue(a.gauge) - getGaugeNumericValue(b.gauge));
+
+      const sumItems = +mObj.items.reduce((acc, cur) => acc + Number(cur.kg || 0), 0).toFixed(3);
+      const sumWeeks = +mObj.weeks.reduce((acc, cur) => acc + Number(cur || 0), 0).toFixed(3);
+      const diff = +(sumItems - sumWeeks).toFixed(3);
+
+      if (Math.abs(diff) > 0.005) {
+        if (sumItems === 0) {
+          mObj.weeks = [0, 0, 0, 0, 0];
+        } else {
+          let targetIdx = (preferredWeekIdx !== null && preferredWeekIdx >= 0 && preferredWeekIdx < 5) ? preferredWeekIdx : -1;
+          if (targetIdx === -1) {
+            for (let i = 4; i >= 0; i--) {
+              if (mObj.weeks[i] > 0) { targetIdx = i; break; }
+            }
+          }
+          if (targetIdx === -1) targetIdx = getWeekIndexFromDateStr(viewFilter.selectedDate);
+
+          let remainingDelta = diff;
+          const nextVal = +(mObj.weeks[targetIdx] + remainingDelta).toFixed(3);
+          if (nextVal >= 0) {
+            mObj.weeks[targetIdx] = nextVal;
+          } else {
+            remainingDelta = nextVal;
+            mObj.weeks[targetIdx] = 0;
+            for (let i = 4; i >= 0 && remainingDelta < -0.001; i--) {
+              if (mObj.weeks[i] > 0) {
+                const take = Math.min(mObj.weeks[i], Math.abs(remainingDelta));
+                mObj.weeks[i] = +(mObj.weeks[i] - take).toFixed(3);
+                remainingDelta = +(remainingDelta + take).toFixed(3);
+              }
+            }
+          }
+        }
+      }
+
+      mObj.producedKg = sumItems;
     }
 
     function getMonthScrapList(yr, mIdx) {
@@ -1880,14 +1947,10 @@
           if (!mObj.backlog) {
             mObj.backlog = (Number(yr) === 2026 && idx === 9) ? { ...DEFAULT_OCT_BACKLOG } : createEmptyBacklogMap(0);
           }
-          // Garante que a bitola 4,20 mm exista no mapa de Carteira (Backlog) de todos os meses já salvos
           ALL_GAUGES.forEach(g => {
-            if (typeof mObj.backlog[g] === 'undefined') {
-              mObj.backlog[g] = 0;
-            }
+            if (typeof mObj.backlog[g] === 'undefined') mObj.backlog[g] = 0;
           });
 
-          // Garante que a bitola 4,20 mm exista na lista de itens da tabela/gráfico de todos os meses já salvos
           if (!Array.isArray(mObj.items)) {
             mObj.items = cloneItemsWithTotal(0);
           } else if (!mObj.items.some(i => i.gauge === '4,20 mm')) {
@@ -1907,6 +1970,8 @@
           }
           if (!Array.isArray(mObj.scrapLogs)) mObj.scrapLogs = [];
           if (!Array.isArray(mObj.deletedScrapIds)) mObj.deletedScrapIds = [];
+
+          reconcileMonthConsistency(mObj, null);
         });
       });
 
@@ -1965,12 +2030,12 @@
     function updateCloudBadge(statusText, isOnline) {
       const badge = document.getElementById('cloudStatusBadge');
       badge.textContent = statusText;
-      badge.className = 'cloud-badge ' + (isOnline ? 'online' : 'local');
+      badge.className = 'badge-pill ' + (isOnline ? 'online' : 'local');
     }
 
     function loadLocalCache() {
       try {
-        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('GRANDE_ACO_PCP_DB_V17');
+        const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('GRANDE_ACO_PCP_DB_V18');
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && parsed.years) return parsed;
@@ -2035,13 +2100,13 @@
       }
 
       if (!navigator.onLine) {
-        updateCloudBadge('📦 Modo Offline Ativo (Cache Local)', false);
+        updateCloudBadge('Modo Offline Ativo (Cache Local)', false);
         return;
       }
 
       await flushOfflineQueueIfNeeded();
 
-      if (forceRender) updateCloudBadge('🔄 Sincronizando com a Nuvem...', true);
+      if (forceRender) updateCloudBadge('Sincronizando com a nuvem...', true);
 
       const url = getActiveCloudUrl();
       let cloudData = null;
@@ -2058,24 +2123,28 @@
           });
           cloudData = await res.json();
         } catch (errFetch) {
-          updateCloudBadge('⚠️ Verifique a conexão ou o Apps Script', false);
+          updateCloudBadge('Verifique a conexão ou o Apps Script', false);
           return;
         }
       }
 
       if (cloudData && cloudData.status === 'error') {
-        updateCloudBadge('⚠️ Erro no Apps Script: ' + (cloudData.message || ''), false);
+        updateCloudBadge('Erro no Apps Script: ' + (cloudData.message || ''), false);
         return;
       }
 
       if (cloudData && cloudData.years) {
+        const hasChanged = forceRender || (cloudData.updatedAt !== state.updatedAt);
         state = upgradeDatabaseStructure(cloudData, state);
         saveLocalCache();
-        syncFilterInputs();
-        renderAll();
+
+        if (hasChanged) {
+          syncFilterInputs();
+          renderAll();
+        }
 
         const timeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        updateCloudBadge(`☁️ Nuvem Sincronizada (${timeStr})`, true);
+        updateCloudBadge(`Nuvem Sincronizada (${timeStr})`, true);
       } else if (cloudData && cloudData.empty) {
         await pushToCloud(null);
       }
@@ -2089,12 +2158,12 @@
 
       if (!navigator.onLine) {
         localStorage.setItem(PENDING_SYNC_KEY, 'true');
-        updateCloudBadge('📦 Salvo Offline (Sincronizará ao voltar a rede)', false);
+        updateCloudBadge('Salvo Offline (Aguardando rede)', false);
         isSavingToCloud = false;
         return;
       }
 
-      updateCloudBadge('☁️ Gravando para todos os PCs...', true);
+      updateCloudBadge('Gravando para todos os PCs...', true);
 
       const btnProd = document.getElementById('btnLaunchProd');
       const btnGoal = document.getElementById('btnSaveGoal');
@@ -2118,10 +2187,10 @@
 
         localStorage.removeItem(PENDING_SYNC_KEY);
         const timeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        updateCloudBadge(`☁️ Salvo na Nuvem (${timeStr})`, true);
+        updateCloudBadge(`Salvo na Nuvem (${timeStr})`, true);
       } catch (err) {
         localStorage.setItem(PENDING_SYNC_KEY, 'true');
-        updateCloudBadge('📦 Salvo na Fila Offline (Sem Rede)', false);
+        updateCloudBadge('Salvo na Fila Offline', false);
       } finally {
         isSavingToCloud = false;
         if (btnProd) btnProd.disabled = false;
@@ -2312,12 +2381,8 @@
 
       const { weightKg, unitPriceBrl, totalValueBrl } = getCalculatedScrapValues();
 
-      if (weightKg <= 0) {
-        return alert('Informe um peso de sucata maior que zero (em kg).');
-      }
-      if (totalValueBrl < 0 || unitPriceBrl < 0) {
-        return alert('Informe um valor financeiro válido (R$).');
-      }
+      if (weightKg <= 0) return alert('Informe um peso de sucata maior que zero (em kg).');
+      if (totalValueBrl < 0 || unitPriceBrl < 0) return alert('Informe um valor financeiro válido (R$).');
 
       ensureYearExists(yr);
       viewFilter.activeYear = yr;
@@ -2422,6 +2487,7 @@
       const daysInMonth = new Date(viewFilter.activeYear, viewFilter.activeMonthIndex + 1, 0).getDate();
       const now = new Date();
       const isCurrentMonthAndYear = (now.getFullYear() === viewFilter.activeYear && now.getMonth() === viewFilter.activeMonthIndex);
+      const isPastMonth = (viewFilter.activeYear < now.getFullYear()) || (viewFilter.activeYear === now.getFullYear() && viewFilter.activeMonthIndex < now.getMonth());
       const elapsedDays = isCurrentMonthAndYear ? Math.max(1, now.getDate()) : daysInMonth;
       const dailyRateKg = m.producedKg / elapsedDays;
       const projectedMonthKg = isCurrentMonthAndYear ? (dailyRateKg * daysInMonth) : m.producedKg;
@@ -2448,9 +2514,15 @@
       document.getElementById('kpiMonthGoal').textContent = `Meta Prevista: ${formatValue(m.goalKg, 0)}`;
 
       document.getElementById('kpiForecastVal').textContent = formatValue(projectedMonthKg, 0);
-      document.getElementById('kpiForecastSub').textContent = isCurrentMonthAndYear && m.producedKg < m.goalKg
-        ? `Ritmo: ${formatValue(dailyRateKg, 0)}/dia • Falta ${formatValue(neededPerDayKg, 0)}/dia`
-        : `Média Diária: ${formatValue(dailyRateKg, 0)}/dia`;
+      if (isCurrentMonthAndYear) {
+        document.getElementById('kpiForecastSub').textContent = m.producedKg < m.goalKg
+          ? `Ritmo: ${formatValue(dailyRateKg, 0)}/dia • Falta ${formatValue(neededPerDayKg, 0)}/dia`
+          : `Ritmo: ${formatValue(dailyRateKg, 0)}/dia • Meta Atingida`;
+      } else if (isPastMonth) {
+        document.getElementById('kpiForecastSub').textContent = `Fechamento Final • Média: ${formatValue(dailyRateKg, 0)}/dia`;
+      } else {
+        document.getElementById('kpiForecastSub').textContent = `Período Futuro • Meta: ${formatValue(m.goalKg, 0)}`;
+      }
 
       document.getElementById('kpiUptimeVal').textContent = uptimePct.toFixed(1).replace('.', ',') + '%';
       document.getElementById('kpiDowntimeSub').textContent = `Horas Paradas no Mês: ${totalDownHours.toFixed(1).replace('.', ',')} h`;
@@ -2495,10 +2567,11 @@
       const weeklyCardsEl = document.getElementById('weeklyKpiCards');
       weeklyCardsEl.innerHTML = visibleWeeks.map((wVal, idx) => {
         const sharePct = sumWeeks > 0 ? ((wVal / sumWeeks) * 100).toFixed(1).replace('.', ',') : '0,0';
+        const isBest = idx === bestWIdx && wVal > 0;
         return `
-          <div class="kpi-card">
+          <div class="kpi-card ${isBest ? 'featured' : ''}">
             <div class="kpi-label">SEMANA ${idx + 1} (${m.name})</div>
-            <div class="kpi-value ${idx === bestWIdx && wVal > 0 ? 'teal' : ''}">${formatValue(wVal, 0)}</div>
+            <div class="kpi-value">${formatValue(wVal, 2)}</div>
             <div class="kpi-sub">Participação no mês: ${sharePct}%</div>
           </div>
         `;
@@ -2529,7 +2602,7 @@
             <div class="status-name">
               ${mo.name}
               <small>${mo.type}</small>
-              <span class="uptime-tag ${tagClass}">Uptime ${machUptime}% (${downH.toFixed(1)}h par.)</span>
+              <span class="uptime-tag ${tagClass}">Uptime ${machUptime}% (${downH.toFixed(1)}h)</span>
             </div>
             <div class="progress-track">
               <div class="progress-fill" style="width: ${widthPct}%"></div>
@@ -2551,10 +2624,10 @@
       const sumWeeks = (m.weeks || []).reduce((a, b) => a + b, 0);
       const diffReconcile = Math.abs(sumWeeks - sumMachItems);
       const recBanner = document.getElementById('reconcileBanner');
-      if (diffReconcile > 1) {
-        recBanner.innerHTML = `⚖️ Soma das Máquinas: <strong>${formatValue(sumMachItems, 3)}</strong> | Fechamento Semanal Consolidado: <strong style="color: var(--gold);">${formatValue(sumWeeks, 3)}</strong>`;
+      if (diffReconcile > 0.05) {
+        recBanner.innerHTML = `Diferença detectada: Máquinas <strong>${formatValue(sumMachItems, 2)}</strong> vs Semanas <strong>${formatValue(sumWeeks, 2)}</strong> <button class="btn-outline" style="margin-left:8px;" onclick="forceSyncWeeksWithMachines()">Sincronizar Agora</button>`;
       } else {
-        recBanner.innerHTML = `✅ Soma das Máquinas conciliada com o Total do Mês: <strong>${formatValue(sumMachItems, 3)}</strong>`;
+        recBanner.innerHTML = `100% Conciliado: Máquinas, Semanas e Total = <strong>${formatValue(sumMachItems, 2)}</strong>`;
       }
 
       tbody.innerHTML = m.items.map((item, idx) => {
@@ -2567,10 +2640,10 @@
 
         const remainingCarteiraKg = Number(m.backlog[item.gauge] || 0);
         const backlogHtml = (remainingCarteiraKg <= 0 && gaugeTotal === 0)
-          ? `<span style="color: var(--text-muted);">Sem Carteira</span>`
+          ? `<span style="color: var(--stone);">Sem Carteira</span>`
           : (remainingCarteiraKg <= 0
-              ? `<span class="badge-backlog-ok">✅ Carteira Zerada / Concluída</span>`
-              : `<span class="badge-backlog-pend">⏳ Falta Produzir ${formatValue(remainingCarteiraKg, 2)}</span>`);
+              ? `<span class="badge-backlog-ok">Carteira Concluída</span>`
+              : `<span class="badge-backlog-pend">Falta ${formatValue(remainingCarteiraKg, 2)}</span>`);
 
         const isZero = item.kg === 0 && remainingCarteiraKg === 0;
         const badgeClass = item.category === 'Estribadeira' ? 'badge-estrib' : 'badge-dobra';
@@ -2582,13 +2655,13 @@
             <td><span class="badge-type ${badgeClass}">${item.category}</span></td>
             <td><strong>${item.gauge}</strong></td>
             <td>${formatValue(item.kg, 3)}</td>
-            <td>${formatValue(machineTotal, 3)}</td>
-            <td style="color: var(--gold); font-weight: 600;">${formatValue(gaugeTotal, 3)}</td>
-            <td style="color: #d8b4fe; font-weight: 700;">${formatValue(remainingCarteiraKg, 2)}</td>
+            <td style="color: var(--stone);">${formatValue(machineTotal, 2)}</td>
+            <td style="font-weight: 600;">${formatValue(gaugeTotal, 3)}</td>
+            <td style="font-weight: 600;">${formatValue(remainingCarteiraKg, 2)}</td>
             <td>${backlogHtml}</td>
             <td>
-              <button class="btn-delete" onclick="removeOrZeroMachineRow(${idx})" title="${isExtraRow ? 'Excluir esta linha extra' : 'Zerar peso desta linha'}">
-                🗑️ ${isExtraRow ? 'Excluir' : 'Zerar'}
+              <button class="btn-delete" onclick="removeOrZeroMachineRow(${idx})" title="${isExtraRow ? 'Excluir linha' : 'Zerar peso'}">
+                ${isExtraRow ? 'Excluir' : 'Zerar'}
               </button>
             </td>
           </tr>
@@ -2606,12 +2679,12 @@
         return `
           <tr class="${isActive ? 'total-highlight' : (displayTotal === 0 ? 'zero-row' : '')}">
             <td><strong>${mItem.name}</strong></td>
-            <td>${formatValue(wks[0] || 0, 0)}</td>
-            <td>${formatValue(wks[1] || 0, 0)}</td>
-            <td>${formatValue(wks[2] || 0, 0)}</td>
-            <td>${formatValue(wks[3] || 0, 3)}</td>
-            <td>${formatValue(wks[4] || 0, 0)}</td>
-            <td><strong>${formatValue(displayTotal, 0)}</strong></td>
+            <td>${formatValue(wks[0] || 0, 2)}</td>
+            <td>${formatValue(wks[1] || 0, 2)}</td>
+            <td>${formatValue(wks[2] || 0, 2)}</td>
+            <td>${formatValue(wks[3] || 0, 2)}</td>
+            <td>${formatValue(wks[4] || 0, 2)}</td>
+            <td><strong>${formatValue(displayTotal, 2)}</strong></td>
             <td>${formatValue(mItem.goalKg, 0)}</td>
             <td><strong>${pct}</strong></td>
           </tr>
@@ -2620,7 +2693,7 @@
 
       const logsBody = document.getElementById('dailyLogsTableBody');
       if (!state.dailyLogs || state.dailyLogs.length === 0) {
-        logsBody.innerHTML = `<tr><td colspan="9" style="color: var(--text-muted);">Nenhum apontamento diário registrado ainda.</td></tr>`;
+        logsBody.innerHTML = `<tr><td colspan="9" style="color: var(--stone);">Nenhum apontamento diário registrado ainda.</td></tr>`;
       } else {
         logsBody.innerHTML = state.dailyLogs
           .slice()
@@ -2629,22 +2702,20 @@
             const wLabel = typeof log.weekIndex === 'number' ? `Semana ${log.weekIndex + 1}` : 'Semana 4';
             const downStr = log.downtimeHours > 0
               ? `<span class="badge-backlog-pend">${log.downtimeHours}h (${log.downtimeReason || 'Parada'})</span>`
-              : `<span style="color: var(--text-muted);">Normal (0h)</span>`;
+              : `<span style="color: var(--stone);">Normal (0h)</span>`;
 
             return `
               <tr>
-                <td><strong>${formatDateBR(log.date)}</strong> <small style="color: var(--text-muted);">${log.time || ''}</small></td>
+                <td><strong>${formatDateBR(log.date)}</strong> <small style="color: var(--stone);">${log.time || ''}</small></td>
                 <td>${wLabel} • ${MONTH_NAMES[log.monthIndex]} / ${log.year}</td>
-                <td><strong>${log.operator || 'PCP'}</strong><br/><small style="color: var(--text-muted);">${log.shift || ''}</small></td>
+                <td><strong>${log.operator || 'PCP'}</strong><br/><small style="color: var(--stone);">${log.shift || ''}</small></td>
                 <td><strong>${log.machine}</strong></td>
                 <td>${log.gauge}</td>
                 <td>${log.mode}</td>
-                <td style="color: var(--teal-bright); font-weight: 700;">${formatValue(log.kg, 3)}</td>
+                <td style="font-weight: 600;">${formatValue(log.kg, 3)}</td>
                 <td>${downStr}</td>
                 <td>
-                  <button class="btn-delete" onclick="deleteHistoryLogById('${log.id}')" title="Excluir este lançamento pelo ID único e reverter">
-                    🗑️ Excluir
-                  </button>
+                  <button class="btn-delete" onclick="deleteHistoryLogById('${log.id}')">Excluir</button>
                 </td>
               </tr>
             `;
@@ -2654,7 +2725,7 @@
       const scrapBody = document.getElementById('scrapLogsTableBody');
       const scrapList = getYearScrapList(viewFilter.activeYear);
       if (scrapList.length === 0) {
-        scrapBody.innerHTML = `<tr><td colspan="10" style="color: var(--text-muted);">Nenhum lançamento de sucata registrado em ${viewFilter.activeYear}. Use o formulário acima para somar lotes.</td></tr>`;
+        scrapBody.innerHTML = `<tr><td colspan="10" style="color: var(--stone);">Nenhum lançamento de sucata registrado em ${viewFilter.activeYear}.</td></tr>`;
       } else {
         const totalKgAll = scrapList.reduce((a, b) => a + Number(b.weightKg || 0), 0);
         const totalBrlAll = scrapList.reduce((a, b) => a + Number(b.totalValueBrl || 0), 0);
@@ -2666,23 +2737,21 @@
           .map(s => {
             const isSale = s.type === 'Venda de Sucata';
             const badgeHtml = isSale
-              ? `<span class="badge-backlog-ok">💰 Venda</span>`
-              : `<span class="badge-backlog-pend">⚙️ Perda</span>`;
+              ? `<span class="badge-backlog-ok">Venda</span>`
+              : `<span class="badge-backlog-pend">Perda</span>`;
             return `
               <tr>
-                <td><strong>${formatDateBR(s.date)}</strong> <small style="color: var(--text-muted);">${s.time || ''}</small></td>
+                <td><strong>${formatDateBR(s.date)}</strong> <small style="color: var(--stone);">${s.time || ''}</small></td>
                 <td>${MONTH_NAMES[s.monthIndex]} / ${s.year}</td>
                 <td>${badgeHtml}</td>
                 <td><strong>${s.machine}</strong></td>
                 <td>${s.gauge}</td>
-                <td style="color: var(--orange); font-weight: 700;">${formatValue(s.weightKg, 2)}</td>
+                <td style="font-weight: 600;">${formatValue(s.weightKg, 2)}</td>
                 <td>${formatCurrencyBRL(s.unitPriceBrl)} /kg</td>
-                <td style="color: var(--emerald); font-weight: 700;">${formatCurrencyBRL(s.totalValueBrl)}</td>
-                <td style="color: var(--text-muted);">${s.notes || '-'}</td>
+                <td style="color: #34d399; font-weight: 600;">${formatCurrencyBRL(s.totalValueBrl)}</td>
+                <td style="color: var(--stone);">${s.notes || '-'}</td>
                 <td>
-                  <button class="btn-delete" onclick="deleteScrapLogById(${s.year}, ${s.monthIndex}, '${s.id}')" title="Excluir este registro de sucata">
-                    🗑️ Excluir
-                  </button>
+                  <button class="btn-delete" onclick="deleteScrapLogById(${s.year}, ${s.monthIndex}, '${s.id}')">Excluir</button>
                 </td>
               </tr>
             `;
@@ -2712,7 +2781,10 @@
       const activeWeekLabels = hasWeek5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
       const activeWeeksData = hasWeek5 ? weeksAll : weeksAll.slice(0, 4);
 
-      // 1. Gráfico de Evolução Mensal vs Previsão
+      const gridColor = 'rgba(255,255,255,0.06)';
+      const tickColor = 'rgba(255,255,255,0.72)';
+
+      // 1. Evolução Mensal vs. Previsão (Revolut Palette: #00a87e Teal + #494fdf Cobalt)
       const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
       if (monthlyChart) monthlyChart.destroy();
 
@@ -2728,22 +2800,22 @@
             {
               label: `Produzido (${viewFilter.unit})`,
               data: prodSeries,
-              borderColor: '#2dd4bf',
-              backgroundColor: 'rgba(45, 212, 191, 0.16)',
+              borderColor: '#00a87e',
+              backgroundColor: 'rgba(0, 168, 126, 0.16)',
               fill: true,
               stepped: 'middle',
               borderWidth: 2.5,
               pointRadius: 4,
-              pointBackgroundColor: '#2dd4bf',
+              pointBackgroundColor: '#00a87e',
               datalabels: {
-                color: '#2dd4bf',
-                backgroundColor: 'rgba(6, 13, 16, 0.9)',
-                borderColor: 'rgba(45, 212, 191, 0.45)',
+                color: '#ffffff',
+                backgroundColor: '#000000',
+                borderColor: '#00a87e',
                 borderWidth: 1,
-                borderRadius: 4,
-                padding: { top: 2, bottom: 2, left: 4, right: 4 },
-                font: { weight: 'bold', size: 9.5 },
-                align: 'bottom',
+                borderRadius: 6,
+                padding: { top: 2, bottom: 2, left: 5, right: 5 },
+                font: { weight: '600', size: 9.5 },
+                align: (ctx) => prodSeries[ctx.dataIndex] >= goalSeries[ctx.dataIndex] ? 'top' : 'bottom',
                 offset: 6,
                 formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
               }
@@ -2751,23 +2823,23 @@
             {
               label: `Previsão / Meta (${viewFilter.unit})`,
               data: goalSeries,
-              borderColor: '#f59e0b',
+              borderColor: '#494fdf',
               borderDash: [6, 4],
               fill: false,
               tension: 0.25,
               borderWidth: 2,
               pointRadius: 4,
-              pointBackgroundColor: '#f59e0b',
+              pointBackgroundColor: '#494fdf',
               datalabels: {
-                color: '#fbbf24',
-                backgroundColor: 'rgba(6, 13, 16, 0.9)',
-                borderColor: 'rgba(245, 158, 11, 0.45)',
+                color: '#ffffff',
+                backgroundColor: '#000000',
+                borderColor: '#494fdf',
                 borderWidth: 1,
-                borderRadius: 4,
-                padding: { top: 2, bottom: 2, left: 4, right: 4 },
-                font: { weight: 'bold', size: 9.5 },
-                align: 'top',
-                offset: 7,
+                borderRadius: 6,
+                padding: { top: 2, bottom: 2, left: 5, right: 5 },
+                font: { weight: '600', size: 9.5 },
+                align: (ctx) => prodSeries[ctx.dataIndex] >= goalSeries[ctx.dataIndex] ? 'bottom' : 'top',
+                offset: 6,
                 formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
               }
             }
@@ -2777,21 +2849,16 @@
           animation: false,
           responsive: true,
           maintainAspectRatio: false,
-          layout: { padding: { top: 26, bottom: 14 } },
-          plugins: { legend: { labels: { color: '#cbd5e1' } } },
+          layout: { padding: { top: 26, bottom: 22 } },
+          plugins: { legend: { labels: { color: tickColor } } },
           scales: {
-            x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.04)' } },
-            y: {
-              ticks: { color: '#94a3b8' },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              beginAtZero: true,
-              suggestedMax: maxValMonthly * 1.25
-            }
+            x: { ticks: { color: tickColor }, grid: { color: gridColor } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxValMonthly * 1.25 }
           }
         }
       });
 
-      // 2. Gráfico Semanal no Telão (Aba 1)
+      // 2. Gráfico Semanal no Telão
       const ctxOverWeek = document.getElementById('overviewWeeklyChart').getContext('2d');
       if (overviewWeeklyChart) overviewWeeklyChart.destroy();
 
@@ -2805,16 +2872,8 @@
           datasets: [{
             label: `Produção Semanal (${viewFilter.unit})`,
             data: weekPlotData,
-            backgroundColor: [
-              'rgba(56, 189, 248, 0.78)',
-              'rgba(45, 212, 191, 0.78)',
-              'rgba(52, 211, 153, 0.78)',
-              'rgba(245, 158, 11, 0.82)',
-              'rgba(168, 85, 247, 0.82)'
-            ],
-            borderColor: ['#38bdf8', '#2dd4bf', '#34d399', '#f59e0b', '#a855f7'],
-            borderWidth: 1.5,
-            borderRadius: 6
+            backgroundColor: ['#007bc2', '#00a87e', '#494fdf', '#ec7e00', '#e61e49'],
+            borderRadius: 8
           }]
         },
         options: {
@@ -2825,21 +2884,16 @@
           plugins: {
             legend: { display: false },
             datalabels: {
-              color: '#f8fafc',
+              color: '#ffffff',
               anchor: 'end',
               align: 'top',
-              font: { weight: 'bold', size: 11 },
+              font: { weight: '600', size: 11 },
               formatter: (val) => val.toLocaleString('pt-BR')
             }
           },
           scales: {
-            x: { ticks: { color: '#cbd5e1', font: { weight: '600' } }, grid: { display: false } },
-            y: {
-              ticks: { color: '#94a3b8' },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              beginAtZero: true,
-              suggestedMax: maxOverWeek * 1.24
-            }
+            x: { ticks: { color: tickColor, font: { weight: '600' } }, grid: { display: false } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxOverWeek * 1.24 }
           }
         }
       });
@@ -2851,10 +2905,10 @@
       const pctYear = Math.min(100, totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0);
 
       if (gaugeMonth) gaugeMonth.destroy();
-      gaugeMonth = createGauge(document.getElementById('gaugeMonthChart'), pctMonth, '#2dd4bf');
+      gaugeMonth = createGauge(document.getElementById('gaugeMonthChart'), pctMonth, '#494fdf');
 
       if (gaugeYear) gaugeYear.destroy();
-      gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#34d399');
+      gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#00a87e');
 
       // 4. Gráfico por Máquina + Bitola (Aba 2)
       const ctxMach = document.getElementById('machineBarChart').getContext('2d');
@@ -2870,14 +2924,8 @@
           datasets: [{
             label: `Peso Produzido (${viewFilter.unit})`,
             data: machPlotData,
-            backgroundColor: m.items.map(i =>
-              i.category === 'Estribadeira' ? 'rgba(45, 212, 191, 0.75)' : 'rgba(245, 158, 11, 0.8)'
-            ),
-            borderColor: m.items.map(i =>
-              i.category === 'Estribadeira' ? '#2dd4bf' : '#f59e0b'
-            ),
-            borderWidth: 1.5,
-            borderRadius: 5
+            backgroundColor: m.items.map(i => i.category === 'Estribadeira' ? '#00a87e' : '#ec7e00'),
+            borderRadius: 6
           }]
         },
         options: {
@@ -2888,33 +2936,26 @@
           plugins: {
             legend: { display: false },
             datalabels: {
-              color: '#f8fafc',
+              color: '#ffffff',
               anchor: 'end',
               align: 'top',
-              font: { weight: 'bold', size: 10 },
+              font: { weight: '600', size: 10 },
               formatter: (val) => val.toLocaleString('pt-BR')
             }
           },
           scales: {
-            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: {
-              ticks: { color: '#94a3b8' },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              beginAtZero: true,
-              suggestedMax: maxMachVal * 1.24
-            }
+            x: { ticks: { color: tickColor, font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxMachVal * 1.24 }
           }
         }
       });
 
-      // 5. Gráfico Consolidado por Bitola vs. Carteira de Pedidos (COM 4,20 MM A 32,00 MM)
+      // 5. Gráfico Consolidado por Bitola vs. Carteira de Pedidos
       const ctxGaugeOnly = document.getElementById('gaugeOnlyBarChart').getContext('2d');
       if (gaugeOnlyChart) gaugeOnlyChart.destroy();
 
       const gaugeTotals = ALL_GAUGES.map(gName => {
-        const sumKg = m.items
-          .filter(i => i.gauge === gName)
-          .reduce((acc, cur) => acc + cur.kg, 0);
+        const sumKg = m.items.filter(i => i.gauge === gName).reduce((acc, cur) => acc + cur.kg, 0);
         return +(sumKg * factor).toFixed(2);
       });
 
@@ -2929,38 +2970,34 @@
             {
               label: `Produzido (${viewFilter.unit})`,
               data: gaugeTotals,
-              backgroundColor: 'rgba(52, 211, 153, 0.78)',
-              borderColor: '#34d399',
-              borderWidth: 1.5,
-              borderRadius: 5,
+              backgroundColor: '#00a87e',
+              borderRadius: 6,
               datalabels: {
-                color: '#34d399',
-                backgroundColor: 'rgba(6, 13, 16, 0.88)',
-                borderRadius: 4,
+                color: '#ffffff',
+                backgroundColor: '#000000',
+                borderRadius: 6,
                 padding: { top: 2, bottom: 2, left: 4, right: 4 },
                 anchor: 'end',
                 align: 'top',
                 offset: 3,
-                font: { weight: 'bold', size: 9.5 },
+                font: { weight: '600', size: 9.5 },
                 formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
               }
             },
             {
               label: `Carteira / Pedido (${viewFilter.unit})`,
               data: gaugeDemands,
-              backgroundColor: 'rgba(168, 85, 247, 0.58)',
-              borderColor: '#a855f7',
-              borderWidth: 1.5,
-              borderRadius: 5,
+              backgroundColor: '#494fdf',
+              borderRadius: 6,
               datalabels: {
-                color: '#e9d5ff',
-                backgroundColor: 'rgba(6, 13, 16, 0.88)',
-                borderRadius: 4,
+                color: '#ffffff',
+                backgroundColor: '#000000',
+                borderRadius: 6,
                 padding: { top: 2, bottom: 2, left: 4, right: 4 },
                 anchor: 'end',
                 align: 'top',
                 offset: 3,
-                font: { weight: 'bold', size: 9.5 },
+                font: { weight: '600', size: 9.5 },
                 formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
               }
             }
@@ -2972,24 +3009,16 @@
           maintainAspectRatio: false,
           layout: { padding: { top: 10 } },
           plugins: {
-            legend: {
-              position: 'top',
-              labels: { color: '#cbd5e1', padding: 16, font: { weight: '600' } }
-            }
+            legend: { position: 'top', labels: { color: tickColor, padding: 16, font: { weight: '600' } } }
           },
           scales: {
-            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: {
-              ticks: { color: '#94a3b8' },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              beginAtZero: true,
-              suggestedMax: maxGaugeOrBacklog * 1.26
-            }
+            x: { ticks: { color: tickColor, font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxGaugeOrBacklog * 1.26 }
           }
         }
       });
 
-      // 6. GRÁFICO ÚNICO GRANDE DA ABA 3: Comparativo Semanal Entre os Meses
+      // 6. Comparativo Semanal Entre os Meses (Aba 3)
       const ctxWeekMulti = document.getElementById('weeklyMultiMonthChart').getContext('2d');
       if (weeklyMultiMonthChart) weeklyMultiMonthChart.destroy();
 
@@ -2999,7 +3028,7 @@
       const listToPlot = activeMonthsForWeeks.length > 0 ? activeMonthsForWeeks : months.slice(5, 10);
       const anyMonthHasW5 = listToPlot.some(item => item.weeks && item.weeks[4] > 0);
       const multiWeekLabels = anyMonthHasW5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
-      const weekColors = ['#38bdf8', '#2dd4bf', '#34d399', '#f59e0b', '#a855f7'];
+      const weekColors = ['#007bc2', '#00a87e', '#494fdf', '#ec7e00', '#e61e49'];
 
       const allMultiValues = [];
       listToPlot.forEach(item => {
@@ -3015,7 +3044,7 @@
             label: wLabel,
             data: listToPlot.map(item => +(((item.weeks && item.weeks[wIdx]) || 0) * factor).toFixed(1)),
             backgroundColor: weekColors[wIdx],
-            borderRadius: 5,
+            borderRadius: 6,
             barPercentage: 0.85,
             categoryPercentage: 0.78
           }))
@@ -3026,29 +3055,24 @@
           maintainAspectRatio: false,
           layout: { padding: { top: 20 } },
           plugins: {
-            legend: { labels: { color: '#cbd5e1', padding: 14, font: { size: 12, weight: '600' } } },
+            legend: { labels: { color: tickColor, padding: 14, font: { size: 12, weight: '600' } } },
             datalabels: {
-              color: '#f8fafc',
+              color: '#ffffff',
               anchor: 'end',
               align: 'top',
               offset: 2,
-              font: { weight: 'bold', size: 10.5 },
+              font: { weight: '600', size: 10.5 },
               formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
             }
           },
           scales: {
-            x: { ticks: { color: '#e2e8f0', font: { size: 12, weight: '600' } }, grid: { display: false } },
-            y: {
-              ticks: { color: '#94a3b8' },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              beginAtZero: true,
-              suggestedMax: maxMultiWeekVal * 1.24
-            }
+            x: { ticks: { color: '#ffffff', font: { size: 12, weight: '600' } }, grid: { display: false } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxMultiWeekVal * 1.24 }
           }
         }
       });
 
-      // 7. GRÁFICOS DA ABA 5: CONTROLE DE SUCATA
+      // 7. Gráficos da Aba 5 (Controle de Sucata)
       const scrapOrigins = ['GERAL / PÁTIO', 'ES02', 'EB10', 'EB12', '20B', 'PT 32'];
       const monthScrapList = getMonthScrapList(viewFilter.activeYear, viewFilter.activeMonthIndex);
 
@@ -3066,11 +3090,9 @@
         data: {
           labels: scrapOrigins,
           datasets: [{
-            label: `Peso Acumulado de Sucata (${viewFilter.unit})`,
+            label: `Peso de Sucata (${viewFilter.unit})`,
             data: scrapByOriginKg,
-            backgroundColor: 'rgba(249, 115, 22, 0.78)',
-            borderColor: '#f97316',
-            borderWidth: 1.5,
+            backgroundColor: '#ec7e00',
             borderRadius: 6
           }]
         },
@@ -3082,21 +3104,16 @@
           plugins: {
             legend: { display: false },
             datalabels: {
-              color: '#f8fafc',
+              color: '#ffffff',
               anchor: 'end',
               align: 'top',
-              font: { weight: 'bold', size: 10 },
+              font: { weight: '600', size: 10 },
               formatter: (val) => val > 0 ? val.toLocaleString('pt-BR') : ''
             }
           },
           scales: {
-            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: {
-              ticks: { color: '#94a3b8' },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              beginAtZero: true,
-              suggestedMax: maxScrapOriginVal * 1.24
-            }
+            x: { ticks: { color: tickColor, font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxScrapOriginVal * 1.24 }
           }
         }
       });
@@ -3117,10 +3134,8 @@
           datasets: [{
             label: 'Valor Acumulado em Sucata (R$)',
             data: monthlyScrapBrlSeries,
-            backgroundColor: 'rgba(245, 158, 11, 0.75)',
-            borderColor: '#f59e0b',
-            borderWidth: 1.5,
-            borderRadius: 5
+            backgroundColor: '#494fdf',
+            borderRadius: 6
           }]
         },
         options: {
@@ -3129,23 +3144,18 @@
           maintainAspectRatio: false,
           layout: { padding: { top: 22 } },
           plugins: {
-            legend: { labels: { color: '#cbd5e1', padding: 14 } },
+            legend: { labels: { color: tickColor, padding: 14 } },
             datalabels: {
-              color: '#fbbf24',
+              color: '#ffffff',
               anchor: 'end',
               align: 'top',
-              font: { weight: 'bold', size: 9.5 },
+              font: { weight: '600', size: 9.5 },
               formatter: (val) => val > 0 ? 'R$ ' + Math.round(val).toLocaleString('pt-BR') : ''
             }
           },
           scales: {
-            x: { ticks: { color: '#cbd5e1', font: { size: 10 } }, grid: { display: false } },
-            y: {
-              ticks: { color: '#94a3b8' },
-              grid: { color: 'rgba(255,255,255,0.06)' },
-              beginAtZero: true,
-              suggestedMax: maxScrapBrlVal * 1.25
-            }
+            x: { ticks: { color: tickColor, font: { size: 10 } }, grid: { display: false } },
+            y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxScrapBrlVal * 1.25 }
           }
         }
       });
@@ -3167,7 +3177,7 @@
           maintainAspectRatio: false,
           rotation: -90,
           circumference: 180,
-          cutout: '76%',
+          cutout: '78%',
           plugins: {
             legend: { display: false },
             tooltip: { enabled: false },
@@ -3175,6 +3185,15 @@
           }
         }
       });
+    }
+
+    async function forceSyncWeeksWithMachines() {
+      if (!requirePcpAuth()) return;
+      const mObj = getActiveMonthObj();
+      reconcileMonthConsistency(mObj, null);
+      syncFilterInputs();
+      renderAll();
+      await pushToCloud(null);
     }
 
     async function handleLaunchProduction() {
@@ -3240,14 +3259,12 @@
       if (val > 0 || mode === 'set') {
         if (mode === 'add') {
           item.kg = +(item.kg + val).toFixed(3);
-          monthObj.weeks[wIdx] = +(prevWeekKg + val).toFixed(3);
           const newBacklog = Math.max(0, +(prevBacklogKg - val).toFixed(3));
           deductedBacklogKg = +(prevBacklogKg - newBacklog).toFixed(3);
           monthObj.backlog[selectedGauge] = newBacklog;
         } else {
           const diff = val - prevKg;
           item.kg = +val.toFixed(3);
-          monthObj.weeks[wIdx] = Math.max(0, +(prevWeekKg + diff).toFixed(3));
           const newBacklog = Math.max(0, +(prevBacklogKg - diff).toFixed(3));
           deductedBacklogKg = +(prevBacklogKg - newBacklog).toFixed(3);
           monthObj.backlog[selectedGauge] = newBacklog;
@@ -3258,9 +3275,7 @@
         monthObj.downtimeHours[selectedMachine] = +((monthObj.downtimeHours[selectedMachine] || 0) + downHours).toFixed(2);
       }
 
-      const sumItems = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
-      const sumWeeks = +monthObj.weeks.reduce((acc, cur) => acc + cur, 0).toFixed(3);
-      monthObj.producedKg = Math.max(sumItems, sumWeeks);
+      reconcileMonthConsistency(monthObj, wIdx);
 
       const nowTimeStr = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
@@ -3277,7 +3292,7 @@
         machine: item.machine,
         category: item.category,
         gauge: item.gauge,
-        mode: val === 0 && downHours > 0 ? '⚠️ Registro de Parada' : (mode === 'add' ? '+ Lote Somado (Abateu Carteira)' : '= Total Substituído'),
+        mode: val === 0 && downHours > 0 ? 'Registro de Parada' : (mode === 'add' ? '+ Lote Somado (Abateu Carteira)' : '= Total Substituído'),
         rawMode: mode,
         kg: val,
         prevKg: prevKg,
@@ -3363,7 +3378,7 @@
       if (logIndex === -1) return;
       const log = state.dailyLogs[logIndex];
 
-      if (!confirm(`Deseja excluir o registro de ${formatValue(log.kg, 3)} (${log.machine} - Bitola ${log.gauge}) e reverter esse valor na produção e na carteira?`)) {
+      if (!confirm(`Deseja excluir o registro de ${formatValue(log.kg, 3)} (${log.machine} - Bitola ${log.gauge}) e reverter esse valor na produção, semanas e carteira?`)) {
         return;
       }
 
@@ -3395,21 +3410,11 @@
           monthObj.backlog[targetLog.gauge] = Math.max(0, +((monthObj.backlog[targetLog.gauge] || 0) + targetLog.deductedBacklogKg).toFixed(3));
         }
 
-        if (typeof targetLog.weekIndex === 'number' && Array.isArray(monthObj.weeks) && targetLog.kg > 0) {
-          if (targetLog.rawMode === 'add') {
-            monthObj.weeks[targetLog.weekIndex] = Math.max(0, +(monthObj.weeks[targetLog.weekIndex] - targetLog.kg).toFixed(3));
-          } else if (typeof targetLog.prevWeekKg === 'number') {
-            monthObj.weeks[targetLog.weekIndex] = +targetLog.prevWeekKg.toFixed(3);
-          }
-        }
-
         if (targetLog.downtimeHours > 0 && monthObj.downtimeHours) {
           monthObj.downtimeHours[targetLog.machine] = Math.max(0, +((monthObj.downtimeHours[targetLog.machine] || 0) - targetLog.downtimeHours).toFixed(2));
         }
 
-        const sumItems = +monthObj.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
-        const sumWeeks = +monthObj.weeks.reduce((acc, cur) => acc + cur, 0).toFixed(3);
-        monthObj.producedKg = Math.max(sumItems, sumWeeks);
+        reconcileMonthConsistency(monthObj, typeof targetLog.weekIndex === 'number' ? targetLog.weekIndex : null);
       }
 
       state.dailyLogs.splice(logIndex, 1);
@@ -3434,13 +3439,24 @@
 
       const activeMonth = getActiveMonthObj();
       if (activeMonth.items[itemIdx]) {
+        const removedKg = Number(activeMonth.items[itemIdx].kg || 0);
+        const gaugeName = activeMonth.items[itemIdx].gauge;
+
         if (isBase) {
           activeMonth.items[itemIdx].kg = 0;
         } else {
           activeMonth.items.splice(itemIdx, 1);
         }
-        activeMonth.producedKg = +activeMonth.items.reduce((acc, cur) => acc + cur.kg, 0).toFixed(3);
+
+        if (removedKg > 0 && confirm(`Deseja devolver os ${formatValue(removedKg, 2)} zerados de volta para a Carteira de Pedidos da bitola ${gaugeName}?`)) {
+          if (!activeMonth.backlog) activeMonth.backlog = createEmptyBacklogMap(0);
+          activeMonth.backlog[gaugeName] = +((activeMonth.backlog[gaugeName] || 0) + removedKg).toFixed(3);
+        }
+
+        reconcileMonthConsistency(activeMonth, null);
       }
+
+      syncFilterInputs();
       renderAll();
       await pushToCloud(null);
     }
@@ -3491,7 +3507,7 @@
     });
 
     window.addEventListener('offline', () => {
-      updateCloudBadge('📦 Sem Internet (Operando em Cache Offline)', false);
+      updateCloudBadge('Sem Internet (Cache Offline)', false);
     });
 
     window.addEventListener('DOMContentLoaded', async () => {
