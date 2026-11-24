@@ -3,23 +3,25 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#1A2129" />
   <title>GRANDE AÇO | Dashboard MES, PCP & Controle de Sucata</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2026-11-24-users" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=2026-11-24-etiqueta" />
 </head>
 <body>
 
   <!-- TOPBAR -->
   <header class="topbar">
     <div class="brand">
-      <div class="brand-logo">GA</div>
+      <span class="brand-mark" aria-hidden="true">GA</span>
       <div class="brand-title">
-        <h1>Dashboard de Produção</h1>
-        <span>Grande Aço • MES, Telemetria, PCP & Sucata</span>
+        <h1>Grande Aço</h1>
+        <span>Produção · PCP · Sucata</span>
       </div>
     </div>
 
@@ -32,7 +34,7 @@
     </nav>
 
     <div class="top-filters">
-      <div class="filter-group">
+      <div class="filter-group filter-date">
         <label>Calendário</label>
         <input type="date" id="globalDatePicker" onchange="onGlobalDateChange(this.value)" />
       </div>
@@ -46,9 +48,9 @@
       <div class="filter-group">
         <label>Ano</label>
         <div class="year-stepper">
-          <button class="year-btn" onclick="stepYear(-1)" title="Ano Anterior">◀</button>
+          <button class="year-btn" onclick="stepYear(-1)" title="Ano anterior" aria-label="Ano anterior"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3.5 5.5 8l4.5 4.5"/></svg></button>
           <input type="number" id="yearInput" min="2000" max="2100" style="width: 56px; text-align: center;" onchange="changeActiveYear(this.value)" />
-          <button class="year-btn" onclick="stepYear(1)" title="Próximo Ano">▶</button>
+          <button class="year-btn" onclick="stepYear(1)" title="Próximo ano" aria-label="Próximo ano"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3.5 10.5 8 6 12.5"/></svg></button>
         </div>
       </div>
 
@@ -59,16 +61,16 @@
           <option value="t">Toneladas (t)</option>
         </select>
       </div>
-
-      <div class="user-area" id="userArea"></div>
     </div>
+
+    <div class="user-area" id="userArea"></div>
   </header>
 
   <!-- FAIXA DE PERÍODO ATIVO -->
   <div class="period-banner">
-    <div>
-      Período ativo: <strong id="bannerPeriodText">NOVEMBRO / 2026</strong>
-      <span style="color: var(--stone); margin-left: 8px;" id="bannerDateText"></span>
+    <div class="period-guide">
+      <strong id="bannerPeriodText">NOVEMBRO / 2026</strong>
+      <span id="bannerDateText"></span>
     </div>
     <div class="cloud-actions">
       <span id="cloudStatusBadge" class="badge-pill online">Conectando à nuvem...</span>
@@ -76,7 +78,7 @@
       <button class="btn-outline" onclick="syncFromCloud(true)">Sincronizar</button>
       <button class="btn-outline" id="btnTvMode" onclick="toggleTvMode()">Modo Telão: OFF</button>
       <div class="menu-wrap">
-        <button class="btn-outline" onclick="toggleMenu(this)" aria-haspopup="true" aria-expanded="false">Mais ▾</button>
+        <button class="btn-outline" onclick="toggleMenu(this)" aria-haspopup="true" aria-expanded="false">Mais <svg class="chev-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6"/></svg></button>
         <div class="menu-panel menu-right" role="menu">
           <div class="menu-label">Relatórios</div>
           <button role="menuitem" onclick="closeMenus(); exportActiveMonthCSV()">Exportar CSV do mês</button>
@@ -96,50 +98,43 @@
 
   <!-- ABA 1: VISÃO GERAL -->
   <section id="visao-geral" class="tab-section active">
-    <div class="kpi-grid">
-      <div class="kpi-card featured" id="kpiCardOee">
-        <div class="kpi-label">
-          <span>Atingimento (OEE Meta)</span>
-          <span class="goal-badge-trophy">META BATIDA</span>
+    <div class="overview-top">
+      <article class="panel summary-tag" id="kpiCardOee">
+        <div class="panel-header">
+          <span class="panel-title">Lote <span id="kpiMonthSub">NOVEMBRO / 2026</span></span>
+          <span class="goal-badge-trophy">Meta batida</span>
         </div>
-        <div class="kpi-value" id="kpiAttainment">0,0%</div>
-        <div class="kpi-sub" id="kpiMonthSub">Referência: NOVEMBRO / 2026</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Produzido no Mês</div>
-        <div class="kpi-value" id="kpiMonthProd">0 kg</div>
-        <div class="kpi-sub" id="kpiMonthGoal">Meta Prevista: 30.000 kg</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Projeção & Ritmo Diário</div>
-        <div class="kpi-value" id="kpiForecastVal">0 kg</div>
-        <div class="kpi-sub" id="kpiForecastSub">Ritmo: 0 kg/dia</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Disponibilidade Máquinas</div>
-        <div class="kpi-value" id="kpiUptimeVal">100,0%</div>
-        <div class="kpi-sub" id="kpiDowntimeSub">Horas Paradas no Mês: 0,0 h</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Acumulado no Ano (<span id="kpiYearLabel">2026</span>)</div>
-        <div class="kpi-value" id="kpiTotalProd">0 kg</div>
-        <div class="kpi-sub" id="kpiTotalGoal">Previsão Anual: 146.000 kg</div>
-      </div>
+        <div class="summary-body">
+          <div class="summary-label">Produzido no mês</div>
+          <div class="summary-value" id="kpiMonthProd">0 kg</div>
+          <div class="goal-rule" role="img" id="kpiGoalRule" aria-label="Progresso da meta">
+            <span class="goal-rule-fill" id="kpiGoalFill"></span>
+            <span class="goal-rule-mark" id="kpiGoalMark" hidden></span>
+          </div>
+          <div class="summary-goal"><strong id="kpiAttainment">0,0%</strong> <span id="kpiMonthGoal">da meta de 0 kg</span></div>
+          <div class="summary-goal-legend" id="kpiGoalLegend"></div>
+
+          <dl class="tag-rows">
+            <div><dt>Projeção do mês</dt><dd id="kpiForecastVal">0 kg</dd></div>
+            <div class="tag-row-note" id="kpiForecastSub">Ritmo: 0 kg/dia</div>
+            <div><dt>Disponibilidade das máquinas</dt><dd id="kpiUptimeVal">100,0%</dd></div>
+            <div class="tag-row-note" id="kpiDowntimeSub">0,0 h paradas</div>
+            <div><dt>Acumulado em <span id="kpiYearLabel">2026</span></dt><dd id="kpiTotalProd">0 kg</dd></div>
+            <div class="tag-row-note" id="kpiTotalGoal">Previsão anual: 0 kg</div>
+          </dl>
+        </div>
+      </article>
+
+      <section class="bitola-board" aria-labelledby="bitolaBoardTitle">
+        <h2 class="board-title" id="bitolaBoardTitle">Etiquetas por bitola <span>produzido e carteira · <span id="bitolaBoardPeriod">NOVEMBRO/2026</span></span></h2>
+        <div class="bitola-grid" id="gaugeTagGrid"></div>
+      </section>
     </div>
 
     <div class="main-grid">
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Evolução Mensal vs. Previsão (<span id="chartYearTitle">2026</span>)</span>
-        </div>
-        <div class="chart-box">
-          <canvas id="monthlyStepChart"></canvas>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Produção Semanal (<span id="overviewWeekTitle">NOVEMBRO/2026</span>)</span>
+          <span class="panel-title">Produção semanal · <span id="overviewWeekTitle">NOVEMBRO/2026</span></span>
         </div>
         <div class="chart-box">
           <canvas id="overviewWeeklyChart"></canvas>
@@ -148,33 +143,21 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Carga & Uptime (<span id="statusMonthTitle">NOVEMBRO/2026</span>)</span>
+          <span class="panel-title">Máquinas · <span id="statusMonthTitle">NOVEMBRO/2026</span></span>
         </div>
         <div class="status-list" id="machineStatusList"></div>
       </div>
-    </div>
-
-    <div class="bottom-grid">
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Disponibilidade & Atingimento Mensal</span>
-        </div>
-        <div class="gauge-wrap">
-          <canvas id="gaugeMonthChart"></canvas>
-          <div class="gauge-number" id="gaugeMonthText">0,0%</div>
-        </div>
-      </div>
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Performance Acumulada no Ano</span>
+          <span class="panel-title">Mês a mês vs. meta · <span id="chartYearTitle">2026</span></span>
         </div>
-        <div class="gauge-wrap">
-          <canvas id="gaugeYearChart"></canvas>
-          <div class="gauge-number" id="gaugeYearText">0,0%</div>
+        <div class="chart-box">
+          <canvas id="monthlyStepChart"></canvas>
         </div>
       </div>
     </div>
+
   </section>
 
   <!-- ABA 2: MÁQUINAS, BITOLAS & CARTEIRA DE PEDIDOS -->
@@ -266,7 +249,7 @@
   <!-- ABA 4: LANÇAMENTOS PCP, PARADAS, CARTEIRA E AUDITORIA -->
   <section id="lancamentos-pcp" class="tab-section">
     <div class="auth-gate" data-auth-gate hidden>
-      <span class="auth-gate-icon" aria-hidden="true">🔒</span>
+      <svg class="auth-gate-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
       <span class="auth-gate-text"></span>
       <button class="btn-login" onclick="onAuthGateClick()">Entrar</button>
     </div>
@@ -484,7 +467,7 @@
   <!-- ABA 5: CONTROLE DE SUCATA -->
   <section id="controle-sucata" class="tab-section">
     <div class="auth-gate" data-auth-gate hidden>
-      <span class="auth-gate-icon" aria-hidden="true">🔒</span>
+      <svg class="auth-gate-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
       <span class="auth-gate-text"></span>
       <button class="btn-login" onclick="onAuthGateClick()">Entrar</button>
     </div>
@@ -646,6 +629,6 @@
     </div>
   </section>
 
-  <script src="app.js?v=2026-11-24-users"></script>
+  <script src="app.js?v=2026-11-24-etiqueta"></script>
 </body>
 </html>

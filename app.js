@@ -1,4 +1,6 @@
 Chart.register(ChartDataLabels);
+Chart.defaults.font.family = "'Archivo', system-ui, sans-serif";
+Chart.defaults.color = '#4A5560';
 
 const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbxEgRmd7Z4TXB2sIvFTmmh3-Sx0tXQhlmYxSCvL28ZhZ1NIher81lydZC0eAlb4RUpD_w/exec";
 const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V9";
@@ -704,7 +706,7 @@ function updateAuthUI() {
               <strong>${escapeHtml(u.name)}</strong>
               <small>${escapeHtml(ROLE_LABELS[u.role] || u.role)}</small>
             </span>
-            <span class="chev">▾</span>
+            <svg class="chev-icon" viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 6 8 10.5 12.5 6"/></svg>
           </button>
           <div class="menu-panel menu-right" role="menu">
             <div class="menu-head">
@@ -2187,9 +2189,28 @@ function renderKPIsAndStatus() {
   document.getElementById('bannerDateText').textContent = `(Data: ${formatDateBR(viewFilter.selectedDate)})`;
 
   document.getElementById('kpiAttainment').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
-  document.getElementById('kpiMonthSub').textContent = `Referência: ${m.name} / ${viewFilter.activeYear}`;
+  document.getElementById('kpiMonthSub').textContent = `${m.name} / ${viewFilter.activeYear}`;
   document.getElementById('kpiMonthProd').textContent = formatValue(m.producedKg, 0);
-  document.getElementById('kpiMonthGoal').textContent = `Meta Prevista: ${formatValue(m.goalKg, 0)}`;
+  document.getElementById('kpiMonthGoal').textContent = m.goalKg > 0 ? `da meta de ${formatValue(m.goalKg, 0)}` : 'sem meta definida';
+  document.getElementById('bitolaBoardPeriod').textContent = `${m.name}/${viewFilter.activeYear}`;
+
+  // Régua da meta: realizado + marca do "esperado até hoje" (só no mês corrente).
+  const expectedPct = isCurrentMonthAndYear ? Math.min(100, (elapsedWorkdays / workdaysInMonth) * 100) : null;
+  document.getElementById('kpiGoalFill').style.width = Math.min(100, pctMonth) + '%';
+  const markEl = document.getElementById('kpiGoalMark');
+  markEl.hidden = expectedPct === null || m.goalKg <= 0;
+  if (expectedPct !== null) markEl.style.left = expectedPct + '%';
+  document.getElementById('kpiGoalRule').setAttribute('aria-label',
+    `Realizado ${pctMonth.toFixed(1).replace('.', ',')}% da meta` + (expectedPct !== null ? `; esperado até hoje ${expectedPct.toFixed(1).replace('.', ',')}%` : ''));
+  const legendEl = document.getElementById('kpiGoalLegend');
+  if (expectedPct !== null && m.goalKg > 0) {
+    const behind = pctMonth < expectedPct;
+    legendEl.innerHTML = `<span class="legend-mark"></span> Esperado até hoje: ${expectedPct.toFixed(1).replace('.', ',')}% ` +
+      `<span class="${behind ? 'legend-warn' : 'legend-ok'}">${behind ? '· abaixo do ritmo' : '· no ritmo'}</span>`;
+  } else {
+    legendEl.textContent = isPastMonth ? 'Mês encerrado' : '';
+  }
+  renderGaugeTags(m);
 
   document.getElementById('kpiForecastVal').textContent = formatValue(projectedMonthKg, 0);
   if (isCurrentMonthAndYear) {
@@ -2203,11 +2224,11 @@ function renderKPIsAndStatus() {
   }
 
   document.getElementById('kpiUptimeVal').textContent = uptimePct.toFixed(1).replace('.', ',') + '%';
-  document.getElementById('kpiDowntimeSub').textContent = `Horas Paradas no Mês: ${totalDownHours.toFixed(1).replace('.', ',')} h de ${plannedPoolHours.toLocaleString('pt-BR')} h programadas`;
+  document.getElementById('kpiDowntimeSub').textContent = `${totalDownHours.toFixed(1).replace('.', ',')} h paradas de ${plannedPoolHours.toLocaleString('pt-BR')} h programadas`;
 
   document.getElementById('kpiYearLabel').textContent = viewFilter.activeYear;
   document.getElementById('kpiTotalProd').textContent = formatValue(totalProd, 0);
-  document.getElementById('kpiTotalGoal').textContent = `Previsão Anual: ${formatValue(totalGoal, 0)}`;
+  document.getElementById('kpiTotalGoal').textContent = `${pctYear.toFixed(1).replace('.', ',')}% da previsão anual de ${formatValue(totalGoal, 0)}`;
 
   document.getElementById('chartYearTitle').textContent = viewFilter.activeYear;
   document.getElementById('overviewWeekTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
@@ -2218,8 +2239,6 @@ function renderKPIsAndStatus() {
   document.getElementById('scrapChartMonthTitle').textContent = `${m.name}/${viewFilter.activeYear}`;
   document.getElementById('scrapChartYearTitle').textContent = viewFilter.activeYear;
 
-  document.getElementById('gaugeMonthText').textContent = pctMonth.toFixed(1).replace('.', ',') + '%';
-  document.getElementById('gaugeYearText').textContent = pctYear.toFixed(1).replace('.', ',') + '%';
 
   const monthScrap = getMonthScrapList(viewFilter.activeYear, viewFilter.activeMonthIndex);
   const yearScrap = getYearScrapList(viewFilter.activeYear);
@@ -2274,7 +2293,7 @@ function renderKPIsAndStatus() {
         <div class="status-name">
           ${mo.name}
           <small>${mo.type}</small>
-          <span class="uptime-tag ${tagClass}">Uptime ${machUptime}% (${downH.toFixed(1)}h)</span>
+          <span class="uptime-tag ${tagClass}">Disponível ${machUptime}% · ${downH.toFixed(1).replace('.', ',')} h</span>
         </div>
         <div class="progress-track">
           <div class="progress-fill" style="width: ${widthPct}%"></div>
@@ -2282,6 +2301,37 @@ function renderKPIsAndStatus() {
         <div class="status-val">${formatValue(sumKg, 0)}</div>
       </div>
     `;
+  }).join('');
+}
+
+// Etiquetas por bitola (Visão Geral): produzido no mês e quanto da carteira já foi atendido.
+function renderGaugeTags(m) {
+  const grid = document.getElementById('gaugeTagGrid');
+  if (!grid) return;
+  const backlog = m.backlog || {};
+  grid.innerHTML = ALL_GAUGES.map(g => {
+    const items = (m.items || []).filter(i => i.gauge === g);
+    const produced = items.reduce((a, b) => a + Number(b.kg || 0), 0);
+    const machines = [...new Set(items.map(i => i.machine))].join(' / ') || '—';
+    const remaining = Math.max(0, Number(backlog[g] || 0));
+    const total = produced + remaining;
+    const servedPct = total > 0 ? Math.round((produced / total) * 100) : 0;
+    let state = 'idle', stateText = 'Sem pedido';
+    if (remaining > 0 && produced === 0) { state = 'warn'; stateText = 'Não iniciada'; }
+    else if (remaining > 0) { state = 'pend'; stateText = `${servedPct}% atendido`; }
+    else if (produced > 0) { state = 'ok'; stateText = 'Carteira zerada'; }
+    const label = `${g}: produzido ${formatValue(produced, 0)}, carteira restante ${formatValue(remaining, 0)}`;
+    return `
+      <article class="bitola-tag is-${state}" aria-label="${escapeHtml(label)}">
+        <header class="bitola-band"><span>${escapeHtml(g)}</span><span>${escapeHtml(machines)}</span></header>
+        <div class="bitola-body">
+          <div class="bitola-kg">${formatValue(produced, 0)}</div>
+          <div class="bitola-sub">produzido no mês</div>
+          <div class="bitola-cart"><span>Carteira</span><strong>${formatValue(remaining, 0)}</strong></div>
+          <div class="bitola-meter" aria-hidden="true"><i style="width:${total > 0 ? servedPct : 0}%"></i></div>
+          <div class="bitola-state">${stateText}</div>
+        </div>
+      </article>`;
   }).join('');
 }
 
@@ -2422,7 +2472,7 @@ function renderTables() {
             <td>${escapeHtml(s.gauge)}</td>
             <td style="font-weight: 600;">${formatValue(Number(s.weightKg) || 0, 2)}</td>
             <td>${formatCurrencyBRL(s.unitPriceBrl)} /kg</td>
-            <td style="color: #34d399; font-weight: 600;">${formatCurrencyBRL(s.totalValueBrl)}</td>
+            <td style="color: var(--ok); font-weight: 600;">${formatCurrencyBRL(s.totalValueBrl)}</td>
             <td style="color: var(--stone);">${escapeHtml(s.notes || '-')}${s.user ? `<br/><small class="by-user">por @${escapeHtml(s.user)}</small>` : ''}</td>
             <td>
               <button class="btn-delete" data-year="${escapeHtml(s.year)}" data-month="${escapeHtml(s.monthIndex)}" data-scrap-id="${escapeHtml(s.id)}" onclick="deleteScrapLogById(this.dataset.year, this.dataset.month, this.dataset.scrapId)">Excluir</button>
@@ -2455,10 +2505,10 @@ function renderCharts() {
   const activeWeekLabels = hasWeek5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
   const activeWeeksData = hasWeek5 ? weeksAll : weeksAll.slice(0, 4);
 
-  const gridColor = 'rgba(255,255,255,0.06)';
-  const tickColor = 'rgba(255,255,255,0.72)';
+  const gridColor = 'rgba(26,33,41,0.08)';
+  const tickColor = '#4A5560';
 
-  // 1. Evolução Mensal vs. Previsão (Revolut Palette: #00a87e Teal + #494fdf Cobalt)
+  // 1. Evolução Mensal vs. Previsão (grafite = realizado, azul = meta)
   const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
   if (monthlyChart) monthlyChart.destroy();
 
@@ -2474,46 +2524,48 @@ function renderCharts() {
         {
           label: `Produzido (${viewFilter.unit})`,
           data: prodSeries,
-          borderColor: '#00a87e',
-          backgroundColor: 'rgba(0, 168, 126, 0.16)',
+          borderColor: '#1A2129',
+          backgroundColor: 'rgba(26, 33, 41, 0.07)',
           fill: true,
           stepped: 'middle',
           borderWidth: 2.5,
           pointRadius: 4,
-          pointBackgroundColor: '#00a87e',
+          pointBackgroundColor: '#1A2129',
           datalabels: {
-            color: '#ffffff',
-            backgroundColor: '#000000',
-            borderColor: '#00a87e',
+            color: '#1A2129',
+            backgroundColor: '#F7F7F4',
+            borderColor: '#1A2129',
             borderWidth: 1,
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 5, right: 5 },
             font: { weight: '600', size: 9.5 },
             align: (ctx) => prodSeries[ctx.dataIndex] >= goalSeries[ctx.dataIndex] ? 'top' : 'bottom',
             offset: 6,
+            display: (ctx) => ctx.chart.canvas.id === 'monthlyStepChart' ? (ctx.dataIndex === viewFilter.activeMonthIndex && Number(ctx.dataset.data[ctx.dataIndex]) > 0) : Number(ctx.dataset.data[ctx.dataIndex]) > 0,
             formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
           }
         },
         {
           label: `Previsão / Meta (${viewFilter.unit})`,
           data: goalSeries,
-          borderColor: '#494fdf',
+          borderColor: '#3DAEE9',
           borderDash: [6, 4],
           fill: false,
           tension: 0.25,
           borderWidth: 2,
           pointRadius: 4,
-          pointBackgroundColor: '#494fdf',
+          pointBackgroundColor: '#3DAEE9',
           datalabels: {
-            color: '#ffffff',
-            backgroundColor: '#000000',
-            borderColor: '#494fdf',
+            color: '#1A2129',
+            backgroundColor: '#F7F7F4',
+            borderColor: '#3DAEE9',
             borderWidth: 1,
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 5, right: 5 },
             font: { weight: '600', size: 9.5 },
             align: (ctx) => prodSeries[ctx.dataIndex] >= goalSeries[ctx.dataIndex] ? 'bottom' : 'top',
             offset: 6,
+            display: (ctx) => ctx.chart.canvas.id === 'monthlyStepChart' ? (ctx.dataIndex === viewFilter.activeMonthIndex && Number(ctx.dataset.data[ctx.dataIndex]) > 0) : Number(ctx.dataset.data[ctx.dataIndex]) > 0,
             formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
           }
         }
@@ -2546,8 +2598,8 @@ function renderCharts() {
       datasets: [{
         label: `Produção Semanal (${viewFilter.unit})`,
         data: weekPlotData,
-        backgroundColor: ['#007bc2', '#00a87e', '#494fdf', '#ec7e00', '#e61e49'],
-        borderRadius: 8
+        backgroundColor: ['#A9D8F2', '#6EC1EE', '#3DAEE9', '#0E6FA8', '#1A2129'],
+        borderRadius: 2
       }]
     },
     options: {
@@ -2558,11 +2610,11 @@ function renderCharts() {
       plugins: {
         legend: { display: false },
         datalabels: {
-          color: '#ffffff',
+          color: '#1A2129',
           anchor: 'end',
           align: 'top',
-          font: { weight: '600', size: 11 },
-          formatter: (val) => val.toLocaleString('pt-BR')
+          font: { family: "'JetBrains Mono', monospace", weight: '700', size: 11 },
+          formatter: (val) => Math.round(val).toLocaleString('pt-BR')
         }
       },
       scales: {
@@ -2579,10 +2631,11 @@ function renderCharts() {
   const pctYear = Math.min(100, totalGoal > 0 ? (totalProd / totalGoal) * 100 : 0);
 
   if (gaugeMonth) gaugeMonth.destroy();
-  gaugeMonth = createGauge(document.getElementById('gaugeMonthChart'), pctMonth, '#494fdf');
+  // Medidores retirados do layout: o resumo do mês já mostra o atingimento.
+  if (document.getElementById('gaugeMonthChart')) gaugeMonth = createGauge(document.getElementById('gaugeMonthChart'), pctMonth, '#3DAEE9');
 
   if (gaugeYear) gaugeYear.destroy();
-  gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#00a87e');
+  if (document.getElementById('gaugeYearChart')) gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#1A2129');
 
   // 4. Gráfico por Máquina + Bitola (Aba 2)
   const ctxMach = document.getElementById('machineBarChart').getContext('2d');
@@ -2598,7 +2651,7 @@ function renderCharts() {
       datasets: [{
         label: `Peso Produzido (${viewFilter.unit})`,
         data: machPlotData,
-        backgroundColor: m.items.map(i => i.category === 'Estribadeira' ? '#00a87e' : '#ec7e00'),
+        backgroundColor: m.items.map(i => i.category === 'Estribadeira' ? '#1A2129' : '#0E6FA8'),
         borderRadius: 6
       }]
     },
@@ -2610,7 +2663,7 @@ function renderCharts() {
       plugins: {
         legend: { display: false },
         datalabels: {
-          color: '#ffffff',
+          color: '#1A2129',
           anchor: 'end',
           align: 'top',
           font: { weight: '600', size: 10 },
@@ -2644,11 +2697,11 @@ function renderCharts() {
         {
           label: `Produzido (${viewFilter.unit})`,
           data: gaugeTotals,
-          backgroundColor: '#00a87e',
+          backgroundColor: '#1A2129',
           borderRadius: 6,
           datalabels: {
-            color: '#ffffff',
-            backgroundColor: '#000000',
+            color: '#1A2129',
+            backgroundColor: '#F7F7F4',
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 4, right: 4 },
             anchor: 'end',
@@ -2661,11 +2714,11 @@ function renderCharts() {
         {
           label: `Carteira / Pedido (${viewFilter.unit})`,
           data: gaugeDemands,
-          backgroundColor: '#494fdf',
+          backgroundColor: '#3DAEE9',
           borderRadius: 6,
           datalabels: {
-            color: '#ffffff',
-            backgroundColor: '#000000',
+            color: '#1A2129',
+            backgroundColor: '#F7F7F4',
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 4, right: 4 },
             anchor: 'end',
@@ -2702,7 +2755,7 @@ function renderCharts() {
   const listToPlot = activeMonthsForWeeks.length > 0 ? activeMonthsForWeeks : months.slice(5, 10);
   const anyMonthHasW5 = listToPlot.some(item => item.weeks && item.weeks[4] > 0);
   const multiWeekLabels = anyMonthHasW5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
-  const weekColors = ['#007bc2', '#00a87e', '#494fdf', '#ec7e00', '#e61e49'];
+  const weekColors = ['#A9D8F2', '#6EC1EE', '#3DAEE9', '#0E6FA8', '#1A2129'];
 
   const allMultiValues = [];
   listToPlot.forEach(item => {
@@ -2731,16 +2784,17 @@ function renderCharts() {
       plugins: {
         legend: { labels: { color: tickColor, padding: 14, font: { size: 12, weight: '600' } } },
         datalabels: {
-          color: '#ffffff',
+          color: '#1A2129',
           anchor: 'end',
           align: 'top',
           offset: 2,
           font: { weight: '600', size: 10.5 },
+          display: (ctx) => ctx.chart.canvas.id === 'monthlyStepChart' ? (ctx.dataIndex === viewFilter.activeMonthIndex && Number(ctx.dataset.data[ctx.dataIndex]) > 0) : Number(ctx.dataset.data[ctx.dataIndex]) > 0,
           formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
         }
       },
       scales: {
-        x: { ticks: { color: '#ffffff', font: { size: 12, weight: '600' } }, grid: { display: false } },
+        x: { ticks: { color: '#1A2129', font: { size: 12, weight: '600' } }, grid: { display: false } },
         y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxMultiWeekVal * 1.24 }
       }
     }
@@ -2766,7 +2820,7 @@ function renderCharts() {
       datasets: [{
         label: `Peso de Sucata (${viewFilter.unit})`,
         data: scrapByOriginKg,
-        backgroundColor: '#ec7e00',
+        backgroundColor: '#0E6FA8',
         borderRadius: 6
       }]
     },
@@ -2778,7 +2832,7 @@ function renderCharts() {
       plugins: {
         legend: { display: false },
         datalabels: {
-          color: '#ffffff',
+          color: '#1A2129',
           anchor: 'end',
           align: 'top',
           font: { weight: '600', size: 10 },
@@ -2808,7 +2862,7 @@ function renderCharts() {
       datasets: [{
         label: 'Valor Acumulado em Sucata (R$)',
         data: monthlyScrapBrlSeries,
-        backgroundColor: '#494fdf',
+        backgroundColor: '#3DAEE9',
         borderRadius: 6
       }]
     },
@@ -2820,7 +2874,7 @@ function renderCharts() {
       plugins: {
         legend: { labels: { color: tickColor, padding: 14 } },
         datalabels: {
-          color: '#ffffff',
+          color: '#1A2129',
           anchor: 'end',
           align: 'top',
           font: { weight: '600', size: 9.5 },
@@ -2841,7 +2895,7 @@ function createGauge(canvasEl, pct, colorHex) {
     data: {
       datasets: [{
         data: [pct, 100 - pct],
-        backgroundColor: [colorHex, 'rgba(255, 255, 255, 0.08)'],
+        backgroundColor: [colorHex, '#E1E6EA'],
         borderWidth: 0
       }]
     },
@@ -3230,7 +3284,7 @@ async function handleUpdateGoal() {
 async function resetDefaultData() {
   if (!(await requireAdminAuth())) return;
   const typed = await uiPrompt(
-    '⚠️ ATENÇÃO: isto APAGA todos os lançamentos, metas, carteira e sucata de TODOS os anos, ' +
+    'ATENÇÃO: isto APAGA todos os lançamentos, metas, carteira e sucata de TODOS os anos, ' +
     'em TODOS os computadores, e volta aos dados originais de 2026.\n\n' +
     'Um backup dos dados atuais será baixado automaticamente antes.\n\n' +
     'Para confirmar, digite RESTAURAR (em maiúsculas):',
