@@ -95,13 +95,15 @@ input { caret-color: var(--ga-deep); }
 
 .brand { display: flex; align-items: center; gap: 12px; }
 
+/* Selo oficial (assets/logo-grande-aco-selo.jpg): círculo branco com anel azul */
 .brand-mark {
-  font-stretch: 125%;
-  font-weight: 900;
-  font-size: 1.55rem;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  color: var(--ga-sky);
+  display: block;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #fff;
 }
 
 .brand-title h1 {
@@ -331,6 +333,10 @@ input { caret-color: var(--ga-deep); }
 }
 
 .chart-box { position: relative; height: 280px; }
+
+/* Na Visão Geral, o gráfico ocupa a altura toda do painel (sem vão embaixo) */
+.main-grid > .panel { display: flex; flex-direction: column; }
+.main-grid > .panel > .chart-box { flex: 1; height: auto; min-height: 280px; }
 
 /* --------------------------------------------------------- VISÃO GERAL */
 .overview-top {
@@ -1027,7 +1033,7 @@ body:not(.can-edit) .reconcile-note .btn-outline { display: none; }
 
 .auth-modal { max-width: 400px; padding: 26px 28px 24px; }
 .auth-mark { display: flex; justify-content: center; margin-bottom: 10px; }
-.auth-mark .brand-logo { font-stretch: 125%; font-weight: 900; font-size: 2rem; line-height: 1; color: var(--ga-sky); }
+.auth-mark .brand-logo { display: block; width: 88px; height: 88px; border-radius: 50%; object-fit: cover; background: #fff; }
 .auth-modal .ui-modal-title { text-align: center; font-size: 1.25rem; }
 .auth-modal .ui-modal-message { text-align: center; margin-bottom: 20px; }
 .auth-modal .ui-modal-actions { flex-direction: column-reverse; }

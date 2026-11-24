@@ -376,7 +376,7 @@ function uiForm({ title, message = '', fields = [], okText = 'Salvar', cancelTex
     if (variant.includes('auth-modal')) {
       const mark = document.createElement('div');
       mark.className = 'auth-mark';
-      mark.innerHTML = '<div class="brand-logo">GA</div>';
+      mark.innerHTML = '<img class="brand-logo" src="assets/logo-grande-aco-selo.jpg" alt="Grande Aço" width="88" height="88" />';
       form.appendChild(mark);
     }
     const titleEl = document.createElement('div');
@@ -2495,6 +2495,16 @@ function renderTables() {
   }
 }
 
+// Rótulo curto para gráficos apertados: 30.732 → "30,7 mil" (em t: 30,7).
+function compactChartNumber(val) {
+  const v = Number(val) || 0;
+  if (v <= 0) return '';
+  if (viewFilter.unit === 'kg' && v >= 1000) {
+    return (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil';
+  }
+  return Math.round(v).toLocaleString('pt-BR');
+}
+
 function renderCharts() {
   const factor = viewFilter.unit === 't' ? 0.001 : 1;
   const months = getActiveYearMonths();
@@ -2538,11 +2548,14 @@ function renderCharts() {
             borderWidth: 1,
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 5, right: 5 },
-            font: { weight: '600', size: 9.5 },
+            font: { family: "'JetBrains Mono', monospace", weight: '700', size: 10 },
             align: (ctx) => prodSeries[ctx.dataIndex] >= goalSeries[ctx.dataIndex] ? 'top' : 'bottom',
             offset: 6,
-            display: (ctx) => ctx.chart.canvas.id === 'monthlyStepChart' ? (ctx.dataIndex === viewFilter.activeMonthIndex && Number(ctx.dataset.data[ctx.dataIndex]) > 0) : Number(ctx.dataset.data[ctx.dataIndex]) > 0,
-            formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
+            // Produzido: número em todos os meses com produção.
+            display: (ctx) => Number(ctx.dataset.data[ctx.dataIndex]) > 0,
+            clamp: true,
+            clip: false,
+            formatter: (val) => compactChartNumber(val)
           }
         },
         {
@@ -2562,11 +2575,16 @@ function renderCharts() {
             borderWidth: 1,
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 5, right: 5 },
-            font: { weight: '600', size: 9.5 },
+            font: { family: "'JetBrains Mono', monospace", weight: '700', size: 10 },
             align: (ctx) => prodSeries[ctx.dataIndex] >= goalSeries[ctx.dataIndex] ? 'bottom' : 'top',
             offset: 6,
-            display: (ctx) => ctx.chart.canvas.id === 'monthlyStepChart' ? (ctx.dataIndex === viewFilter.activeMonthIndex && Number(ctx.dataset.data[ctx.dataIndex]) > 0) : Number(ctx.dataset.data[ctx.dataIndex]) > 0,
-            formatter: (val) => val > 0 ? Math.round(val).toLocaleString('pt-BR') : ''
+            // Meta: número no mês ativo e nos meses ainda sem produção
+            // (nos outros, o rótulo da produção já fica ao lado e eles se atropelariam).
+            display: (ctx) => Number(ctx.dataset.data[ctx.dataIndex]) > 0 &&
+              (ctx.dataIndex === viewFilter.activeMonthIndex || !(prodSeries[ctx.dataIndex] > 0)),
+            clamp: true,
+            clip: false,
+            formatter: (val) => compactChartNumber(val)
           }
         }
       ]
@@ -2575,7 +2593,7 @@ function renderCharts() {
       animation: false,
       responsive: true,
       maintainAspectRatio: false,
-      layout: { padding: { top: 26, bottom: 22 } },
+      layout: { padding: { top: 26, bottom: 22, left: 8, right: 22 } },
       plugins: { legend: { labels: { color: tickColor } } },
       scales: {
         x: { ticks: { color: tickColor }, grid: { color: gridColor } },
