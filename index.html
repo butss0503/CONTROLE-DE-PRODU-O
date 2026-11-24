@@ -9,7 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2026-11-23" />
+  <link rel="stylesheet" href="style.css?v=2026-11-24-users" />
 </head>
 <body>
 
@@ -59,6 +59,8 @@
           <option value="t">Toneladas (t)</option>
         </select>
       </div>
+
+      <div class="user-area" id="userArea"></div>
     </div>
   </header>
 
@@ -70,17 +72,25 @@
     </div>
     <div class="cloud-actions">
       <span id="cloudStatusBadge" class="badge-pill online">Conectando à nuvem...</span>
-      <button class="btn-outline" id="btnTvMode" onclick="toggleTvMode()">Modo Telão: OFF</button>
-      <button class="btn-outline" id="btnLockPin" onclick="togglePcpLock()">PCP Bloqueado</button>
       <button class="btn-outline" onclick="setTodayDate()">Hoje</button>
-      <button class="btn-outline" onclick="exportActiveMonthCSV()">Exportar CSV</button>
-      <button class="btn-outline" onclick="window.print()">Imprimir</button>
       <button class="btn-outline" onclick="syncFromCloud(true)">Sincronizar</button>
-      <button class="btn-outline" onclick="changeCloudUrlPrompt()">URL Nuvem</button>
-      <button class="btn-outline" onclick="downloadBackup()" title="Baixa um arquivo .json com todos os dados">Baixar Backup</button>
-      <button class="btn-outline" onclick="openImportBackupDialog()" title="Restaura os dados a partir de um arquivo .json de backup">Importar Backup</button>
+      <button class="btn-outline" id="btnTvMode" onclick="toggleTvMode()">Modo Telão: OFF</button>
+      <div class="menu-wrap">
+        <button class="btn-outline" onclick="toggleMenu(this)" aria-haspopup="true" aria-expanded="false">Mais ▾</button>
+        <div class="menu-panel menu-right" role="menu">
+          <div class="menu-label">Relatórios</div>
+          <button role="menuitem" onclick="closeMenus(); exportActiveMonthCSV()">Exportar CSV do mês</button>
+          <button role="menuitem" onclick="closeMenus(); window.print()">Imprimir</button>
+          <div class="menu-sep"></div>
+          <div class="menu-label">Dados</div>
+          <button role="menuitem" onclick="closeMenus(); downloadBackup()" title="Baixa um arquivo .json com todos os dados">Baixar backup</button>
+          <button role="menuitem" data-requires="admin" onclick="closeMenus(); openImportBackupDialog()" title="Restaura os dados a partir de um arquivo .json de backup">Importar backup</button>
+          <button role="menuitem" onclick="closeMenus(); changeCloudUrlPrompt()">URL da nuvem</button>
+          <div class="menu-sep" data-requires="admin"></div>
+          <button role="menuitem" class="menu-danger" data-requires="admin" onclick="closeMenus(); resetDefaultData()" title="Apaga tudo e volta aos dados originais (pede confirmação)">Restaurar padrão</button>
+        </div>
+      </div>
       <input type="file" id="backupFileInput" accept=".json,application/json" style="display: none;" onchange="handleImportBackupFile(this.files[0])" />
-      <button class="btn-delete" style="height: 34px;" onclick="resetDefaultData()" title="Apaga tudo e volta aos dados originais (pede confirmação)">Restaurar Padrão</button>
     </div>
   </div>
 
@@ -255,6 +265,11 @@
 
   <!-- ABA 4: LANÇAMENTOS PCP, PARADAS, CARTEIRA E AUDITORIA -->
   <section id="lancamentos-pcp" class="tab-section">
+    <div class="auth-gate" data-auth-gate hidden>
+      <span class="auth-gate-icon" aria-hidden="true">🔒</span>
+      <span class="auth-gate-text"></span>
+      <button class="btn-login" onclick="onAuthGateClick()">Entrar</button>
+    </div>
     <div class="pcp-grid">
       <div class="panel">
         <div class="panel-header">
@@ -437,18 +452,13 @@
           <input type="number" id="backlogDemandInput" step="0.01" placeholder="Digite o peso do pedido" />
         </div>
         <button class="btn-action btn-cobalt" onclick="handleUpdateBacklogDemand()">Lançar na Carteira</button>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
-          <span style="font-size: 0.76rem; color: var(--stone);">Segurança de Edição (PIN PCP)</span>
-          <button class="btn-outline" onclick="changePinPrompt()">Alterar PIN</button>
-        </div>
       </div>
     </div>
 
     <div class="panel">
       <div class="panel-header">
         <span class="panel-title">Trilha de Auditoria & Histórico de Lançamentos</span>
-        <button class="btn-delete" onclick="clearAllHistoryLogs()">Limpar Histórico</button>
+        <button class="btn-delete" data-requires="admin" onclick="clearAllHistoryLogs()">Limpar Histórico</button>
       </div>
       <div class="table-container">
         <table>
@@ -473,6 +483,11 @@
 
   <!-- ABA 5: CONTROLE DE SUCATA -->
   <section id="controle-sucata" class="tab-section">
+    <div class="auth-gate" data-auth-gate hidden>
+      <span class="auth-gate-icon" aria-hidden="true">🔒</span>
+      <span class="auth-gate-text"></span>
+      <button class="btn-login" onclick="onAuthGateClick()">Entrar</button>
+    </div>
     <div class="kpi-grid">
       <div class="kpi-card featured">
         <div class="kpi-label">Valor Total da Sucata (Mês)</div>
@@ -606,7 +621,7 @@
         <span class="panel-title">Relatório Detalhado de Lançamentos de Sucata</span>
         <div style="display: flex; gap: 8px;">
           <button class="btn-outline" onclick="exportScrapCSV()">Exportar Sucata CSV</button>
-          <button class="btn-delete" onclick="clearAllScrapLogs()">Limpar Sucata do Mês</button>
+          <button class="btn-delete" data-requires="admin" onclick="clearAllScrapLogs()">Limpar Sucata do Mês</button>
         </div>
       </div>
       <div class="table-container">
@@ -631,6 +646,6 @@
     </div>
   </section>
 
-  <script src="app.js?v=2026-11-23b"></script>
+  <script src="app.js?v=2026-11-24-users"></script>
 </body>
 </html>

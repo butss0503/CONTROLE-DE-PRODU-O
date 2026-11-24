@@ -20,7 +20,18 @@ function getActiveCloudUrl() {
 }
 
 async function changeCloudUrlPrompt() {
-  if (!(await requirePcpAuth())) return;
+  if (!isAdmin()) {
+    // Se a nuvem atual não responde, não há como conferir o login: permite trocar
+    // (só afeta este PC), mas avisa. Se responde, exige administrador.
+    let reachable = false;
+    try { reachable = !!(await cloudGet({ action: 'session', token: 'x' })); } catch (e) { reachable = false; }
+    if (reachable) {
+      if (!(await requireAdminAuth())) return;
+    } else if (!(await uiConfirm(
+      'A nuvem configurada não está respondendo, então não dá para conferir seu login.\n\nAlterar a URL mesmo assim? (A mudança vale só para este computador.)',
+      { title: 'URL da Nuvem', okText: 'Alterar URL' }
+    ))) return;
+  }
   const current = getActiveCloudUrl();
   const next = await uiPrompt('Cole abaixo a URL do App da Web do seu Google Apps Script (terminada em /exec):', {
     title: 'URL da Nuvem',
@@ -216,7 +227,7 @@ const STORAGE_KEY = 'GRANDE_ACO_PCP_DB_V19';
 const PENDING_SYNC_KEY = 'GRANDE_ACO_PENDING_OFFLINE_SYNC';
 
 let tvModeInterval = null;
-let pcpUnlockedSession = false;
+
 let lastCelebratedKey = '';
 let lastLocalSaveTime = 0;
 
@@ -249,124 +260,737 @@ function toggleTvMode() {
   }
 }
 
-function updateLockButtonUI() {
-  const btn = document.getElementById('btnLockPin');
-  if (pcpUnlockedSession) {
-    btn.textContent = 'PCP Liberado';
-    btn.classList.add('active-toggle');
-  } else {
-    btn.textContent = 'PCP Bloqueado';
-    btn.classList.remove('active-toggle');
-  }
-}
+// ============================ USUÁRIOS E LOGIN ============================
+// Ver o dashboard é livre. Para lançar/editar é preciso entrar com usuário e
+// senha próprios. Perfis: admin (tudo + usuários), pcp (lança e edita) e
+// viewer (só consulta). A senha é conferida pelo Apps Script; o navegador só
+// guarda um token de sessão aleatório (expira após 6 h sem uso).
+const SESSION_KEY = 'GRANDE_ACO_SESSION_V1';
+const ROLE_LABELS = { admin: 'Administrador', pcp: 'PCP', viewer: 'Visualizador' };
+const ROLE_DESCRIPTIONS = {
+  admin: 'Faz tudo e gerencia usuários',
+  pcp: 'Lança, edita e exclui produção e sucata',
+  viewer: 'Só consulta'
+};
+const MIN_PASSWORD_LENGTH = 6;
 
-// ============================ PIN DO PCP (item 4) ============================
-// O PIN NÃO fica mais nos dados baixados pelo navegador. Ele é conferido pelo
-// Apps Script, e toda gravação leva o PIN da sessão. Sem PIN certo, a nuvem
-// recusa a gravação.
-let sessionPin = null;
+let currentSession = loadSession();
 
-function lockPcpSession() {
-  pcpUnlockedSession = false;
-  sessionPin = null;
-  updateLockButtonUI();
-}
-
-async function requirePcpAuth() {
-  if (pcpUnlockedSession && sessionPin) return true;
-  const typed = await uiPrompt('Digite o PIN do PCP para liberar lançamentos e exclusões nesta sessão:', {
-    title: 'PIN do PCP',
-    inputType: 'password',
-    okText: 'Liberar'
-  });
-  if (typed === null) return false;
-  const pin = typed.trim();
-  if (!pin) return false;
-
-  let result = null;
+function loadSession() {
   try {
-    result = await cloudGet({ action: 'checkPin', pin });
-  } catch (e) {
-    result = null;
-  }
-
-  if (result && result.years) {
-    // Apps Script antigo (ainda não atualizado): confere do jeito antigo.
-    result = { ok: pin === String(result.pcpPin || '1234') };
-  }
-
-  if (result && result.ok === true) {
-    pcpUnlockedSession = true;
-    sessionPin = pin;
-    updateLockButtonUI();
-    if (hasPendingChanges()) flushPendingChanges();
-    return true;
-  }
-  if (result && result.locked) {
-    await uiAlert('Muitas tentativas de PIN erradas. Por segurança, aguarde 10 minutos e tente de novo.', 'PIN bloqueado');
-    return false;
-  }
-  if (result && result.ok === false) {
-    await uiAlert('PIN incorreto! Operação cancelada.', 'PIN incorreto');
-    return false;
-  }
-
-  // Sem resposta da nuvem (sem internet): libera provisoriamente.
-  const goOffline = await uiConfirm(
-    'Não foi possível conferir o PIN na nuvem (sem internet?).\n\n' +
-    'Liberar mesmo assim? Os lançamentos ficam guardados neste PC e, se o PIN estiver errado, a nuvem vai recusá-los quando a internet voltar.',
-    { title: 'Sem conexão', okText: 'Liberar offline' }
-  );
-  if (!goOffline) return false;
-  pcpUnlockedSession = true;
-  sessionPin = pin;
-  updateLockButtonUI();
-  return true;
+    const s = JSON.parse(localStorage.getItem(SESSION_KEY) || 'null');
+    if (s && s.token && s.user && s.user.username) return s;
+  } catch (e) {}
+  return null;
 }
 
-async function togglePcpLock() {
-  if (pcpUnlockedSession) {
-    lockPcpSession();
-  } else {
-    await requirePcpAuth();
-  }
+function setSession(s) {
+  currentSession = s;
+  if (s) localStorage.setItem(SESSION_KEY, JSON.stringify(s));
+  else localStorage.removeItem(SESSION_KEY);
+  updateAuthUI();
 }
 
-async function changePinPrompt() {
-  if (!(await requirePcpAuth())) return;
-  const nextPin = await uiPrompt('Digite o NOVO PIN do PCP (mínimo 4 caracteres):', {
-    title: 'Alterar PIN', inputType: 'password'
-  });
-  if (nextPin === null) return;
-  const pinValue = nextPin.trim();
-  if (pinValue.length < 4) return uiAlert('O PIN precisa ter pelo menos 4 caracteres.');
+function currentUser() {
+  return currentSession ? currentSession.user : null;
+}
 
-  const again = await uiPrompt('Digite o novo PIN mais uma vez para confirmar:', {
-    title: 'Alterar PIN', inputType: 'password'
-  });
-  if (again === null) return;
-  if (again.trim() !== pinValue) return uiAlert('Os dois PINs digitados são diferentes. Nada foi alterado.');
+function sessionToken() {
+  return currentSession ? currentSession.token : null;
+}
 
-  if (!navigator.onLine) return uiAlert('Sem internet. O PIN só pode ser alterado com conexão.');
+function canEdit() {
+  const u = currentUser();
+  return !!u && !u.mustChange && (u.role === 'admin' || u.role === 'pcp');
+}
 
+function isAdmin() {
+  const u = currentUser();
+  return !!u && !u.mustChange && u.role === 'admin';
+}
+
+function randomHex(bytes) {
+  const arr = new Uint8Array(bytes);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function generateTempPassword() {
+  const alphabet = 'abcdefghjkmnpqrstuvwxyz23456789';
+  const arr = new Uint8Array(8);
+  crypto.getRandomValues(arr);
+  return Array.from(arr, b => alphabet[b % alphabet.length]).join('');
+}
+
+function userInitials(name) {
+  const parts = String(name || '?').trim().split(/\s+/).filter(Boolean);
+  const first = parts[0] ? parts[0][0] : '?';
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : '';
+  return (first + last).toUpperCase();
+}
+
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+// Envia uma ação de conta por POST e lê o resultado por GET (o POST é no-cors).
+async function cloudAction(payload) {
+  if (!navigator.onLine) {
+    return { status: 'error', code: 'offline', message: 'Sem internet. Conecte-se para continuar.' };
+  }
+  const opId = 'acc_' + randomHex(12);
   try {
     await fetch(getActiveCloudUrl(), {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-      body: JSON.stringify({ action: 'changePin', pin: sessionPin, newPin: pinValue })
+      body: JSON.stringify({ ...payload, opId })
     });
-  } catch (e) { /* a conferência abaixo decide */ }
+  } catch (e) { /* a leitura abaixo decide */ }
 
-  let check = null;
-  try { check = await cloudGet({ action: 'checkPin', pin: pinValue }); } catch (e) { check = null; }
-
-  if (check && check.ok === true) {
-    sessionPin = pinValue;
-    await uiAlert('Novo PIN salvo e confirmado na nuvem. Vale para todos os PCs.', 'PIN alterado');
-  } else {
-    await uiAlert('NÃO foi possível confirmar o novo PIN na nuvem. O PIN antigo continua valendo.\n\nConfira se o Apps Script foi atualizado e tente de novo.', 'PIN não alterado');
+  for (let i = 0; i < 7; i++) {
+    try {
+      const r = await cloudGet({ action: 'result', opId });
+      if (r && r.years) {
+        return { status: 'error', code: 'outdated', message: 'O Apps Script ainda está na versão antiga (com PIN). Publique o novo Code.gs para usar usuários e senhas.' };
+      }
+      if (r && !r.pending) return r;
+    } catch (e) {}
+    await sleep(500 + i * 350);
   }
+  return { status: 'error', code: 'noresponse', message: 'A nuvem não respondeu. Confira a internet e tente de novo.' };
+}
+
+// ---------- Janela de formulário (login, senha, usuários) ----------
+// onSubmit(values, setError) → true fecha a janela; qualquer outra coisa a mantém aberta.
+function uiForm({ title, message = '', fields = [], okText = 'Salvar', cancelText = 'Cancelar', variant = '', onSubmit = null }) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'ui-modal-overlay';
+    const form = document.createElement('form');
+    form.className = 'ui-modal ui-form ' + variant;
+    form.setAttribute('role', 'dialog');
+    form.setAttribute('aria-modal', 'true');
+    form.noValidate = true;
+
+    if (variant.includes('auth-modal')) {
+      const mark = document.createElement('div');
+      mark.className = 'auth-mark';
+      mark.innerHTML = '<div class="brand-logo">GA</div>';
+      form.appendChild(mark);
+    }
+    const titleEl = document.createElement('div');
+    titleEl.className = 'ui-modal-title';
+    titleEl.textContent = title;
+    form.appendChild(titleEl);
+    if (message) {
+      const msgEl = document.createElement('div');
+      msgEl.className = 'ui-modal-message';
+      msgEl.textContent = message;
+      form.appendChild(msgEl);
+    }
+
+    const inputs = {};
+    fields.forEach(f => {
+      const row = document.createElement('div');
+      row.className = 'form-row';
+      const label = document.createElement('label');
+      label.textContent = f.label;
+      const id = 'f_' + randomHex(4);
+      label.htmlFor = id;
+      row.appendChild(label);
+
+      let input;
+      if (f.type === 'select') {
+        input = document.createElement('select');
+        (f.options || []).forEach(o => {
+          const opt = document.createElement('option');
+          opt.value = o.value;
+          opt.textContent = o.label;
+          input.appendChild(opt);
+        });
+        input.value = f.value || (f.options && f.options[0] ? f.options[0].value : '');
+        row.appendChild(input);
+      } else {
+        input = document.createElement('input');
+        input.type = f.type || 'text';
+        input.value = f.value || '';
+        input.placeholder = f.placeholder || '';
+        input.autocomplete = f.autocomplete || 'off';
+        input.spellcheck = false;
+        if (f.type === 'password') {
+          const wrap = document.createElement('div');
+          wrap.className = 'password-wrap';
+          const eye = document.createElement('button');
+          eye.type = 'button';
+          eye.className = 'password-toggle';
+          eye.textContent = 'Mostrar';
+          eye.addEventListener('click', () => {
+            const show = input.type === 'password';
+            input.type = show ? 'text' : 'password';
+            eye.textContent = show ? 'Ocultar' : 'Mostrar';
+            input.focus();
+          });
+          wrap.appendChild(input);
+          wrap.appendChild(eye);
+          row.appendChild(wrap);
+        } else {
+          row.appendChild(input);
+        }
+      }
+      input.id = id;
+      input.name = f.name;
+      if (f.hint) {
+        const hint = document.createElement('small');
+        hint.className = 'form-hint';
+        hint.textContent = f.hint;
+        row.appendChild(hint);
+      }
+      inputs[f.name] = input;
+      form.appendChild(row);
+    });
+
+    const errorEl = document.createElement('div');
+    errorEl.className = 'form-error';
+    errorEl.setAttribute('role', 'alert');
+    errorEl.hidden = true;
+    form.appendChild(errorEl);
+
+    const actions = document.createElement('div');
+    actions.className = 'ui-modal-actions';
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'btn-outline';
+    cancelBtn.textContent = cancelText || 'Cancelar';
+    if (!cancelText) cancelBtn.hidden = true;
+    const okBtn = document.createElement('button');
+    okBtn.type = 'submit';
+    okBtn.className = 'btn-action btn-cobalt';
+    okBtn.textContent = okText;
+    actions.appendChild(cancelBtn);
+    actions.appendChild(okBtn);
+    form.appendChild(actions);
+
+    let busy = false;
+    function setError(msg) {
+      errorEl.textContent = msg || '';
+      errorEl.hidden = !msg;
+    }
+    function close(result) {
+      document.removeEventListener('keydown', onKey, true);
+      overlay.remove();
+      resolve(result);
+    }
+    function isTopmost() {
+      const all = document.querySelectorAll('.ui-modal-overlay');
+      return all[all.length - 1] === overlay;
+    }
+    function onKey(ev) {
+      if (ev.key === 'Escape' && cancelText && !busy && isTopmost()) {
+        ev.preventDefault();
+        ev.stopPropagation();
+        close(null);
+      }
+    }
+
+    form.addEventListener('submit', async ev => {
+      ev.preventDefault();
+      if (busy) return;
+      const values = {};
+      Object.keys(inputs).forEach(k => { values[k] = inputs[k].value; });
+      if (!onSubmit) return close(values);
+      setError('');
+      busy = true;
+      okBtn.disabled = true;
+      cancelBtn.disabled = true;
+      const prevText = okBtn.textContent;
+      okBtn.textContent = 'Aguarde...';
+      let done = false;
+      try {
+        done = await onSubmit(values, setError);
+      } catch (e) {
+        setError('Erro inesperado: ' + e.message);
+      }
+      busy = false;
+      okBtn.disabled = false;
+      cancelBtn.disabled = false;
+      okBtn.textContent = prevText;
+      if (done === true) close(values);
+    });
+    cancelBtn.addEventListener('click', () => { if (!busy) close(null); });
+    document.addEventListener('keydown', onKey, true);
+
+    overlay.appendChild(form);
+    document.body.appendChild(overlay);
+    const firstEmpty = Object.values(inputs).find(i => !i.value) || Object.values(inputs)[0];
+    (firstEmpty || okBtn).focus();
+  });
+}
+
+// ---------- Login / logout / troca de senha ----------
+async function openLoginDialog(reason = '') {
+  let typedPassword = '';
+  const result = await uiForm({
+    title: 'Entrar no PCP',
+    message: reason || 'Use seu usuário e senha para lançar e editar dados.',
+    variant: 'auth-modal',
+    okText: 'Entrar',
+    fields: [
+      { name: 'username', label: 'Usuário', autocomplete: 'username', placeholder: 'ex.: flavio' },
+      { name: 'password', label: 'Senha', type: 'password', autocomplete: 'current-password' }
+    ],
+    onSubmit: async (v, setError) => {
+      const username = v.username.trim().toLowerCase();
+      if (!username || !v.password) { setError('Preencha usuário e senha.'); return false; }
+      const token = randomHex(32);
+      const r = await cloudAction({ action: 'login', username, password: v.password, token });
+      if (r.status !== 'ok') { setError(r.message || 'Não foi possível entrar.'); return false; }
+      typedPassword = v.password;
+      setSession({ token, user: r.user });
+      return true;
+    }
+  });
+  if (!result) return false;
+
+  const u = currentUser();
+  if (u && u.mustChange) {
+    const changed = await openChangePasswordDialog({ forced: true, currentPassword: typedPassword });
+    if (!changed) return false;
+  }
+  if (hasPendingChanges() && canEdit()) flushPendingChanges();
+  return true;
+}
+
+async function openChangePasswordDialog({ forced = false, currentPassword = '' } = {}) {
+  if (!currentSession) return false;
+  const fields = [];
+  if (!currentPassword) {
+    fields.push({ name: 'current', label: forced ? 'Senha provisória' : 'Senha atual', type: 'password', autocomplete: 'current-password' });
+  }
+  fields.push(
+    { name: 'next', label: 'Nova senha', type: 'password', autocomplete: 'new-password', hint: `Mínimo de ${MIN_PASSWORD_LENGTH} caracteres. Só você vai saber.` },
+    { name: 'again', label: 'Repita a nova senha', type: 'password', autocomplete: 'new-password' }
+  );
+
+  const result = await uiForm({
+    title: forced ? 'Crie sua senha' : 'Trocar minha senha',
+    message: forced
+      ? `Olá, ${currentUser().name}! Você entrou com uma senha provisória. Para continuar, crie uma senha só sua.`
+      : '',
+    variant: 'auth-modal',
+    okText: 'Salvar senha',
+    cancelText: forced ? 'Agora não' : 'Cancelar',
+    fields,
+    onSubmit: async (v, setError) => {
+      const current = currentPassword || v.current;
+      if (!current) { setError('Informe a senha atual.'); return false; }
+      if (v.next.length < MIN_PASSWORD_LENGTH) { setError(`A nova senha precisa ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`); return false; }
+      if (v.next !== v.again) { setError('As duas senhas digitadas são diferentes.'); return false; }
+      if (v.next === current) { setError('A nova senha precisa ser diferente da atual.'); return false; }
+      const r = await cloudAction({ action: 'changePassword', token: sessionToken(), currentPassword: current, newPassword: v.next });
+      if (r.status !== 'ok') {
+        if (r.code === 'auth') { setSession(null); setError('Sua sessão expirou. Feche e entre de novo.'); return false; }
+        setError(r.message || 'Não foi possível trocar a senha.');
+        return false;
+      }
+      setSession({ token: sessionToken(), user: r.user });
+      return true;
+    }
+  });
+
+  if (result) {
+    showToast('Senha alterada com sucesso.');
+    return true;
+  }
+  return false;
+}
+
+async function logout() {
+  const token = sessionToken();
+  setSession(null);
+  if (token && navigator.onLine) {
+    fetch(getActiveCloudUrl(), {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'logout', token })
+    }).catch(() => {});
+  }
+  showToast('Você saiu. O dashboard continua disponível para consulta.');
+}
+
+// Garante que o usuário pode editar (abre o login se precisar).
+async function requireEditAuth() {
+  return requireRole(['admin', 'pcp']);
+}
+
+async function requireAdminAuth() {
+  return requireRole(['admin']);
+}
+
+async function requireRole(roles) {
+  let u = currentUser();
+  if (u && u.mustChange) {
+    await openChangePasswordDialog({ forced: true });
+    u = currentUser();
+    if (!u || u.mustChange) return false;
+  }
+  if (!u) {
+    if (!navigator.onLine) {
+      await uiAlert('Sem internet: não é possível entrar agora. Conecte-se e tente de novo.', 'Sem conexão');
+      return false;
+    }
+    const msg = roles.length === 1 && roles[0] === 'admin'
+      ? 'Esta ação é exclusiva de administradores. Entre com um usuário administrador.'
+      : 'Entre com seu usuário para lançar e editar dados.';
+    if (!(await openLoginDialog(msg))) return false;
+    u = currentUser();
+    if (!u) return false;
+  }
+  if (!roles.includes(u.role)) {
+    const needed = roles.map(r => ROLE_LABELS[r]).join(' ou ');
+    await uiAlert(`Seu perfil (${ROLE_LABELS[u.role] || u.role}) não permite esta ação. Ela é liberada para: ${needed}.\n\nSe precisar, peça a um administrador para mudar seu perfil.`, 'Sem permissão');
+    return false;
+  }
+  return true;
+}
+
+// Chamado quando a nuvem informa que a sessão não vale mais.
+function handleSessionLost(reason = 'auth') {
+  if (!currentSession) return;
+  setSession(null);
+  const msg = reason === 'forbidden'
+    ? 'Seu perfil não permite gravar. Alterações deste PC ficaram guardadas.'
+    : 'Sua sessão terminou (expirou ou o usuário foi alterado). Entre de novo para continuar lançando.';
+  showToast(msg, 'warn');
+}
+
+// Atualiza o usuário com o que a nuvem informou (perfil trocado, desativado...).
+function applyCloudSession(info) {
+  if (!currentSession || typeof info === 'undefined') return;
+  if (info === null) return handleSessionLost('auth');
+  const prev = currentSession.user;
+  if (prev.role !== info.role || prev.name !== info.name || prev.mustChange !== info.mustChange) {
+    setSession({ token: currentSession.token, user: info });
+  }
+}
+
+async function verifyStoredSession() {
+  if (!currentSession || !navigator.onLine) return;
+  try {
+    const r = await cloudGet({ action: 'session', token: currentSession.token });
+    if (r && r.ok === false) handleSessionLost('auth');
+    else if (r && r.ok === true && r.user) applyCloudSession(r.user);
+  } catch (e) { /* sem conexão: mantém a sessão local */ }
+}
+
+// ---------- Interface: área do usuário, menus, avisos ----------
+function updateAuthUI() {
+  const u = currentUser();
+  const body = document.body;
+  if (!body) return;
+  body.classList.remove('auth-none', 'auth-admin', 'auth-pcp', 'auth-viewer', 'can-edit');
+  body.classList.add(u ? 'auth-' + u.role : 'auth-none');
+  if (canEdit()) body.classList.add('can-edit');
+
+  const area = document.getElementById('userArea');
+  if (area) {
+    if (!u) {
+      area.innerHTML = `<button class="btn-login" onclick="openLoginDialog()">Entrar</button>`;
+    } else {
+      area.innerHTML = `
+        <div class="menu-wrap">
+          <button class="user-chip" onclick="toggleMenu(this)" aria-haspopup="true" aria-expanded="false">
+            <span class="user-avatar role-${escapeHtml(u.role)}">${escapeHtml(userInitials(u.name))}</span>
+            <span class="user-chip-text">
+              <strong>${escapeHtml(u.name)}</strong>
+              <small>${escapeHtml(ROLE_LABELS[u.role] || u.role)}</small>
+            </span>
+            <span class="chev">▾</span>
+          </button>
+          <div class="menu-panel menu-right" role="menu">
+            <div class="menu-head">
+              <strong>${escapeHtml(u.name)}</strong>
+              <small>@${escapeHtml(u.username)} · ${escapeHtml(ROLE_DESCRIPTIONS[u.role] || '')}</small>
+            </div>
+            <button role="menuitem" onclick="closeMenus(); openChangePasswordDialog()">Trocar minha senha</button>
+            ${u.role === 'admin' ? `<button role="menuitem" onclick="closeMenus(); openUsersManager()">Gerenciar usuários</button>` : ''}
+            <div class="menu-sep"></div>
+            <button role="menuitem" class="menu-danger" onclick="closeMenus(); logout()">Sair</button>
+          </div>
+        </div>`;
+    }
+  }
+
+  document.querySelectorAll('[data-auth-gate]').forEach(el => {
+    let text;
+    if (!u) text = 'Modo consulta. Entre com seu usuário para lançar e editar.';
+    else if (u.mustChange) text = 'Crie sua senha definitiva para liberar os lançamentos.';
+    else if (!canEdit()) text = `Seu perfil é ${ROLE_LABELS[u.role]}: apenas consulta.`;
+    else text = '';
+    el.hidden = !text;
+    const span = el.querySelector('.auth-gate-text');
+    if (span) span.textContent = text;
+    const btn = el.querySelector('button');
+    if (btn) {
+      btn.hidden = !!u && !u.mustChange;
+      btn.textContent = u && u.mustChange ? 'Criar senha' : 'Entrar';
+    }
+  });
+
+  const opInput = document.getElementById('inputOperatorName');
+  if (opInput) {
+    if (u && (!opInput.value || opInput.dataset.auto === '1')) {
+      opInput.value = u.name;
+      opInput.dataset.auto = '1';
+    } else if (!u && opInput.dataset.auto === '1') {
+      opInput.value = '';
+    }
+  }
+}
+
+function onAuthGateClick() {
+  const u = currentUser();
+  if (u && u.mustChange) openChangePasswordDialog({ forced: true });
+  else openLoginDialog();
+}
+
+function closeMenus(except = null) {
+  document.querySelectorAll('.menu-wrap.open').forEach(w => {
+    if (w === except) return;
+    w.classList.remove('open');
+    const b = w.querySelector('[aria-expanded]');
+    if (b) b.setAttribute('aria-expanded', 'false');
+  });
+}
+
+function toggleMenu(btn) {
+  const wrap = btn.closest('.menu-wrap');
+  const willOpen = !wrap.classList.contains('open');
+  closeMenus(wrap);
+  wrap.classList.toggle('open', willOpen);
+  btn.setAttribute('aria-expanded', String(willOpen));
+}
+
+document.addEventListener('click', ev => {
+  if (!ev.target.closest('.menu-wrap')) closeMenus();
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape') closeMenus();
+});
+
+function showToast(message, kind = 'ok') {
+  let host = document.getElementById('toastHost');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'toastHost';
+    host.className = 'toast-host';
+    document.body.appendChild(host);
+  }
+  const t = document.createElement('div');
+  t.className = 'toast toast-' + kind;
+  t.setAttribute('role', 'status');
+  t.textContent = message;
+  host.appendChild(t);
+  setTimeout(() => t.classList.add('leaving'), 4200);
+  setTimeout(() => t.remove(), 4600);
+}
+
+// ---------- Gerenciar usuários (admin) ----------
+function formatDateTimeShort(ms) {
+  if (!ms) return '—';
+  return new Date(ms).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' });
+}
+
+const ROLE_OPTIONS = ['pcp', 'viewer', 'admin'].map(r => ({ value: r, label: `${ROLE_LABELS[r]} — ${ROLE_DESCRIPTIONS[r]}` }));
+
+async function openUsersManager() {
+  if (!(await requireAdminAuth())) return;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'ui-modal-overlay';
+  overlay.innerHTML = `
+    <div class="ui-modal users-modal" role="dialog" aria-modal="true" aria-label="Gerenciar usuários">
+      <div class="users-modal-head">
+        <div>
+          <div class="ui-modal-title">Usuários</div>
+          <div class="users-modal-sub">Quem pode entrar no PCP e o que cada um pode fazer.</div>
+        </div>
+        <div class="users-modal-tools">
+          <button type="button" class="btn-outline" data-act="close">Fechar</button>
+          <button type="button" class="btn-action btn-cobalt" data-act="new">+ Novo usuário</button>
+        </div>
+      </div>
+      <div class="users-list" aria-live="polite"><div class="users-empty">Carregando usuários...</div></div>
+    </div>`;
+  document.body.appendChild(overlay);
+  const listEl = overlay.querySelector('.users-list');
+  let users = [];
+
+  function close() {
+    document.removeEventListener('keydown', onKey, true);
+    overlay.remove();
+  }
+  function onKey(ev) {
+    const all = document.querySelectorAll('.ui-modal-overlay');
+    if (ev.key === 'Escape' && all[all.length - 1] === overlay) { ev.preventDefault(); close(); }
+  }
+  document.addEventListener('keydown', onKey, true);
+
+  async function load() {
+    let r;
+    try { r = await cloudGet({ action: 'users', token: sessionToken() }); } catch (e) { r = null; }
+    if (!r || r.status !== 'ok') {
+      if (r && r.years) {
+        listEl.innerHTML = `<div class="users-empty">O Apps Script ainda está na versão antiga. Publique o novo Code.gs.</div>`;
+      } else {
+        listEl.innerHTML = `<div class="users-empty">${escapeHtml((r && r.message) || 'Não foi possível carregar a lista (sem conexão?).')}</div>`;
+      }
+      return;
+    }
+    users = r.users;
+    render();
+  }
+
+  function render() {
+    const me = currentUser();
+    listEl.innerHTML = users.map(u => {
+      const isMe = me && me.username === u.username;
+      const status = !u.active
+        ? '<span class="user-status off">Desativado</span>'
+        : (u.mustChange ? '<span class="user-status pending">Aguardando 1º acesso</span>' : '<span class="user-status on">Ativo</span>');
+      return `
+        <div class="user-row ${u.active ? '' : 'inactive'}" data-user="${escapeHtml(u.username)}">
+          <span class="user-avatar role-${escapeHtml(u.role)}">${escapeHtml(userInitials(u.name))}</span>
+          <div class="user-row-main">
+            <strong>${escapeHtml(u.name)}${isMe ? ' <em>(você)</em>' : ''}</strong>
+            <small>@${escapeHtml(u.username)} · último acesso: ${escapeHtml(formatDateTimeShort(u.lastLogin))}</small>
+          </div>
+          <span class="role-tag role-${escapeHtml(u.role)}">${escapeHtml(ROLE_LABELS[u.role] || u.role)}</span>
+          ${status}
+          <div class="menu-wrap">
+            <button type="button" class="btn-outline" onclick="toggleMenu(this)" aria-haspopup="true" aria-expanded="false">Ações ▾</button>
+            <div class="menu-panel menu-right" role="menu">
+              <button role="menuitem" data-act="edit">Editar nome e perfil</button>
+              <button role="menuitem" data-act="reset">Gerar senha provisória</button>
+              ${isMe ? '' : `<button role="menuitem" data-act="toggle">${u.active ? 'Desativar acesso' : 'Reativar acesso'}</button>`}
+              ${isMe ? '' : `<div class="menu-sep"></div><button role="menuitem" class="menu-danger" data-act="delete">Excluir usuário</button>`}
+            </div>
+          </div>
+        </div>`;
+    }).join('') || '<div class="users-empty">Nenhum usuário.</div>';
+  }
+
+  async function run(payload) {
+    const r = await cloudAction({ ...payload, token: sessionToken() });
+    if (r.code === 'auth') handleSessionLost('auth');
+    return r;
+  }
+
+  function showCredentials(name, username, temp) {
+    return uiAlert(
+      `Passe estes dados para ${name}:\n\nUsuário: ${username}\nSenha provisória: ${temp}\n\nNo primeiro acesso o sistema pede para criar uma senha própria.`,
+      'Acesso pronto'
+    );
+  }
+
+  overlay.addEventListener('click', async ev => {
+    const btn = ev.target.closest('[data-act]');
+    if (!btn) return;
+    const act = btn.dataset.act;
+    closeMenus();
+    if (act === 'close') return close();
+
+    if (act === 'new') {
+      const temp = generateTempPassword();
+      let created = null;
+      await uiForm({
+        title: 'Novo usuário',
+        okText: 'Criar usuário',
+        fields: [
+          { name: 'name', label: 'Nome da pessoa', placeholder: 'ex.: Flávio Souza' },
+          { name: 'username', label: 'Usuário (para entrar)', placeholder: 'ex.: flavio', hint: '3 a 30 caracteres: letras minúsculas, números, ponto ou hífen. Sem espaço.' },
+          { name: 'role', label: 'Perfil', type: 'select', options: ROLE_OPTIONS, value: 'pcp' },
+          { name: 'temp', label: 'Senha provisória', value: temp, hint: 'A pessoa troca no primeiro acesso.' }
+        ],
+        onSubmit: async (v, setError) => {
+          const username = v.username.trim().toLowerCase();
+          if (!v.name.trim()) { setError('Informe o nome da pessoa.'); return false; }
+          if (!/^[a-z0-9._-]{3,30}$/.test(username)) { setError('Usuário inválido: use 3 a 30 letras minúsculas, números, ponto, hífen ou sublinhado.'); return false; }
+          if (v.temp.length < MIN_PASSWORD_LENGTH) { setError(`A senha provisória precisa ter pelo menos ${MIN_PASSWORD_LENGTH} caracteres.`); return false; }
+          const r = await run({ action: 'createUser', name: v.name.trim(), username, role: v.role, tempPassword: v.temp });
+          if (r.status !== 'ok') { setError(r.message); return false; }
+          created = { name: v.name.trim(), username, temp: v.temp };
+          return true;
+        }
+      });
+      if (created) {
+        await load();
+        await showCredentials(created.name, created.username, created.temp);
+      }
+      return;
+    }
+
+    const row = btn.closest('[data-user]');
+    const u = row && users.find(x => x.username === row.dataset.user);
+    if (!u) return;
+
+    if (act === 'edit') {
+      const ok = await uiForm({
+        title: `Editar ${u.name}`,
+        okText: 'Salvar',
+        fields: [
+          { name: 'name', label: 'Nome da pessoa', value: u.name },
+          { name: 'role', label: 'Perfil', type: 'select', options: ROLE_OPTIONS, value: u.role }
+        ],
+        onSubmit: async (v, setError) => {
+          if (!v.name.trim()) { setError('Informe o nome.'); return false; }
+          const r = await run({ action: 'updateUser', username: u.username, name: v.name.trim(), role: v.role });
+          if (r.status !== 'ok') { setError(r.message); return false; }
+          if (currentUser() && currentUser().username === u.username) setSession({ token: sessionToken(), user: r.user });
+          return true;
+        }
+      });
+      if (ok) await load();
+    } else if (act === 'reset') {
+      const temp = generateTempPassword();
+      let done = false;
+      await uiForm({
+        title: `Nova senha provisória para ${u.name}`,
+        message: 'A senha atual deixa de valer. No próximo acesso a pessoa cria uma senha própria.',
+        okText: 'Gerar senha',
+        fields: [{ name: 'temp', label: 'Senha provisória', value: temp }],
+        onSubmit: async (v, setError) => {
+          if (v.temp.length < MIN_PASSWORD_LENGTH) { setError(`Mínimo de ${MIN_PASSWORD_LENGTH} caracteres.`); return false; }
+          const r = await run({ action: 'resetPassword', username: u.username, tempPassword: v.temp });
+          if (r.status !== 'ok') { setError(r.message); return false; }
+          done = v.temp;
+          return true;
+        }
+      });
+      if (done) {
+        await load();
+        await showCredentials(u.name, u.username, done);
+      }
+    } else if (act === 'toggle') {
+      const activate = !u.active;
+      if (!(await uiConfirm(
+        activate ? `Reativar o acesso de ${u.name}?` : `Desativar o acesso de ${u.name}? A pessoa sai na hora e não consegue mais entrar (os lançamentos dela continuam).`,
+        { title: activate ? 'Reativar usuário' : 'Desativar usuário', okText: activate ? 'Reativar' : 'Desativar', danger: !activate }
+      ))) return;
+      const r = await run({ action: 'updateUser', username: u.username, active: activate });
+      if (r.status !== 'ok') return uiAlert(r.message, 'Não foi possível');
+      await load();
+    } else if (act === 'delete') {
+      if (!(await uiConfirm(
+        `Excluir o usuário ${u.name} (@${u.username})? Isso não pode ser desfeito. Os lançamentos feitos por ele continuam no histórico.\n\nDica: se for só temporário, prefira "Desativar acesso".`,
+        { title: 'Excluir usuário', okText: 'Excluir', danger: true }
+      ))) return;
+      const r = await run({ action: 'deleteUser', username: u.username });
+      if (r.status !== 'ok') return uiAlert(r.message, 'Não foi possível');
+      await load();
+    }
+  });
+
+  load();
 }
 
 function formatCurrencyBRL(val) {
@@ -434,7 +1058,7 @@ function handleImportBackupFile(file) {
       return uiAlert('Arquivo inválido: não contém os dados de produção (campo "years").');
     }
 
-    if (!(await requirePcpAuth())) return;
+    if (!(await requireAdminAuth())) return;
 
     const yearsList = Object.keys(parsed.years).join(', ');
     const createdLabel = parsed.backupCreatedAt
@@ -766,7 +1390,9 @@ function createDefaultDatabase() {
 
 function upgradeDatabaseStructure(db, currentLocalState = null) {
   if (!db || !db.years) return createDefaultDatabase();
-  delete db.pcpPin; // o PIN fica só no Apps Script (nunca nos dados do navegador)
+  delete db.pcpPin; // o PIN antigo fica só no Apps Script (nunca nos dados do navegador)
+  delete db.session;   // informações de sessão/recusa vêm junto da leitura, não são dados
+  delete db.rejection;
 
   Object.keys(db.years).forEach(yr => {
     db.years[yr].forEach((mObj, idx) => {
@@ -1016,9 +1642,23 @@ async function cloudGet(params = {}) {
 }
 
 // Lê o banco da nuvem. Com `saveId`, a nuvem também informa se recusou essa gravação.
+// Com sessão ativa, envia o token para a nuvem dizer se a sessão ainda vale.
 async function readCloudData(saveId = null) {
-  return cloudGet(saveId ? { saveId } : {});
+  const params = {};
+  if (saveId) params.saveId = saveId;
+  if (sessionToken()) params.token = sessionToken();
+  const data = await cloudGet(params);
+  if (data && data.years && sessionToken()) applyCloudSession(data.session);
+  return data;
 }
+
+const REJECTION_MESSAGES = {
+  auth: 'Sua sessão terminou (expirou, a senha foi redefinida ou o usuário foi desativado).',
+  mustChange: 'Você precisa criar sua senha definitiva antes de lançar.',
+  forbidden: 'Seu perfil não permite gravar dados.',
+  pin: 'O Apps Script na nuvem ainda é a versão antiga (com PIN).',
+  locked: 'O Apps Script na nuvem ainda é a versão antiga (com PIN).'
+};
 
 async function flushPendingChanges() {
   if (isSavingToCloud) {
@@ -1032,8 +1672,8 @@ async function flushPendingChanges() {
     return;
   }
 
-  if (!sessionPin) {
-    updateCloudBadge('Alterações pendentes — clique em "PCP Bloqueado" e digite o PIN para enviar', false);
+  if (!canEdit()) {
+    updateCloudBadge('Alterações pendentes neste PC — clique em "Entrar" para enviar', false);
     return;
   }
 
@@ -1050,10 +1690,11 @@ async function flushPendingChanges() {
     }
     if (result === 'retry') {
       updateCloudBadge('NÃO salvo na nuvem — nova tentativa automática em instantes', false);
-    } else if (result === 'pin') {
-      lockPcpSession();
-      updateCloudBadge('NÃO salvo: a nuvem recusou o PIN — clique em "PCP Bloqueado" e digite o PIN correto', false);
-      uiAlert('A nuvem recusou a gravação porque o PIN não confere (talvez ele tenha sido alterado em outro PC).\n\nSeus lançamentos estão guardados neste PC. Clique em "PCP Bloqueado", digite o PIN correto e eles serão enviados.', 'PIN recusado');
+    } else if (result && result.rejected) {
+      const why = REJECTION_MESSAGES[result.rejected] || 'A nuvem recusou a gravação.';
+      if (result.rejected === 'auth' || result.rejected === 'forbidden') setSession(null);
+      updateCloudBadge('NÃO salvo na nuvem — entre de novo para enviar', false);
+      uiAlert(`${why}\n\nSeus lançamentos estão guardados neste PC. Entre com seu usuário e eles serão enviados.`, 'Gravação recusada');
     }
   } finally {
     isSavingToCloud = false;
@@ -1066,8 +1707,8 @@ async function flushPendingChanges() {
   }
 }
 
-// Retorna 'ok' (confirmado), 'retry' (tentar de novo), 'pin' (PIN recusado)
-// ou 'done' (nada mais a enviar).
+// Retorna 'ok' (confirmado), 'retry' (tentar de novo), { rejected: motivo }
+// (login recusado) ou 'done' (nada mais a enviar).
 async function tryPushOnce() {
   const sentOps = pendingOps.slice();
   const newUpdatedAt = Math.max(Date.now(), (cloudBaseUpdatedAt || 0) + 1);
@@ -1079,7 +1720,7 @@ async function tryPushOnce() {
 
   const payloadStr = JSON.stringify({
     state,
-    pin: sessionPin,
+    token: sessionToken(),
     baseUpdatedAt: cloudBaseUpdatedAt,
     lastLogs: sentOps.map(o => o.lastLog).filter(Boolean)
   });
@@ -1102,7 +1743,7 @@ async function tryPushOnce() {
     return 'retry';
   }
   if (!cloud || cloud.status === 'error') return 'retry';
-  if (cloud.rejection === 'pin' || cloud.rejection === 'locked') return 'pin';
+  if (cloud.rejection) return { rejected: cloud.rejection };
 
   if (Number(cloud.updatedAt) === newUpdatedAt && cloud.saveId === saveId) {
     setCloudBase(newUpdatedAt);
@@ -1370,7 +2011,7 @@ function updateScrapLiveCalculation() {
 }
 
 async function handleLaunchScrap() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
 
   const scrapDate = document.getElementById('scrapDateInput').value || viewFilter.selectedDate;
   const [yr, mo] = scrapDate.split('-').map(Number);
@@ -1417,7 +2058,9 @@ async function handleLaunchScrap() {
     weightKg: +weightKg.toFixed(3),
     unitPriceBrl: +unitPriceBrl.toFixed(4),
     totalValueBrl: +totalValueBrl.toFixed(2),
-    notes
+    notes,
+    user: currentUser() ? currentUser().username : '',
+    userName: currentUser() ? currentUser().name : ''
   };
 
   document.getElementById('scrapWeightKgInput').value = '';
@@ -1448,7 +2091,7 @@ async function handleLaunchScrap() {
 }
 
 async function deleteScrapLogById(yr, mIdx, scrapId) {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
   yr = Number(yr);
   mIdx = Number(mIdx);
   ensureYearExists(yr);
@@ -1475,7 +2118,7 @@ async function deleteScrapLogById(yr, mIdx, scrapId) {
 }
 
 async function clearAllScrapLogs() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireAdminAuth())) return;
   const yr = viewFilter.activeYear;
   const mIdx = viewFilter.activeMonthIndex;
   const m = getActiveMonthObj();
@@ -1739,7 +2382,7 @@ function renderTables() {
           <tr>
             <td><strong>${escapeHtml(formatDateBR(log.date))}</strong> <small style="color: var(--stone);">${escapeHtml(log.time || '')}</small></td>
             <td>${wLabel} • ${escapeHtml(MONTH_NAMES[log.monthIndex])} / ${escapeHtml(log.year)}</td>
-            <td><strong>${escapeHtml(log.operator || 'PCP')}</strong><br/><small style="color: var(--stone);">${escapeHtml(log.shift || '')}</small></td>
+            <td><strong>${escapeHtml(log.operator || 'PCP')}</strong><br/><small style="color: var(--stone);">${escapeHtml(log.shift || '')}</small>${log.user ? `<br/><small class="by-user">lançado por @${escapeHtml(log.user)}</small>` : ''}</td>
             <td><strong>${escapeHtml(log.machine)}</strong></td>
             <td>${escapeHtml(log.gauge)}</td>
             <td>${escapeHtml(log.mode)}</td>
@@ -1780,7 +2423,7 @@ function renderTables() {
             <td style="font-weight: 600;">${formatValue(Number(s.weightKg) || 0, 2)}</td>
             <td>${formatCurrencyBRL(s.unitPriceBrl)} /kg</td>
             <td style="color: #34d399; font-weight: 600;">${formatCurrencyBRL(s.totalValueBrl)}</td>
-            <td style="color: var(--stone);">${escapeHtml(s.notes || '-')}</td>
+            <td style="color: var(--stone);">${escapeHtml(s.notes || '-')}${s.user ? `<br/><small class="by-user">por @${escapeHtml(s.user)}</small>` : ''}</td>
             <td>
               <button class="btn-delete" data-year="${escapeHtml(s.year)}" data-month="${escapeHtml(s.monthIndex)}" data-scrap-id="${escapeHtml(s.id)}" onclick="deleteScrapLogById(this.dataset.year, this.dataset.month, this.dataset.scrapId)">Excluir</button>
             </td>
@@ -2219,7 +2862,7 @@ function createGauge(canvasEl, pct, colorHex) {
 }
 
 async function forceSyncWeeksWithMachines() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
   const yr = viewFilter.activeYear;
   const mIdx = viewFilter.activeMonthIndex;
   await commitChange(() => {
@@ -2231,7 +2874,7 @@ async function forceSyncWeeksWithMachines() {
 }
 
 async function handleLaunchProduction() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
 
   const launchDate = document.getElementById('launchDateInput').value || viewFilter.selectedDate;
   const [yr, mo] = launchDate.split('-').map(Number);
@@ -2343,6 +2986,8 @@ async function handleLaunchProduction() {
     date: launchDate,
     time: nowTimeStr,
     operator: operatorName,
+    user: currentUser() ? currentUser().username : '',
+    userName: currentUser() ? currentUser().name : '',
     shift: shiftName,
     year: yr,
     monthIndex: mIdx,
@@ -2369,7 +3014,7 @@ async function handleLaunchProduction() {
 }
 
 async function handleUpdateBacklogDemand() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
 
   const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
   const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
@@ -2400,7 +3045,7 @@ async function handleUpdateBacklogDemand() {
 }
 
 async function handleUpdateWeeksDirect() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
 
   const yr = parseInt(document.getElementById('directWeekYearInput').value, 10) || viewFilter.activeYear;
   const mIdx = parseInt(document.getElementById('directWeekMonthSelect').value, 10);
@@ -2450,7 +3095,7 @@ async function handleUpdateWeeksDirect() {
 }
 
 async function deleteHistoryLogById(logId) {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
 
   const log = (state.dailyLogs || []).find(l => l.id === logId);
   if (!log) return;
@@ -2510,7 +3155,7 @@ async function deleteHistoryLogById(logId) {
 }
 
 async function removeOrZeroMachineRow(itemIdx) {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
 
   const yr = viewFilter.activeYear;
   const mIdx = viewFilter.activeMonthIndex;
@@ -2557,7 +3202,7 @@ async function removeOrZeroMachineRow(itemIdx) {
 }
 
 async function clearAllHistoryLogs() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireAdminAuth())) return;
   if (!(await uiConfirm(
     'Deseja limpar toda a lista de histórico de lançamentos diários?\n\n(Os pesos já lançados continuam nos totais; só a lista some.)',
     { title: 'Limpar histórico', okText: 'Limpar', danger: true }
@@ -2566,7 +3211,7 @@ async function clearAllHistoryLogs() {
 }
 
 async function handleUpdateGoal() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireEditAuth())) return;
 
   const yr = parseInt(document.getElementById('goalYearInput').value, 10) || viewFilter.activeYear;
   const mIdx = parseInt(document.getElementById('goalMonthSelect').value, 10);
@@ -2583,7 +3228,7 @@ async function handleUpdateGoal() {
 }
 
 async function resetDefaultData() {
-  if (!(await requirePcpAuth())) return;
+  if (!(await requireAdminAuth())) return;
   const typed = await uiPrompt(
     '⚠️ ATENÇÃO: isto APAGA todos os lançamentos, metas, carteira e sucata de TODOS os anos, ' +
     'em TODOS os computadores, e volta aos dados originais de 2026.\n\n' +
@@ -2622,7 +3267,10 @@ window.addEventListener('offline', () => {
 
 window.addEventListener('DOMContentLoaded', async () => {
   populateCatalogSelects();
-  updateLockButtonUI();
+  const opInput = document.getElementById('inputOperatorName');
+  opInput.addEventListener('input', () => { opInput.dataset.auto = opInput.value ? '0' : '1'; });
+  updateAuthUI();
+  verifyStoredSession();
   setTodayDate();
   updateScrapLiveCalculation();
   await syncFromCloud(true);
