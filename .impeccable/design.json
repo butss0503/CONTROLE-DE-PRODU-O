@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-24T18:58:25.958Z",
+  "generatedAt": "2026-11-25T10:57:00.953034Z",
   "title": "Design System: Grande Aço · Dashboard de Produção",
   "extensions": {
     "colorMeta": {
@@ -8,495 +8,479 @@
         "role": "primary",
         "displayName": "Azul-Céu Grande Aço",
         "canonical": "#3DAEE9",
-        "oklch": "oklch(71.3% 0.1313 236)",
+        "oklch": "oklch(71.3% 0.1313 236.0)",
         "tonalRamp": [
-          "oklch(15% 0.0328 236)",
-          "oklch(26% 0.0569 236)",
-          "oklch(37% 0.081 236)",
-          "oklch(48% 0.1051 236)",
-          "oklch(60% 0.1313 236)",
-          "oklch(72% 0.1051 236)",
-          "oklch(84% 0.0788 236)",
-          "oklch(95% 0.0547 236)"
+          "oklch(15% 0.0358 236.0)",
+          "oklch(26% 0.0621 236.0)",
+          "oklch(37% 0.0883 236.0)",
+          "oklch(48% 0.1146 236.0)",
+          "oklch(60% 0.1194 236.0)",
+          "oklch(72% 0.0907 236.0)",
+          "oklch(84% 0.0621 236.0)",
+          "oklch(95% 0.0358 236.0)"
+        ]
+      },
+      "ga-sky-hi": {
+        "role": "primary",
+        "displayName": "Céu Aceso",
+        "canonical": "#7CC9F0",
+        "oklch": "oklch(80.0% 0.0942 231.7)",
+        "tonalRamp": [
+          "oklch(15% 0.0257 231.7)",
+          "oklch(26% 0.0445 231.7)",
+          "oklch(37% 0.0633 231.7)",
+          "oklch(48% 0.0822 231.7)",
+          "oklch(60% 0.0856 231.7)",
+          "oklch(72% 0.065 231.7)",
+          "oklch(84% 0.0445 231.7)",
+          "oklch(95% 0.0257 231.7)"
+        ]
+      },
+      "ga-sky-deep": {
+        "role": "primary",
+        "displayName": "Céu Profundo",
+        "canonical": "#1E5A7C",
+        "oklch": "oklch(44.6% 0.0822 237.8)",
+        "tonalRamp": [
+          "oklch(15% 0.0224 237.8)",
+          "oklch(26% 0.0389 237.8)",
+          "oklch(37% 0.0553 237.8)",
+          "oklch(48% 0.0718 237.8)",
+          "oklch(60% 0.0748 237.8)",
+          "oklch(72% 0.0568 237.8)",
+          "oklch(84% 0.0389 237.8)",
+          "oklch(95% 0.0224 237.8)"
+        ]
+      },
+      "ga-sky-glow": {
+        "role": "primary",
+        "displayName": "Brilho do Céu",
+        "canonical": "rgba(61, 174, 233, 0.35)",
+        "oklch": "oklch(71.3% 0.1313 236.0 / 0.35)",
+        "tonalRamp": [
+          "oklch(15% 0.0358 236.0)",
+          "oklch(26% 0.0621 236.0)",
+          "oklch(37% 0.0883 236.0)",
+          "oklch(48% 0.1146 236.0)",
+          "oklch(60% 0.1194 236.0)",
+          "oklch(72% 0.0907 236.0)",
+          "oklch(84% 0.0621 236.0)",
+          "oklch(95% 0.0358 236.0)"
         ]
       },
       "ga-sky-soft": {
         "role": "primary",
-        "displayName": "Céu Claro",
-        "canonical": "#D6EEFB",
-        "oklch": "oklch(93.5% 0.0309 231.3)",
+        "displayName": "Véu do Céu",
+        "canonical": "rgba(61, 174, 233, 0.12)",
+        "oklch": "oklch(71.3% 0.1313 236.0 / 0.12)",
         "tonalRamp": [
-          "oklch(15% 0.0077 231.3)",
-          "oklch(26% 0.0134 231.3)",
-          "oklch(37% 0.019 231.3)",
-          "oklch(48% 0.0247 231.3)",
-          "oklch(60% 0.0309 231.3)",
-          "oklch(72% 0.0247 231.3)",
-          "oklch(84% 0.0185 231.3)",
-          "oklch(95% 0.0129 231.3)"
+          "oklch(15% 0.0358 236.0)",
+          "oklch(26% 0.0621 236.0)",
+          "oklch(37% 0.0883 236.0)",
+          "oklch(48% 0.1146 236.0)",
+          "oklch(60% 0.1194 236.0)",
+          "oklch(72% 0.0907 236.0)",
+          "oklch(84% 0.0621 236.0)",
+          "oklch(95% 0.0358 236.0)"
         ]
       },
-      "ga-sky-hover": {
+      "on-sky": {
         "role": "primary",
-        "displayName": "Céu Aceso",
-        "canonical": "#63BFEE",
-        "oklch": "oklch(76.6% 0.1105 233)",
+        "displayName": "Tinta sobre Céu",
+        "canonical": "#04131C",
+        "oklch": "oklch(17.8% 0.0289 235.4)",
         "tonalRamp": [
-          "oklch(15% 0.0276 233)",
-          "oklch(26% 0.0479 233)",
-          "oklch(37% 0.0682 233)",
-          "oklch(48% 0.0884 233)",
-          "oklch(60% 0.1105 233)",
-          "oklch(72% 0.0884 233)",
-          "oklch(84% 0.0663 233)",
-          "oklch(95% 0.0461 233)"
+          "oklch(15% 0.0079 235.4)",
+          "oklch(26% 0.0136 235.4)",
+          "oklch(37% 0.0194 235.4)",
+          "oklch(48% 0.0252 235.4)",
+          "oklch(60% 0.0262 235.4)",
+          "oklch(72% 0.0199 235.4)",
+          "oklch(84% 0.0136 235.4)",
+          "oklch(95% 0.0079 235.4)"
         ]
       },
-      "ga-deep": {
-        "role": "secondary",
-        "displayName": "Azul Profundo",
-        "canonical": "#0E6FA8",
-        "oklch": "oklch(52% 0.1205 242.7)",
-        "tonalRamp": [
-          "oklch(15% 0.0301 242.7)",
-          "oklch(26% 0.0522 242.7)",
-          "oklch(37% 0.0743 242.7)",
-          "oklch(48% 0.0964 242.7)",
-          "oklch(60% 0.1205 242.7)",
-          "oklch(72% 0.0964 242.7)",
-          "oklch(84% 0.0723 242.7)",
-          "oklch(95% 0.0502 242.7)"
-        ]
-      },
-      "ga-ink": {
+      "bg": {
         "role": "neutral",
-        "displayName": "Grafite Feixe",
-        "canonical": "#1A2129",
-        "oklch": "oklch(24.4% 0.0184 252)",
+        "displayName": "Chão Noturno",
+        "canonical": "#07090C",
+        "oklch": "oklch(13.9% 0.0077 255.5)",
         "tonalRamp": [
-          "oklch(15% 0.0046 252)",
-          "oklch(26% 0.008 252)",
-          "oklch(37% 0.0114 252)",
-          "oklch(48% 0.0147 252)",
-          "oklch(60% 0.0184 252)",
-          "oklch(72% 0.0147 252)",
-          "oklch(84% 0.0111 252)",
-          "oklch(95% 0.0077 252)"
+          "oklch(15% 0.0021 255.5)",
+          "oklch(26% 0.0037 255.5)",
+          "oklch(37% 0.0052 255.5)",
+          "oklch(48% 0.0067 255.5)",
+          "oklch(60% 0.007 255.5)",
+          "oklch(72% 0.0053 255.5)",
+          "oklch(84% 0.0037 255.5)",
+          "oklch(95% 0.0021 255.5)"
         ]
       },
-      "ground": {
+      "surface": {
         "role": "neutral",
-        "displayName": "Névoa de Aço",
-        "canonical": "#E3E7EB",
-        "oklch": "oklch(92.6% 0.0069 247.9)",
+        "displayName": "Painel",
+        "canonical": "#0E1217",
+        "oklch": "oklch(18.0% 0.0121 254.1)",
         "tonalRamp": [
-          "oklch(15% 0.0017 247.9)",
-          "oklch(26% 0.003 247.9)",
-          "oklch(37% 0.0043 247.9)",
-          "oklch(48% 0.0055 247.9)",
-          "oklch(60% 0.0069 247.9)",
-          "oklch(72% 0.0055 247.9)",
-          "oklch(84% 0.0042 247.9)",
-          "oklch(95% 0.0029 247.9)"
+          "oklch(15% 0.0033 254.1)",
+          "oklch(26% 0.0057 254.1)",
+          "oklch(37% 0.0082 254.1)",
+          "oklch(48% 0.0106 254.1)",
+          "oklch(60% 0.011 254.1)",
+          "oklch(72% 0.0084 254.1)",
+          "oklch(84% 0.0057 254.1)",
+          "oklch(95% 0.0033 254.1)"
         ]
       },
-      "stock": {
+      "surface-2": {
         "role": "neutral",
-        "displayName": "Papel de Etiqueta",
-        "canonical": "#F7F7F4",
-        "oklch": "oklch(97.5% 0.004 106.5)",
+        "displayName": "Painel Elevado",
+        "canonical": "#151B22",
+        "oklch": "oklch(21.9% 0.0165 252.5)",
         "tonalRamp": [
-          "oklch(15% 0.001 106.5)",
-          "oklch(26% 0.0017 106.5)",
-          "oklch(37% 0.0024 106.5)",
-          "oklch(48% 0.0032 106.5)",
-          "oklch(60% 0.004 106.5)",
-          "oklch(72% 0.0032 106.5)",
-          "oklch(84% 0.0024 106.5)",
-          "oklch(95% 0.0017 106.5)"
+          "oklch(15% 0.0045 252.5)",
+          "oklch(26% 0.0078 252.5)",
+          "oklch(37% 0.0111 252.5)",
+          "oklch(48% 0.0144 252.5)",
+          "oklch(60% 0.015 252.5)",
+          "oklch(72% 0.0114 252.5)",
+          "oklch(84% 0.0078 252.5)",
+          "oklch(95% 0.0045 252.5)"
         ]
       },
-      "field": {
+      "surface-3": {
         "role": "neutral",
-        "displayName": "Branco de Campo",
-        "canonical": "#FFFFFF",
-        "oklch": "oklch(100% 0 89.9)",
+        "displayName": "Painel Fundo",
+        "canonical": "#1C242D",
+        "oklch": "oklch(25.7% 0.0206 251.6)",
         "tonalRamp": [
-          "oklch(15% 0 89.9)",
-          "oklch(26% 0 89.9)",
-          "oklch(37% 0 89.9)",
-          "oklch(48% 0 89.9)",
-          "oklch(60% 0 89.9)",
-          "oklch(72% 0 89.9)",
-          "oklch(84% 0 89.9)",
-          "oklch(95% 0 89.9)"
+          "oklch(15% 0.0056 251.6)",
+          "oklch(26% 0.0097 251.6)",
+          "oklch(37% 0.0138 251.6)",
+          "oklch(48% 0.0179 251.6)",
+          "oklch(60% 0.0187 251.6)",
+          "oklch(72% 0.0142 251.6)",
+          "oklch(84% 0.0097 251.6)",
+          "oklch(95% 0.0056 251.6)"
         ]
       },
-      "band": {
+      "text": {
         "role": "neutral",
-        "displayName": "Faixa Grafite",
-        "canonical": "#1A2129",
-        "oklch": "oklch(24.4% 0.0184 252)",
+        "displayName": "Texto",
+        "canonical": "#E8EDF2",
+        "oklch": "oklch(94.4% 0.0086 247.9)",
         "tonalRamp": [
-          "oklch(15% 0.0046 252)",
-          "oklch(26% 0.008 252)",
-          "oklch(37% 0.0114 252)",
-          "oklch(48% 0.0147 252)",
-          "oklch(60% 0.0184 252)",
-          "oklch(72% 0.0147 252)",
-          "oklch(84% 0.0111 252)",
-          "oklch(95% 0.0077 252)"
+          "oklch(15% 0.0024 247.9)",
+          "oklch(26% 0.0041 247.9)",
+          "oklch(37% 0.0058 247.9)",
+          "oklch(48% 0.0075 247.9)",
+          "oklch(60% 0.0078 247.9)",
+          "oklch(72% 0.006 247.9)",
+          "oklch(84% 0.0041 247.9)",
+          "oklch(95% 0.0024 247.9)"
         ]
       },
-      "band-line": {
+      "text-2": {
         "role": "neutral",
-        "displayName": "Linha da Faixa",
-        "canonical": "#3A4550",
-        "oklch": "oklch(38.5% 0.0237 248.4)",
+        "displayName": "Texto Secundário",
+        "canonical": "#B9C4CE",
+        "oklch": "oklch(81.5% 0.0186 245.4)",
         "tonalRamp": [
-          "oklch(15% 0.0059 248.4)",
-          "oklch(26% 0.0103 248.4)",
-          "oklch(37% 0.0146 248.4)",
-          "oklch(48% 0.0189 248.4)",
-          "oklch(60% 0.0237 248.4)",
-          "oklch(72% 0.0189 248.4)",
-          "oklch(84% 0.0142 248.4)",
-          "oklch(95% 0.0099 248.4)"
-        ]
-      },
-      "band-hover": {
-        "role": "neutral",
-        "displayName": "Grafite Aceso",
-        "canonical": "#2B3540",
-        "oklch": "oklch(32.4% 0.0239 251)",
-        "tonalRamp": [
-          "oklch(15% 0.006 251)",
-          "oklch(26% 0.0103 251)",
-          "oklch(37% 0.0147 251)",
-          "oklch(48% 0.0191 251)",
-          "oklch(60% 0.0239 251)",
-          "oklch(72% 0.0191 251)",
-          "oklch(84% 0.0143 251)",
-          "oklch(95% 0.01 251)"
-        ]
-      },
-      "ink": {
-        "role": "neutral",
-        "displayName": "Tinta Grafite",
-        "canonical": "#1A2129",
-        "oklch": "oklch(24.4% 0.0184 252)",
-        "tonalRamp": [
-          "oklch(15% 0.0046 252)",
-          "oklch(26% 0.008 252)",
-          "oklch(37% 0.0114 252)",
-          "oklch(48% 0.0147 252)",
-          "oklch(60% 0.0184 252)",
-          "oklch(72% 0.0147 252)",
-          "oklch(84% 0.0111 252)",
-          "oklch(95% 0.0077 252)"
-        ]
-      },
-      "ink-2": {
-        "role": "neutral",
-        "displayName": "Grafite Médio",
-        "canonical": "#36414C",
-        "oklch": "oklch(37% 0.0239 248.5)",
-        "tonalRamp": [
-          "oklch(15% 0.006 248.5)",
-          "oklch(26% 0.0103 248.5)",
-          "oklch(37% 0.0147 248.5)",
-          "oklch(48% 0.0191 248.5)",
-          "oklch(60% 0.0239 248.5)",
-          "oklch(72% 0.0191 248.5)",
-          "oklch(84% 0.0143 248.5)",
-          "oklch(95% 0.01 248.5)"
+          "oklch(15% 0.0051 245.4)",
+          "oklch(26% 0.0088 245.4)",
+          "oklch(37% 0.0125 245.4)",
+          "oklch(48% 0.0162 245.4)",
+          "oklch(60% 0.0169 245.4)",
+          "oklch(72% 0.0128 245.4)",
+          "oklch(84% 0.0088 245.4)",
+          "oklch(95% 0.0051 245.4)"
         ]
       },
       "mute": {
         "role": "neutral",
         "displayName": "Cinza Rótulo",
-        "canonical": "#56616B",
-        "oklch": "oklch(48.7% 0.0211 245.7)",
+        "canonical": "#8E9BA8",
+        "oklch": "oklch(68.3% 0.0243 248.2)",
         "tonalRamp": [
-          "oklch(15% 0.0053 245.7)",
-          "oklch(26% 0.0091 245.7)",
-          "oklch(37% 0.013 245.7)",
-          "oklch(48% 0.0169 245.7)",
-          "oklch(60% 0.0211 245.7)",
-          "oklch(72% 0.0169 245.7)",
-          "oklch(84% 0.0127 245.7)",
-          "oklch(95% 0.0088 245.7)"
+          "oklch(15% 0.0066 248.2)",
+          "oklch(26% 0.0115 248.2)",
+          "oklch(37% 0.0163 248.2)",
+          "oklch(48% 0.0212 248.2)",
+          "oklch(60% 0.0221 248.2)",
+          "oklch(72% 0.0168 248.2)",
+          "oklch(84% 0.0115 248.2)",
+          "oklch(95% 0.0066 248.2)"
         ]
       },
-      "on-band": {
+      "white": {
         "role": "neutral",
-        "displayName": "Sobre Faixa",
+        "displayName": "Branco",
         "canonical": "#FFFFFF",
-        "oklch": "oklch(100% 0 89.9)",
+        "oklch": "oklch(100.0% 0.0 89.9)",
         "tonalRamp": [
-          "oklch(15% 0 89.9)",
-          "oklch(26% 0 89.9)",
-          "oklch(37% 0 89.9)",
-          "oklch(48% 0 89.9)",
-          "oklch(60% 0 89.9)",
-          "oklch(72% 0 89.9)",
-          "oklch(84% 0 89.9)",
-          "oklch(95% 0 89.9)"
-        ]
-      },
-      "on-band-mute": {
-        "role": "neutral",
-        "displayName": "Sobre Faixa Suave",
-        "canonical": "#B7C1CA",
-        "oklch": "oklch(80.6% 0.0168 245.1)",
-        "tonalRamp": [
-          "oklch(15% 0.0042 245.1)",
-          "oklch(26% 0.0073 245.1)",
-          "oklch(37% 0.0104 245.1)",
-          "oklch(48% 0.0135 245.1)",
-          "oklch(60% 0.0168 245.1)",
-          "oklch(72% 0.0135 245.1)",
-          "oklch(84% 0.0101 245.1)",
-          "oklch(95% 0.007 245.1)"
+          "oklch(15% 0.0 89.9)",
+          "oklch(26% 0.0 89.9)",
+          "oklch(37% 0.0 89.9)",
+          "oklch(48% 0.0 89.9)",
+          "oklch(60% 0.0 89.9)",
+          "oklch(72% 0.0 89.9)",
+          "oklch(84% 0.0 89.9)",
+          "oklch(95% 0.0 89.9)"
         ]
       },
       "line": {
         "role": "neutral",
         "displayName": "Linha",
-        "canonical": "#C6CED5",
-        "oklch": "oklch(84.7% 0.0131 244.3)",
+        "canonical": "rgba(255, 255, 255, 0.08)",
+        "oklch": "oklch(100.0% 0.0 89.9 / 0.08)",
         "tonalRamp": [
-          "oklch(15% 0.0033 244.3)",
-          "oklch(26% 0.0057 244.3)",
-          "oklch(37% 0.0081 244.3)",
-          "oklch(48% 0.0105 244.3)",
-          "oklch(60% 0.0131 244.3)",
-          "oklch(72% 0.0105 244.3)",
-          "oklch(84% 0.0079 244.3)",
-          "oklch(95% 0.0055 244.3)"
+          "oklch(15% 0.0 89.9)",
+          "oklch(26% 0.0 89.9)",
+          "oklch(37% 0.0 89.9)",
+          "oklch(48% 0.0 89.9)",
+          "oklch(60% 0.0 89.9)",
+          "oklch(72% 0.0 89.9)",
+          "oklch(84% 0.0 89.9)",
+          "oklch(95% 0.0 89.9)"
         ]
       },
-      "line-soft": {
+      "line-strong": {
         "role": "neutral",
-        "displayName": "Linha Suave",
-        "canonical": "#DEE3E7",
-        "oklch": "oklch(91.3% 0.0077 241.7)",
+        "displayName": "Linha Forte",
+        "canonical": "rgba(255, 255, 255, 0.16)",
+        "oklch": "oklch(100.0% 0.0 89.9 / 0.16)",
         "tonalRamp": [
-          "oklch(15% 0.0019 241.7)",
-          "oklch(26% 0.0033 241.7)",
-          "oklch(37% 0.0047 241.7)",
-          "oklch(48% 0.0061 241.7)",
-          "oklch(60% 0.0077 241.7)",
-          "oklch(72% 0.0061 241.7)",
-          "oklch(84% 0.0046 241.7)",
-          "oklch(95% 0.0032 241.7)"
-        ]
-      },
-      "neutral-chip": {
-        "role": "neutral",
-        "displayName": "Chip Neutro",
-        "canonical": "#E2E8EE",
-        "oklch": "oklch(92.8% 0.0104 247.9)",
-        "tonalRamp": [
-          "oklch(15% 0.0026 247.9)",
-          "oklch(26% 0.0045 247.9)",
-          "oklch(37% 0.0064 247.9)",
-          "oklch(48% 0.0083 247.9)",
-          "oklch(60% 0.0104 247.9)",
-          "oklch(72% 0.0083 247.9)",
-          "oklch(84% 0.0062 247.9)",
-          "oklch(95% 0.0043 247.9)"
+          "oklch(15% 0.0 89.9)",
+          "oklch(26% 0.0 89.9)",
+          "oklch(37% 0.0 89.9)",
+          "oklch(48% 0.0 89.9)",
+          "oklch(60% 0.0 89.9)",
+          "oklch(72% 0.0 89.9)",
+          "oklch(84% 0.0 89.9)",
+          "oklch(95% 0.0 89.9)"
         ]
       },
       "ok": {
         "role": "state",
         "displayName": "Verde Ok",
-        "canonical": "#0E7A4F",
-        "oklch": "oklch(51.3% 0.1131 159.4)",
+        "canonical": "#34D399",
+        "oklch": "oklch(77.3% 0.1535 163.2)",
         "tonalRamp": [
-          "oklch(15% 0.0283 159.4)",
-          "oklch(26% 0.049 159.4)",
-          "oklch(37% 0.0697 159.4)",
-          "oklch(48% 0.0905 159.4)",
-          "oklch(60% 0.1131 159.4)",
-          "oklch(72% 0.0905 159.4)",
-          "oklch(84% 0.0678 159.4)",
-          "oklch(95% 0.0471 159.4)"
+          "oklch(15% 0.0419 163.2)",
+          "oklch(26% 0.0726 163.2)",
+          "oklch(37% 0.1033 163.2)",
+          "oklch(48% 0.134 163.2)",
+          "oklch(60% 0.1395 163.2)",
+          "oklch(72% 0.106 163.2)",
+          "oklch(84% 0.0726 163.2)",
+          "oklch(95% 0.0419 163.2)"
         ]
       },
       "ok-soft": {
         "role": "state",
         "displayName": "Verde Ok Suave",
-        "canonical": "#DDF1E7",
-        "oklch": "oklch(94.1% 0.0249 164.4)",
+        "canonical": "rgba(52, 211, 153, 0.14)",
+        "oklch": "oklch(77.3% 0.1535 163.2 / 0.14)",
         "tonalRamp": [
-          "oklch(15% 0.0062 164.4)",
-          "oklch(26% 0.0108 164.4)",
-          "oklch(37% 0.0154 164.4)",
-          "oklch(48% 0.0199 164.4)",
-          "oklch(60% 0.0249 164.4)",
-          "oklch(72% 0.0199 164.4)",
-          "oklch(84% 0.015 164.4)",
-          "oklch(95% 0.0104 164.4)"
+          "oklch(15% 0.0419 163.2)",
+          "oklch(26% 0.0726 163.2)",
+          "oklch(37% 0.1033 163.2)",
+          "oklch(48% 0.134 163.2)",
+          "oklch(60% 0.1395 163.2)",
+          "oklch(72% 0.106 163.2)",
+          "oklch(84% 0.0726 163.2)",
+          "oklch(95% 0.0419 163.2)"
         ]
       },
       "warn": {
         "role": "state",
         "displayName": "Âmbar Atenção",
-        "canonical": "#A35F00",
-        "oklch": "oklch(55.1% 0.1247 63.9)",
+        "canonical": "#FBBF24",
+        "oklch": "oklch(83.7% 0.1644 84.4)",
         "tonalRamp": [
-          "oklch(15% 0.0312 63.9)",
-          "oklch(26% 0.054 63.9)",
-          "oklch(37% 0.0769 63.9)",
-          "oklch(48% 0.0997 63.9)",
-          "oklch(60% 0.1247 63.9)",
-          "oklch(72% 0.0997 63.9)",
-          "oklch(84% 0.0748 63.9)",
-          "oklch(95% 0.0519 63.9)"
+          "oklch(15% 0.0448 84.4)",
+          "oklch(26% 0.0777 84.4)",
+          "oklch(37% 0.1106 84.4)",
+          "oklch(48% 0.1435 84.4)",
+          "oklch(60% 0.1495 84.4)",
+          "oklch(72% 0.1136 84.4)",
+          "oklch(84% 0.0777 84.4)",
+          "oklch(95% 0.0448 84.4)"
         ]
       },
       "warn-soft": {
         "role": "state",
         "displayName": "Âmbar Suave",
-        "canonical": "#FBEBD3",
-        "oklch": "oklch(94.7% 0.0361 78.1)",
+        "canonical": "rgba(251, 191, 36, 0.14)",
+        "oklch": "oklch(83.7% 0.1644 84.4 / 0.14)",
         "tonalRamp": [
-          "oklch(15% 0.009 78.1)",
-          "oklch(26% 0.0156 78.1)",
-          "oklch(37% 0.0223 78.1)",
-          "oklch(48% 0.0289 78.1)",
-          "oklch(60% 0.0361 78.1)",
-          "oklch(72% 0.0289 78.1)",
-          "oklch(84% 0.0217 78.1)",
-          "oklch(95% 0.015 78.1)"
+          "oklch(15% 0.0448 84.4)",
+          "oklch(26% 0.0777 84.4)",
+          "oklch(37% 0.1106 84.4)",
+          "oklch(48% 0.1435 84.4)",
+          "oklch(60% 0.1495 84.4)",
+          "oklch(72% 0.1136 84.4)",
+          "oklch(84% 0.0777 84.4)",
+          "oklch(95% 0.0448 84.4)"
         ]
       },
       "bad": {
         "role": "state",
         "displayName": "Vermelho Ruim",
-        "canonical": "#C42F2D",
-        "oklch": "oklch(54.1% 0.1861 26.6)",
+        "canonical": "#F87171",
+        "oklch": "oklch(71.1% 0.1661 22.2)",
         "tonalRamp": [
-          "oklch(15% 0.0465 26.6)",
-          "oklch(26% 0.0806 26.6)",
-          "oklch(37% 0.1148 26.6)",
-          "oklch(48% 0.1489 26.6)",
-          "oklch(60% 0.1861 26.6)",
-          "oklch(72% 0.1489 26.6)",
-          "oklch(84% 0.1117 26.6)",
-          "oklch(95% 0.0775 26.6)"
+          "oklch(15% 0.0453 22.2)",
+          "oklch(26% 0.0785 22.2)",
+          "oklch(37% 0.1118 22.2)",
+          "oklch(48% 0.145 22.2)",
+          "oklch(60% 0.151 22.2)",
+          "oklch(72% 0.1148 22.2)",
+          "oklch(84% 0.0785 22.2)",
+          "oklch(95% 0.0453 22.2)"
         ]
       },
       "bad-soft": {
         "role": "state",
         "displayName": "Vermelho Suave",
-        "canonical": "#F8E0DF",
-        "oklch": "oklch(92.6% 0.0265 20.5)",
+        "canonical": "rgba(248, 113, 113, 0.14)",
+        "oklch": "oklch(71.1% 0.1661 22.2 / 0.14)",
         "tonalRamp": [
-          "oklch(15% 0.0066 20.5)",
-          "oklch(26% 0.0115 20.5)",
-          "oklch(37% 0.0164 20.5)",
-          "oklch(48% 0.0212 20.5)",
-          "oklch(60% 0.0265 20.5)",
-          "oklch(72% 0.0212 20.5)",
-          "oklch(84% 0.0159 20.5)",
-          "oklch(95% 0.0111 20.5)"
+          "oklch(15% 0.0453 22.2)",
+          "oklch(26% 0.0785 22.2)",
+          "oklch(37% 0.1118 22.2)",
+          "oklch(48% 0.145 22.2)",
+          "oklch(60% 0.151 22.2)",
+          "oklch(72% 0.1148 22.2)",
+          "oklch(84% 0.0785 22.2)",
+          "oklch(95% 0.0453 22.2)"
         ]
       },
-      "bad-deep": {
+      "bad-solid": {
         "role": "state",
-        "displayName": "Vermelho Fundo",
-        "canonical": "#A42624",
-        "oklch": "oklch(47.4% 0.1628 26.7)",
+        "displayName": "Vermelho Cheio",
+        "canonical": "#C23B3B",
+        "oklch": "oklch(55.1% 0.1719 24.8)",
         "tonalRamp": [
-          "oklch(15% 0.0407 26.7)",
-          "oklch(26% 0.0705 26.7)",
-          "oklch(37% 0.1004 26.7)",
-          "oklch(48% 0.1302 26.7)",
-          "oklch(60% 0.1628 26.7)",
-          "oklch(72% 0.1302 26.7)",
-          "oklch(84% 0.0977 26.7)",
-          "oklch(95% 0.0678 26.7)"
+          "oklch(15% 0.0469 24.8)",
+          "oklch(26% 0.0812 24.8)",
+          "oklch(37% 0.1156 24.8)",
+          "oklch(48% 0.15 24.8)",
+          "oklch(60% 0.1562 24.8)",
+          "oklch(72% 0.1187 24.8)",
+          "oklch(84% 0.0812 24.8)",
+          "oklch(95% 0.0469 24.8)"
         ]
       },
-      "chart-sky-1": {
+      "chart-goal": {
         "role": "chart",
-        "displayName": "Semana 1 (céu claro)",
-        "canonical": "#A9D8F2",
-        "oklch": "oklch(85.8% 0.0609 232.6)",
+        "displayName": "Linha da Meta",
+        "canonical": "#DDE6EE",
+        "oklch": "oklch(92.0% 0.0146 244.7)",
         "tonalRamp": [
-          "oklch(15% 0.0152 232.6)",
-          "oklch(26% 0.0264 232.6)",
-          "oklch(37% 0.0375 232.6)",
-          "oklch(48% 0.0487 232.6)",
-          "oklch(60% 0.0609 232.6)",
-          "oklch(72% 0.0487 232.6)",
-          "oklch(84% 0.0365 232.6)",
-          "oklch(95% 0.0254 232.6)"
+          "oklch(15% 0.004 244.7)",
+          "oklch(26% 0.0069 244.7)",
+          "oklch(37% 0.0098 244.7)",
+          "oklch(48% 0.0127 244.7)",
+          "oklch(60% 0.0132 244.7)",
+          "oklch(72% 0.0101 244.7)",
+          "oklch(84% 0.0069 244.7)",
+          "oklch(95% 0.004 244.7)"
         ]
       },
-      "chart-sky-2": {
+      "chart-week-2": {
         "role": "chart",
-        "displayName": "Semana 2 (céu médio)",
-        "canonical": "#6EC1EE",
-        "oklch": "oklch(77.5% 0.1035 234)",
+        "displayName": "Semana 2",
+        "canonical": "#2678A6",
+        "oklch": "oklch(54.6% 0.1049 238.1)",
         "tonalRamp": [
-          "oklch(15% 0.0259 234)",
-          "oklch(26% 0.0448 234)",
-          "oklch(37% 0.0638 234)",
-          "oklch(48% 0.0828 234)",
-          "oklch(60% 0.1035 234)",
-          "oklch(72% 0.0828 234)",
-          "oklch(84% 0.0621 234)",
-          "oklch(95% 0.0431 234)"
+          "oklch(15% 0.0286 238.1)",
+          "oklch(26% 0.0496 238.1)",
+          "oklch(37% 0.0706 238.1)",
+          "oklch(48% 0.0915 238.1)",
+          "oklch(60% 0.0953 238.1)",
+          "oklch(72% 0.0725 238.1)",
+          "oklch(84% 0.0496 238.1)",
+          "oklch(95% 0.0286 238.1)"
         ]
       },
-      "chart-tick": {
+      "chart-week-5": {
         "role": "chart",
-        "displayName": "Eixo e legenda",
-        "canonical": "#4A5560",
-        "oklch": "oklch(44.4% 0.0229 248.3)",
+        "displayName": "Semana 5",
+        "canonical": "#C4E8FA",
+        "oklch": "oklch(91.1% 0.045 229.5)",
         "tonalRamp": [
-          "oklch(15% 0.0057 248.3)",
-          "oklch(26% 0.0099 248.3)",
-          "oklch(37% 0.0141 248.3)",
-          "oklch(48% 0.0183 248.3)",
-          "oklch(60% 0.0229 248.3)",
-          "oklch(72% 0.0183 248.3)",
-          "oklch(84% 0.0137 248.3)",
-          "oklch(95% 0.0095 248.3)"
+          "oklch(15% 0.0123 229.5)",
+          "oklch(26% 0.0213 229.5)",
+          "oklch(37% 0.0303 229.5)",
+          "oklch(48% 0.0393 229.5)",
+          "oklch(60% 0.0409 229.5)",
+          "oklch(72% 0.0311 229.5)",
+          "oklch(84% 0.0213 229.5)",
+          "oklch(95% 0.0123 229.5)"
         ]
       },
-      "chart-track": {
+      "chart-dobra": {
         "role": "chart",
-        "displayName": "Trilho de medidor",
-        "canonical": "#E1E6EA",
-        "oklch": "oklch(92.2% 0.0077 241.7)",
+        "displayName": "Dobradeira",
+        "canonical": "#8FD3F5",
+        "oklch": "oklch(83.4% 0.0834 230.7)",
         "tonalRamp": [
-          "oklch(15% 0.0019 241.7)",
-          "oklch(26% 0.0033 241.7)",
-          "oklch(37% 0.0047 241.7)",
-          "oklch(48% 0.0061 241.7)",
-          "oklch(60% 0.0077 241.7)",
-          "oklch(72% 0.0061 241.7)",
-          "oklch(84% 0.0046 241.7)",
-          "oklch(95% 0.0032 241.7)"
+          "oklch(15% 0.0227 230.7)",
+          "oklch(26% 0.0394 230.7)",
+          "oklch(37% 0.0561 230.7)",
+          "oklch(48% 0.0728 230.7)",
+          "oklch(60% 0.0758 230.7)",
+          "oklch(72% 0.0576 230.7)",
+          "oklch(84% 0.0394 230.7)",
+          "oklch(95% 0.0227 230.7)"
+        ]
+      },
+      "chart-grid": {
+        "role": "chart",
+        "displayName": "Grade do Gráfico",
+        "canonical": "rgba(255, 255, 255, 0.07)",
+        "oklch": "oklch(100.0% 0.0 89.9 / 0.07)",
+        "tonalRamp": [
+          "oklch(15% 0.0 89.9)",
+          "oklch(26% 0.0 89.9)",
+          "oklch(37% 0.0 89.9)",
+          "oklch(48% 0.0 89.9)",
+          "oklch(60% 0.0 89.9)",
+          "oklch(72% 0.0 89.9)",
+          "oklch(84% 0.0 89.9)",
+          "oklch(95% 0.0 89.9)"
+        ]
+      },
+      "chart-label-bg": {
+        "role": "chart",
+        "displayName": "Fundo do Rótulo",
+        "canonical": "#0B0F14",
+        "oklch": "oklch(16.7% 0.0124 254.2)",
+        "tonalRamp": [
+          "oklch(15% 0.0034 254.2)",
+          "oklch(26% 0.0058 254.2)",
+          "oklch(37% 0.0083 254.2)",
+          "oklch(48% 0.0108 254.2)",
+          "oklch(60% 0.0112 254.2)",
+          "oklch(72% 0.0085 254.2)",
+          "oklch(84% 0.0058 254.2)",
+          "oklch(95% 0.0034 254.2)"
         ]
       }
     },
     "typographyMeta": {
       "display": {
         "displayName": "Display (Archivo larga)",
-        "purpose": "Produzido do mês na etiqueta de resumo e valor da semana em destaque."
+        "purpose": "Só o produzido do mês no cartão em destaque."
       },
       "headline": {
         "displayName": "Headline",
-        "purpose": "Títulos de quadro e período na faixa de período, caixa alta."
+        "purpose": "Nome da marca na barra e período na faixa de período, caixa alta."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Códigos de máquina e títulos de janela."
+        "purpose": "Títulos de painel em caixa alta, com ponto azul-céu brilhante."
       },
       "body": {
         "displayName": "Body",
@@ -504,262 +488,295 @@
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Faixas de etiqueta, rótulos de campo, cabeçalhos de tabela, filtros e menus; caixa alta."
+        "purpose": "Rótulos de KPI, cabeçalhos de tabela, filtros e menus; caixa alta."
       },
       "number-lg": {
-        "displayName": "Número grande (mono)",
-        "purpose": "Valores de KPI."
+        "displayName": "Número grande",
+        "purpose": "Valores dos KPIs comuns."
       },
       "number": {
-        "displayName": "Número (mono)",
-        "purpose": "Produzido por bitola."
+        "displayName": "Número",
+        "purpose": "Totais por máquina."
       },
       "number-sm": {
-        "displayName": "Número pequeno (mono)",
-        "purpose": "Valores de linha de etiqueta, barras de máquina, campos numéricos."
+        "displayName": "Número pequeno",
+        "purpose": "Produzido e restante por bitola, tabelas, campos numéricos, datas."
       }
     },
     "shadows": [
       {
-        "name": "shadow-tag",
-        "value": "0 1px 2px rgba(26, 33, 41, 0.14), 0 6px 16px rgba(26, 33, 41, 0.07)",
-        "purpose": "Toda etiqueta em repouso: painel, KPI, bitola."
-      },
-      {
         "name": "shadow-pop",
-        "value": "0 2px 4px rgba(26, 33, 41, 0.12), 0 18px 40px rgba(26, 33, 41, 0.22)",
-        "purpose": "Menus, janelas modais e avisos."
+        "value": "0 24px 60px rgba(0, 0, 0, 0.6)",
+        "purpose": "Janelas, menus e avisos rápidos."
       },
       {
-        "name": "tie-hole",
-        "value": "inset 0 1px 2px rgba(26, 33, 41, 0.45), 0 0 0 2px rgba(255, 255, 255, 0.18)",
-        "purpose": "Furo de amarração no canto da etiqueta."
+        "name": "glow-featured",
+        "value": "0 0 0 1px rgba(61, 174, 233, 0.08), 0 10px 40px rgba(61, 174, 233, 0.10)",
+        "purpose": "Só o cartão em destaque (com borda azul a 45% e brilho radial no canto)."
+      },
+      {
+        "name": "glow-active",
+        "value": "0 0 18px rgba(61, 174, 233, 0.35)",
+        "purpose": "Aba ativa, botão de entrar, selo da barra (24px no login)."
+      },
+      {
+        "name": "glow-meter",
+        "value": "0 0 10px rgba(61, 174, 233, 0.35)",
+        "purpose": "Réguas de progresso (12px na meta, 8px nas bitolas)."
+      },
+      {
+        "name": "glow-dot",
+        "value": "0 0 8px currentColor",
+        "purpose": "Pontos de estado e da pílula de nuvem."
       },
       {
         "name": "focus-halo",
-        "value": "0 0 0 3px rgba(61, 174, 233, 0.28)",
-        "purpose": "Halo de campo em foco, com borda ga-deep."
+        "value": "0 0 0 3px rgba(61, 174, 233, 0.22)",
+        "purpose": "Campos em foco."
+      },
+      {
+        "name": "brand-seal",
+        "value": "0 0 0 1px rgba(255, 255, 255, 0.16), 0 0 18px rgba(61, 174, 233, 0.35)",
+        "purpose": "Selo de 44px na barra superior."
       }
     ],
     "motion": [
       {
-        "name": "ease-tag",
+        "name": "ease-rise",
         "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "Sublinhado da aba (0,25s), entrada de aba (0,32s), réguas de meta e de máquina (0,5–0,6s)."
+        "purpose": "Entrada da aba (0,35s, sobe 6px) e crescimento das réguas (0,5s a 0,7s)."
       },
       {
-        "name": "tag-in",
-        "value": "opacity 0.4→1, translateY(6px)→0, 0.32s",
-        "purpose": "Entrada da seção ao trocar de aba."
+        "name": "duration-state",
+        "value": "0.15s–0.18s ease",
+        "purpose": "Hover e foco de botões, abas e campos."
       },
       {
-        "name": "state-fast",
-        "value": "0.15s ease",
-        "purpose": "Hover de botões, bordas de campo, cor das abas."
+        "name": "duration-fade",
+        "value": "0.12s–0.18s ease",
+        "purpose": "Abertura de menus, janelas e avisos."
       },
       {
         "name": "reduced-motion",
-        "value": "animações desligadas, transições 0.01ms",
-        "purpose": "prefers-reduced-motion: reduce."
+        "value": "prefers-reduced-motion: reduce",
+        "purpose": "Desliga animações de entrada e reduz transições a 0,01ms."
       }
     ],
     "breakpoints": [
       {
-        "name": "main-2col",
+        "name": "kpi-2col",
         "value": "1280px"
       },
       {
-        "name": "overview-stack",
-        "value": "1000px"
+        "name": "stack-rows",
+        "value": "1100px"
       },
       {
         "name": "mobile",
         "value": "760px"
       }
     ],
+    "background": {
+      "page": "radial-gradient(1200px 500px at 85% -10%, rgba(61, 174, 233, 0.10), transparent 60%), #07090C",
+      "card": "linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 40%), #0E1217",
+      "topbar": "rgba(7, 9, 12, 0.8) com backdrop-filter: blur(12px)"
+    },
+    "brand": {
+      "logo": "assets/logo-grande-aco-selo.jpg",
+      "description": "Selo redondo branco com anel azul-céu.",
+      "sizes": {
+        "topbar": "44px",
+        "login": "84px"
+      }
+    },
     "chart": {
       "fontFamily": "'Archivo', system-ui, sans-serif",
-      "dataLabelFont": "'JetBrains Mono', monospace",
+      "dataLabelFont": "'JetBrains Mono', monospace, 700, 10px",
       "produced": {
-        "line": "#1A2129",
-        "fill": "rgba(26, 33, 41, 0.07)",
+        "line": "#3DAEE9",
+        "fill": "rgba(61, 174, 233, 0.16)",
         "stepped": "middle",
         "width": 2.5
       },
       "goal": {
-        "line": "#3DAEE9",
+        "line": "#DDE6EE",
         "dash": [
           6,
           4
-        ],
-        "width": 2
+        ]
       },
       "weekSequence": [
-        "#A9D8F2",
-        "#6EC1EE",
+        "#1E5A7C",
+        "#2678A6",
         "#3DAEE9",
-        "#0E6FA8",
-        "#1A2129"
+        "#7CC9F0",
+        "#C4E8FA"
       ],
       "machineCategory": {
-        "Estribadeira": "#1A2129",
-        "Dobradeira": "#0E6FA8"
+        "Estribadeira": "#3DAEE9",
+        "Dobradeira": "#8FD3F5"
       },
-      "tick": "#4A5560",
-      "grid": "rgba(26, 33, 41, 0.08)",
-      "gaugeTrack": "#E1E6EA",
+      "tick": "#8E9BA8",
+      "grid": "rgba(255, 255, 255, 0.07)",
+      "gaugeTrack": "rgba(255, 255, 255, 0.08)",
+      "barRadius": 6,
       "dataLabel": {
-        "background": "#F7F7F4",
-        "borderColor": "série",
+        "color": "#E8EDF2",
+        "background": "#0B0F14",
+        "borderColor": "cor da série",
         "borderRadius": 6
-      }
+      },
+      "compactNumber": "30.732 kg → \"30,7 mil\"",
+      "narrowRule": "Gráfico anual com menos de 520px: rótulo só no mês ativo."
     }
   },
   "components": [
     {
-      "name": "Botão primário",
+      "name": "Botão Primário",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Ação principal dos formulários de lançamento (Salvar, Registrar).",
-      "html": "<button class=\"ds-btn-primary\">Registrar produção</button>",
-      "css": ".ds-btn-primary { min-height:46px; padding:10px 20px; border:none; border-radius:var(--r-ctl, 6px); background:var(--ga-ink, #1A2129); color:#fff; font-family:'Archivo', system-ui, sans-serif; font-weight:700; font-size:0.9rem; letter-spacing:0.01em; cursor:pointer; transition: background 0.15s ease, transform 0.1s ease; } .ds-btn-primary:hover { background:#2B3540; } .ds-btn-primary:active { transform: translateY(1px); } .ds-btn-primary:focus-visible { outline:2px solid var(--ga-deep, #0E6FA8); outline-offset:2px; }"
+      "description": "Ação principal dos formulários de lançamento: pílula clara sobre o escuro.",
+      "html": "<button class=\"ds-btn-action\">Salvar apontamento</button>",
+      "css": ".ds-btn-action { min-height: 46px; padding: 10px 22px; border: none; border-radius: 999px; background: var(--text, #E8EDF2); color: #07090C; font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: background 0.15s ease, transform 0.1s ease; } .ds-btn-action:hover { background: #fff; } .ds-btn-action:active { transform: translateY(1px); } .ds-btn-action:focus-visible { outline: 2px solid var(--ga-sky, #3DAEE9); outline-offset: 2px; }"
     },
     {
-      "name": "Botão azul-céu",
+      "name": "Botão Azul-Céu",
       "kind": "button",
       "refersTo": "button-sky",
-      "description": "Ação de marca: entrar, ação secundária de destaque.",
+      "description": "Ação de marca (entrar, destaque): azul-céu com texto escuro e brilho no hover.",
       "html": "<button class=\"ds-btn-sky\">Entrar</button>",
-      "css": ".ds-btn-sky { min-height:40px; padding:0 20px; border:none; border-radius:var(--r-ctl, 6px); background:var(--ga-sky, #3DAEE9); color:var(--ga-ink, #1A2129); font-family:'Archivo', system-ui, sans-serif; font-weight:800; font-size:0.86rem; cursor:pointer; transition: background 0.15s ease; } .ds-btn-sky:hover { background:#63BFEE; } .ds-btn-sky:focus-visible { outline:2px solid var(--ga-deep, #0E6FA8); outline-offset:2px; }"
+      "css": ".ds-btn-sky { min-height: 40px; padding: 0 22px; border: none; border-radius: 999px; background: var(--ga-sky, #3DAEE9); color: #04131C; font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); font-weight: 800; font-size: 0.86rem; cursor: pointer; box-shadow: 0 0 18px rgba(61, 174, 233, 0.35); transition: background 0.15s ease, box-shadow 0.15s ease; } .ds-btn-sky:hover { background: var(--ga-sky-hi, #7CC9F0); box-shadow: 0 0 20px rgba(61, 174, 233, 0.35); } .ds-btn-sky:focus-visible { outline: 2px solid var(--ga-sky, #3DAEE9); outline-offset: 2px; }"
     },
     {
-      "name": "Botão contorno",
+      "name": "Botão Outline",
       "kind": "button",
       "refersTo": "button-outline",
-      "description": "Ferramentas e alternâncias (Mais, Modo Telão, unidade).",
-      "html": "<button class=\"ds-btn-outline\">Exportar CSV</button> <button class=\"ds-btn-outline is-on\">kg</button>",
-      "css": ".ds-btn-outline { display:inline-flex; align-items:center; gap:6px; min-height:34px; padding:5px 14px; background:#fff; border:1px solid var(--line, #C6CED5); border-radius:var(--r-ctl, 6px); color:var(--ink, #1A2129); font-family:'Archivo', system-ui, sans-serif; font-size:0.8rem; font-weight:600; cursor:pointer; transition: background 0.15s ease, border-color 0.15s ease; } .ds-btn-outline:hover { border-color:var(--ga-ink, #1A2129); } .ds-btn-outline.is-on { background:var(--ga-ink, #1A2129); border-color:var(--ga-ink, #1A2129); color:#fff; } .ds-btn-outline:focus-visible { outline:2px solid var(--ga-deep, #0E6FA8); outline-offset:2px; }"
+      "description": "Ações secundárias da faixa de período e toggles; vira azul-céu quando ligado.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-btn-outline\">Sincronizar</button><button class=\"ds-btn-outline is-on\">Modo Telão: ON</button></div>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 5px 14px; background: var(--surface-2, #151B22); border: 1px solid var(--line-strong, rgba(255,255,255,0.16)); border-radius: 999px; color: var(--text, #E8EDF2); font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease; } .ds-btn-outline:hover { border-color: var(--ga-sky, #3DAEE9); } .ds-btn-outline:focus-visible { outline: 2px solid var(--ga-sky, #3DAEE9); outline-offset: 2px; } .ds-btn-outline.is-on { background: var(--ga-sky, #3DAEE9); border-color: var(--ga-sky, #3DAEE9); color: #04131C; }"
     },
     {
-      "name": "Botão excluir",
+      "name": "Botão Excluir",
       "kind": "button",
       "refersTo": "button-delete",
-      "description": "Excluir lançamento em linha de tabela.",
+      "description": "Exclusão de lançamento em linha de tabela; vermelho cheio no hover.",
       "html": "<button class=\"ds-btn-delete\">Excluir</button>",
-      "css": ".ds-btn-delete { padding:4px 10px; background:transparent; border:1px solid #E3AEAD; border-radius:var(--r-ctl, 6px); color:var(--bad, #C42F2D); font-family:'Archivo', system-ui, sans-serif; font-size:0.74rem; font-weight:700; cursor:pointer; transition: background 0.15s ease, color 0.15s ease; } .ds-btn-delete:hover { background:var(--bad, #C42F2D); border-color:var(--bad, #C42F2D); color:#fff; } .ds-btn-delete:focus-visible { outline:2px solid var(--ga-deep, #0E6FA8); outline-offset:2px; }"
+      "css": ".ds-btn-delete { display: inline-flex; align-items: center; padding: 5px 12px; background: transparent; border: 1px solid rgba(248, 113, 113, 0.45); border-radius: 999px; color: var(--bad, #F87171); font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); font-size: 0.74rem; font-weight: 700; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; } .ds-btn-delete:hover { background: #C23B3B; border-color: #C23B3B; color: #fff; } .ds-btn-delete:focus-visible { outline: 2px solid var(--ga-sky, #3DAEE9); outline-offset: 2px; }"
     },
     {
-      "name": "Campo de formulário",
+      "name": "Campo",
       "kind": "input",
       "refersTo": "input",
-      "description": "Campo rotulado dos lançamentos; números em mono.",
-      "html": "<label class=\"ds-field\"><span>Peso produzido (kg)</span><input type=\"number\" value=\"1250\"></label>",
-      "css": ".ds-field { display:flex; flex-direction:column; gap:5px; font-family:'Archivo', system-ui, sans-serif; } .ds-field span { font-size:0.78rem; font-weight:600; color:var(--ink-2, #36414C); } .ds-field input { min-height:44px; padding:9px 12px; background:#fff; border:1px solid var(--line, #C6CED5); border-radius:var(--r-ctl, 6px); font-family:'JetBrains Mono', ui-monospace, Consolas, monospace; font-size:0.92rem; color:var(--ink, #1A2129); outline:none; transition: border-color 0.15s ease, box-shadow 0.15s ease; } .ds-field input:hover { border-color:#A7B1BA; } .ds-field input:focus-visible, .ds-field input:focus { border-color:var(--ga-deep, #0E6FA8); box-shadow:0 0 0 3px rgba(61,174,233,0.28); }"
+      "description": "Campo de formulário: recorte escuro com halo azul no foco; números em mono.",
+      "html": "<label class=\"ds-field\"><span>Peso produzido (kg)</span><input type=\"number\" value=\"1250\" /></label>",
+      "css": ".ds-field { display: flex; flex-direction: column; gap: 6px; font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); } .ds-field span { font-size: 0.78rem; font-weight: 600; color: var(--text-2, #B9C4CE); } .ds-field input { min-height: 46px; padding: 10px 14px; background: var(--bg, #07090C); border: 1px solid var(--line-strong, rgba(255,255,255,0.16)); border-radius: 10px; color: var(--text, #E8EDF2); font-family: var(--font-num, 'JetBrains Mono', monospace); font-size: 0.92rem; outline: none; color-scheme: dark; caret-color: var(--ga-sky, #3DAEE9); transition: border-color 0.15s ease, box-shadow 0.15s ease; } .ds-field input:hover { border-color: rgba(255,255,255,0.24); } .ds-field input:focus-visible, .ds-field input:focus { border-color: var(--ga-sky, #3DAEE9); box-shadow: 0 0 0 3px rgba(61, 174, 233, 0.22); }"
     },
     {
-      "name": "Barra superior e abas",
+      "name": "Abas em Pílula",
       "kind": "nav",
-      "refersTo": "tab",
-      "description": "Barra grafite com monograma, abas e sublinhado azul-céu na aba ativa.",
-      "html": "<nav class=\"ds-topbar\"><span class=\"ds-mark\">GA</span><button class=\"ds-tab is-active\">Visão Geral</button><button class=\"ds-tab\">Máquinas &amp; Carteira</button><button class=\"ds-tab\">Produção Semanal</button></nav>",
-      "css": ".ds-topbar { display:flex; align-items:stretch; gap:0 8px; min-height:60px; padding:0 20px; background:var(--band, #1A2129); font-family:'Archivo', system-ui, sans-serif; } .ds-mark { align-self:center; margin-right:16px; font-stretch:125%; font-weight:900; font-size:1.55rem; color:var(--ga-sky, #3DAEE9); } .ds-tab { position:relative; background:none; border:none; color:var(--on-band-mute, #B7C1CA); font-family:inherit; font-weight:600; font-size:0.86rem; padding:0 14px; cursor:pointer; transition: color 0.15s ease; } .ds-tab::after { content:''; position:absolute; left:14px; right:14px; bottom:0; height:3px; background:var(--ga-sky, #3DAEE9); transform:scaleX(0); transition: transform 0.25s cubic-bezier(0.16,1,0.3,1); } .ds-tab:hover, .ds-tab.is-active { color:#fff; } .ds-tab.is-active::after { transform:scaleX(1); } .ds-tab:focus-visible { outline:2px solid var(--ga-sky, #3DAEE9); outline-offset:-4px; }"
+      "refersTo": "tab-active",
+      "description": "Navegação principal: trilho escuro, aba ativa azul-céu com brilho.",
+      "html": "<nav class=\"ds-tabs\"><button class=\"ds-tab is-active\">1. Visão Geral</button><button class=\"ds-tab\">2. Máquinas &amp; Carteira</button><button class=\"ds-tab\">3. Produção Semanal</button></nav>",
+      "css": ".ds-tabs { display: inline-flex; gap: 4px; padding: 5px; background: var(--surface, #0E1217); border: 1px solid var(--line, rgba(255,255,255,0.08)); border-radius: 999px; } .ds-tab { background: transparent; border: none; color: var(--mute, #8E9BA8); font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); font-weight: 600; font-size: 0.84rem; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease; } .ds-tab:hover { color: var(--text, #E8EDF2); background: var(--surface-2, #151B22); } .ds-tab:focus-visible { outline: 2px solid var(--ga-sky, #3DAEE9); outline-offset: 2px; } .ds-tab.is-active { background: var(--ga-sky, #3DAEE9); color: #04131C; box-shadow: 0 0 18px rgba(61, 174, 233, 0.35); }"
     },
     {
-      "name": "Etiqueta de painel",
-      "kind": "card",
-      "refersTo": "tag-panel",
-      "description": "Painel padrão: papel, faixa grafite de ponta a ponta, furo de amarração.",
-      "html": "<article class=\"ds-tag\"><header class=\"ds-tag-band\">Produção semanal · NOVEMBRO/2026</header><dl class=\"ds-rows\"><div><dt>Projeção do mês</dt><dd>412.300 kg</dd></div><div><dt>Disponibilidade</dt><dd>93,4%</dd></div></dl></article>",
-      "css": ".ds-tag { position:relative; max-width:360px; background:var(--stock, #F7F7F4); border-radius:var(--r-tag, 6px); box-shadow:0 1px 2px rgba(26,33,41,0.14), 0 6px 16px rgba(26,33,41,0.07); overflow:hidden; padding-bottom:18px; font-family:'Archivo', system-ui, sans-serif; color:var(--ink, #1A2129); } .ds-tag::after { content:''; position:absolute; border-radius:50%; background:var(--ground, #E3E7EB); box-shadow: inset 0 1px 2px rgba(26,33,41,0.45); top:13px; right:16px; width:13px; height:13px; box-shadow: inset 0 1px 2px rgba(26,33,41,0.45), 0 0 0 2px rgba(255,255,255,0.18); } .ds-tag-band { min-height:40px; padding:11px 44px 8px 18px; margin-bottom:16px; background:var(--band, #1A2129); color:#fff; font-stretch:125%; font-size:0.74rem; font-weight:800; letter-spacing:0.05em; text-transform:uppercase; } .ds-rows { margin:0 18px; border-top:1px dashed var(--line, #C6CED5); } .ds-rows div { display:flex; justify-content:space-between; align-items:baseline; gap:12px; padding:11px 0; border-bottom:1px dashed var(--line, #C6CED5); } .ds-rows dt { font-stretch:125%; font-size:0.72rem; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--mute, #56616B); } .ds-rows dd { margin:0; font-family:'JetBrains Mono', ui-monospace, Consolas, monospace; font-weight:800; font-size:1.02rem; }"
-    },
-    {
-      "name": "Etiqueta de bitola",
-      "kind": "custom",
-      "refersTo": "tag-band-sky",
-      "description": "Assinatura: uma etiqueta por bitola com faixa azul-céu, produzido, carteira e estado.",
-      "html": "<article class=\"ds-bitola\"><header class=\"ds-bitola-band\"><span><b>Ø</b> 8,00</span><span>EB10 / ES02</span></header><div class=\"ds-bitola-body\"><div class=\"ds-bitola-kg\">18.420 kg</div><div class=\"ds-bitola-sub\">produzido no mês</div><div class=\"ds-bitola-cart\"><span>Carteira</span><strong>6.100 kg</strong></div><div class=\"ds-meter\"><i style=\"width:75%\"></i></div><div class=\"ds-state\">75% atendido</div></div></article>",
-      "css": ".ds-bitola { position:relative; width:180px; background:var(--stock, #F7F7F4); border-radius:var(--r-tag, 6px); box-shadow:0 1px 2px rgba(26,33,41,0.14), 0 6px 16px rgba(26,33,41,0.07); overflow:hidden; font-family:'Archivo', system-ui, sans-serif; color:var(--ink, #1A2129); } .ds-bitola::after { content:''; position:absolute; border-radius:50%; background:var(--ground, #E3E7EB); box-shadow: inset 0 1px 2px rgba(26,33,41,0.45); top:8px; right:10px; width:10px; height:10px; } .ds-bitola-band { display:flex; justify-content:space-between; gap:6px; padding:6px 30px 6px 12px; background:var(--ga-sky, #3DAEE9); color:var(--ga-ink, #1A2129); font-family:'JetBrains Mono', ui-monospace, Consolas, monospace; font-size:0.72rem; font-weight:800; white-space:nowrap; } .ds-bitola-band b { font-family:'Archivo', system-ui, sans-serif; font-stretch:125%; font-weight:900; } .ds-bitola-band span:last-child { font-weight:600; overflow:hidden; text-overflow:ellipsis; } .ds-bitola-body { padding:12px; } .ds-bitola-kg { font-family:'JetBrains Mono', ui-monospace, Consolas, monospace; font-weight:800; font-size:1.32rem; line-height:1.1; letter-spacing:-0.02em; } .ds-bitola-sub { margin-top:2px; font-stretch:125%; font-size:0.7rem; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; color:var(--mute, #56616B); } .ds-bitola-cart { display:flex; justify-content:space-between; margin-top:12px; font-size:0.78rem; color:var(--ink-2, #36414C); } .ds-bitola-cart strong { font-family:'JetBrains Mono', ui-monospace, Consolas, monospace; } .ds-meter { height:6px; margin-top:6px; background:var(--line-soft, #DEE3E7); border-radius:2px; overflow:hidden; } .ds-meter i { display:block; height:100%; background:var(--ga-sky, #3DAEE9); } .ds-state { display:flex; align-items:center; gap:6px; margin-top:8px; font-size:0.72rem; font-weight:700; color:var(--ga-deep, #0E6FA8); } .ds-state::before { content:''; width:7px; height:7px; border-radius:50%; background:currentColor; }"
-    },
-    {
-      "name": "Tags de estado",
+      "name": "Tags de Estado",
       "kind": "chip",
       "refersTo": "chip-ok",
-      "description": "Tags retas de 3px para disponibilidade, backlog e perfis.",
-      "html": "<span class=\"ds-chip ds-ok\">Disponível 96,2% · 1,5 h</span> <span class=\"ds-chip ds-warn\">Pendente</span> <span class=\"ds-chip ds-bad\">Inativo</span> <span class=\"ds-chip ds-sky\">Dobra</span>",
-      "css": ".ds-chip { display:inline-block; padding:3px 8px; border-radius:3px; font-family:'Archivo', system-ui, sans-serif; font-size:0.7rem; font-weight:700; white-space:nowrap; } .ds-ok { background:var(--ok-soft, #DDF1E7); color:var(--ok, #0E7A4F); } .ds-warn { background:var(--warn-soft, #FBEBD3); color:var(--warn, #A35F00); } .ds-bad { background:var(--bad-soft, #F8E0DF); color:var(--bad, #C42F2D); } .ds-sky { background:var(--ga-sky-soft, #D6EEFB); color:#0B5A88; }"
+      "description": "Estados em pílula translúcida; nunca como fundo de painel.",
+      "html": "<div style=\"display:flex;gap:8px\"><span class=\"ds-chip ds-ok\">Em dia</span><span class=\"ds-chip ds-warn\">Pendente</span><span class=\"ds-chip ds-bad\">Inativo</span><span class=\"ds-chip ds-sky\">Estribadeira</span></div>",
+      "css": ".ds-chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); font-size: 0.72rem; font-weight: 700; white-space: nowrap; } .ds-ok { background: rgba(52,211,153,0.14); color: #34D399; } .ds-warn { background: rgba(251,191,36,0.14); color: #FBBF24; } .ds-bad { background: rgba(248,113,113,0.14); color: #F87171; } .ds-sky { background: rgba(61,174,233,0.12); color: #7CC9F0; }"
     },
     {
-      "name": "Pílula de nuvem",
-      "kind": "chip",
-      "refersTo": "badge-pill",
-      "description": "Indicador de sincronização: cheia quando online, tracejada em modo local.",
-      "html": "<span class=\"ds-pill ds-online\">Salvo na nuvem</span> <span class=\"ds-pill ds-local\">Modo local</span>",
-      "css": ".ds-pill { display:inline-flex; align-items:center; gap:8px; padding:5px 12px; border-radius:999px; background:#fff; border:1px solid var(--line, #C6CED5); font-family:'Archivo', system-ui, sans-serif; font-size:0.76rem; font-weight:600; } .ds-pill::before { content:''; width:8px; height:8px; border-radius:50%; background:currentColor; } .ds-online { color:var(--ok, #0E7A4F); border-color:#9ED2B7; } .ds-local { color:var(--warn, #A35F00); border-color:#E7C18A; border-style:dashed; }"
+      "name": "Painel",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Contêiner padrão: grafite, borda fina, 16px, título em caixa alta com ponto azul brilhante.",
+      "html": "<section class=\"ds-panel\"><h3 class=\"ds-panel-title\">Máquinas · Novembro/2026</h3><p>Conteúdo do painel.</p></section>",
+      "css": ".ds-panel { padding: 20px 22px 22px; background: linear-gradient(180deg, rgba(255,255,255,0.025), transparent 40%), var(--surface, #0E1217); border: 1px solid var(--line, rgba(255,255,255,0.08)); border-radius: 16px; color: var(--text, #E8EDF2); font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); font-size: 15px; } .ds-panel p { color: var(--text-2, #B9C4CE); } .ds-panel-title { margin: 0 0 16px; font-stretch: 125%; font-weight: 700; font-size: 0.82rem; letter-spacing: 0.06em; text-transform: uppercase; } .ds-panel-title::before { content: ''; display: inline-block; vertical-align: middle; width: 7px; height: 7px; margin: -2px 10px 0 0; border-radius: 50%; background: #3DAEE9; box-shadow: 0 0 10px #3DAEE9; }"
+    },
+    {
+      "name": "Cartão em Destaque",
+      "kind": "custom",
+      "refersTo": "kpi-card-featured",
+      "description": "Produzido do mês: borda e brilho azul, número em Archivo larga, régua da meta com marca do esperado.",
+      "html": "<div class=\"ds-kpi-featured\"><div class=\"ds-kpi-label\">Produzido · Novembro / 2026</div><div class=\"ds-kpi-value\">612.480 kg</div><div class=\"ds-rule\"><span class=\"ds-rule-fill\" style=\"width:72%\"></span><span class=\"ds-rule-mark\" style=\"left:80%\"></span></div><div class=\"ds-kpi-sub\"><strong>72,0%</strong> da meta de 850.000 kg</div></div>",
+      "css": ".ds-kpi-featured { padding: 18px 20px; max-width: 420px; border: 1px solid rgba(61,174,233,0.45); border-radius: 16px; background: radial-gradient(420px 180px at 0% 0%, rgba(61,174,233,0.22), transparent 70%), linear-gradient(180deg, rgba(255,255,255,0.03), transparent 40%), var(--surface, #0E1217); box-shadow: 0 0 0 1px rgba(61,174,233,0.08), 0 10px 40px rgba(61,174,233,0.10); color: var(--text, #E8EDF2); font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); } .ds-kpi-label { font-stretch: 125%; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: #7CC9F0; margin-bottom: 12px; } .ds-kpi-value { font-stretch: 125%; font-weight: 800; font-size: clamp(2.2rem, 3.4vw, 3rem); line-height: 1.1; letter-spacing: -0.03em; white-space: nowrap; } .ds-rule { position: relative; height: 8px; margin-top: 14px; background: var(--surface-3, #1C242D); border-radius: 999px; } .ds-rule-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: linear-gradient(90deg, #1E5A7C, #3DAEE9); box-shadow: 0 0 12px rgba(61,174,233,0.35); transition: width 0.7s cubic-bezier(0.16, 1, 0.3, 1); } .ds-rule-mark { position: absolute; top: -5px; bottom: -5px; border-left: 2px dashed #FBBF24; } .ds-kpi-sub { font-size: 0.8rem; color: var(--mute, #8E9BA8); margin-top: 8px; } .ds-kpi-sub strong { font-family: var(--font-num, 'JetBrains Mono', monospace); color: var(--text, #E8EDF2); }"
+    },
+    {
+      "name": "Linha de Bitola",
+      "kind": "custom",
+      "refersTo": "card",
+      "description": "Uma linha da lista de bitolas: código largo, números em mono, medidor de carteira e situação com ponto brilhante.",
+      "html": "<div class=\"ds-bitola\"><div class=\"ds-brow is-pend\"><span class=\"g\">8,00</span><span class=\"kg\">42.310</span><span class=\"meter\"><i style=\"width:64%\"></i></span><span class=\"st\">64% atendido</span></div><div class=\"ds-brow is-ok\"><span class=\"g\">10,00</span><span class=\"kg\">58.900</span><span class=\"meter\"><i style=\"width:100%\"></i></span><span class=\"st\">Carteira zerada</span></div><div class=\"ds-brow is-warn\"><span class=\"g\">12,50</span><span class=\"kg\">0</span><span class=\"meter\"><i style=\"width:0\"></i></span><span class=\"st\">Não iniciada</span></div></div>",
+      "css": ".ds-bitola { font-family: var(--font-ui, 'Archivo', system-ui, sans-serif); color: var(--text, #E8EDF2); background: var(--surface, #0E1217); border-radius: 16px; padding: 8px 16px; } .ds-brow { display: grid; grid-template-columns: 72px 90px minmax(100px, 1fr) 130px; align-items: center; gap: 12px; padding: 9px 4px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.86rem; } .ds-brow:last-child { border-bottom: none; } .ds-brow:hover { background: rgba(61,174,233,0.05); } .ds-brow .g { font-stretch: 125%; font-weight: 800; } .ds-brow .kg { font-family: var(--font-num, 'JetBrains Mono', monospace); font-weight: 700; text-align: right; } .ds-brow .meter { display: block; height: 6px; background: var(--surface-3, #1C242D); border-radius: 999px; overflow: hidden; } .ds-brow .meter i { display: block; height: 100%; border-radius: 999px; background: #3DAEE9; box-shadow: 0 0 8px rgba(61,174,233,0.35); } .ds-brow .st { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; font-weight: 700; } .ds-brow .st::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: currentColor; box-shadow: 0 0 8px currentColor; } .ds-brow.is-ok .st { color: #34D399; } .ds-brow.is-ok .meter i { background: #34D399; box-shadow: 0 0 8px rgba(52,211,153,0.4); } .ds-brow.is-pend .st { color: #7CC9F0; } .ds-brow.is-warn .st { color: #FBBF24; }"
     }
   ],
   "narrative": {
-    "northStar": "Etiqueta do Feixe",
-    "overview": "Todo número do dashboard é a etiqueta amarrada ao feixe de vergalhão no pátio: um papel claro (`stock`), uma faixa de lote no topo e um furo de amarração no canto direito. Bitola, máquina, peso e carteira se leem como se lê a etiqueta de um feixe: o código grande na faixa, o peso logo abaixo, nada além do necessário. As etiquetas ficam sobre um chão de névoa de aço (`ground`), e a estrutura (barra superior, faixas de resumo, cabeçalhos de painel) é grafite.\n\nA densidade é de chão de fábrica, não de apresentação: grades de etiquetas pequenas (mínimo de 158px por bitola), linhas tracejadas separando os campos da etiqueta e números em mono alinhados. Duas faixas fazem a hierarquia: a faixa **grafite** marca resumo e estrutura (cabeçalho de painel, etiqueta de resumo do mês, semana em destaque); a faixa **azul-céu** marca o dado por item (bitola, KPI). Os estados (ok, atenção, ruim) aparecem como pontos, tags pequenas e réguas, nunca como fundos de painel inteiros.\n\nO mundo rejeita a grade escura de cartões KPI estilo SaaS (o visual anterior do projeto) e o painel administrativo branco com barra lateral.",
+    "northStar": "A Sala de Controle",
+    "overview": "O dashboard é a sala de controle da usina à noite: um chão preto (`bg`) com um brilho azul-céu fraco vindo do canto superior direito, painéis escuros em camadas e uma única fonte de luz, o azul-céu da Grande Aço. Essa luz acende só no que está vivo ou no que importa agora: a aba ativa, o cartão em destaque do mês, as réguas de progresso, os pontos de estado e o selo da marca. O resto fica apagado e legível, em cinza-claro sobre grafite.\n\nA densidade é a de um painel de operação, não de uma apresentação. Uma faixa de quatro KPIs abre a Visão Geral, com o produzido do mês maior e iluminado; logo abaixo vêm dois gráficos lado a lado e, depois, a operação: a lista de máquinas e a tabela de bitolas, com produzido, carteira atendida e situação em linhas finas. Os títulos e rótulos saem em Archivo larga, em caixa alta; todo número medido sai em JetBrains Mono, com algarismos alinhados.\n\nO brilho azul é uma assinatura pedida pelo cliente (\"mais futurista\") e faz parte do sistema, não é enfeite. O mundo claro anterior, de etiquetas de feixe em papel, foi rejeitado pelo cliente por \"parecer um calendário\" e não volta.",
     "keyCharacteristics": [
-      "Painéis são etiquetas: papel `stock`, faixa no topo, furo de amarração à direita, cantos de 6px.",
-      "Faixa grafite = estrutura e resumo; faixa azul-céu = dado por item.",
-      "Archivo larga (125%) para display, códigos de máquina e rótulos; JetBrains Mono para todo número medido.",
-      "Linhas tracejadas separam os campos dentro da etiqueta e marcam o que é pendente ou esperado.",
-      "Chão de névoa de aço, sombras curtas e baixas; nada flutua alto, exceto menus e janelas."
+      "Chão preto com brilho radial azul-céu no topo direito; superfícies em três degraus de grafite.",
+      "Uma luz só: azul-céu com brilho (glow) na aba ativa, no cartão em destaque, nas réguas, nos pontos de estado e no selo.",
+      "Cartões de 16px com borda fina (hairline) de 1px e um leve reflexo no topo; controles em pílula.",
+      "Archivo larga (125%) em caixa alta para títulos e rótulos; JetBrains Mono para todo número medido.",
+      "Estados em verde, âmbar e vermelho claros, sempre como ponto, tag, régua ou borda."
     ],
     "rules": [
       {
-        "name": "The Duas Faixas Rule",
-        "body": "Grafite marca estrutura e resumo; azul-céu marca o dado de cada item. Uma etiqueta tem uma faixa só, e a cor da faixa diz o tipo da etiqueta.",
+        "name": "The Uma Luz Rule",
+        "body": "O azul-céu é a única fonte de luz. O brilho (glow) vai só na aba ativa, no cartão em destaque, nas réguas e medidores, nos pontos de estado, no botão de entrar e no selo. Um cartão comum nunca brilha, e cada faixa de KPIs tem um único cartão em destaque.",
         "section": "colors"
       },
       {
-        "name": "The Céu Não É Texto Rule",
-        "body": "O azul-céu `ga-sky` nunca é cor de texto sobre papel; sobre o céu, o texto é sempre grafite `ga-ink`. Para link, foco e texto azul use `ga-deep`.",
+        "name": "The Tinta sobre Céu Rule",
+        "body": "Sobre preenchimento azul-céu o texto é sempre `on-sky`, nunca branco. Sobre o escuro, o céu pode ser texto (`ga-sky-hi` em rótulos e tags).",
         "section": "colors"
       },
       {
         "name": "The Estado em Ponto Rule",
-        "body": "Estados aparecem como ponto, tag pequena ou régua colorida. Nenhum painel inteiro é pintado de verde, âmbar ou vermelho.",
+        "body": "Verde, âmbar e vermelho aparecem como ponto com brilho, tag em pílula, régua ou borda. Nenhum painel é pintado inteiro com cor de estado.",
         "section": "colors"
       },
       {
         "name": "The Mono Mede Rule",
-        "body": "JetBrains Mono é só para o que foi medido ou codificado: kg, t, %, h, R$, datas. Palavras, rótulos e títulos nunca saem em mono; saem em Archivo larga em caixa alta.",
+        "body": "JetBrains Mono é só para o que foi medido: kg, t, %, h, R$ e datas. Palavras, rótulos e títulos nunca saem em mono. A única exceção é o produzido do mês, que sai em Archivo larga para ser o número principal da tela.",
         "section": "typography"
       },
       {
         "name": "The Largura É Voz Rule",
-        "body": "A largura de 125% é reservada a display, códigos de máquina, faixas e rótulos. O texto corrido e os controles ficam na largura normal.",
+        "body": "A largura de 125% fica para títulos, rótulos, nomes de máquina, códigos de bitola e o número em destaque. Texto corrido, abas e controles ficam na largura normal.",
         "section": "typography"
       },
       {
-        "name": "The Papel Assentado Rule",
-        "body": "Etiquetas nunca sobem no hover nem ganham sombra maior. Só o que se sobrepõe à página usa a sombra de sobreposição.",
+        "name": "The Plano com Luz Rule",
+        "body": "Cartões ficam planos e não sobem no hover. A sombra escura é só para o que se sobrepõe à página, e o brilho azul é só para o que está ativo ou medindo.",
         "section": "elevation"
       },
       {
-        "name": "The Tracejado Pendente Rule",
-        "body": "Tracejado para o que é previsto, pendente ou não salvo; linha cheia para o que já está gravado. A pílula de nuvem passa de tracejada (local) a cheia (online).",
+        "name": "The Pílula É Controle Rule",
+        "body": "O que se clica ou o que mede é pílula; o que contém é cartão de 16px. Não há cantos retos na interface.",
         "section": "shapes"
       }
     ],
     "dos": [
-      "**Do** montar todo painel novo como etiqueta: papel `stock`, faixa de ponta a ponta no topo, furo de amarração no canto direito e cantos de 6px.",
-      "**Do** usar faixa grafite para resumo e estrutura e faixa azul-céu para o dado de cada item (The Duas Faixas Rule).",
-      "**Do** pôr todo número medido (kg, t, %, h, R$) em JetBrains Mono 800, no formato pt-BR (1.234,5 kg).",
-      "**Do** escrever rótulos em Archivo larga (125%), caixa alta, entre 0,7rem e 0,74rem, com espaçamento de 0,05em.",
-      "**Do** usar tracejado para o previsto, pendente ou não salvo e linha cheia para o registrado.",
-      "**Do** manter o texto sobre azul-céu em grafite `ga-ink` e usar `ga-deep` para foco e texto azul.",
-      "**Do** seguir a sequência dos gráficos: grafite para o realizado, céu tracejado para a meta e a rampa céu-claro → grafite para as semanas."
+      "**Do** manter o chão `bg` com o brilho radial azul no topo direito e montar todo cartão novo em `surface`, com borda de 1px `line` e cantos de 16px.",
+      "**Do** usar o brilho azul-céu só no que está ativo, medindo ou em destaque (The Uma Luz Rule), com um único cartão em destaque por faixa.",
+      "**Do** pôr todo número medido (kg, t, %, h, R$) em JetBrains Mono, no formato pt-BR (1.234,5 kg), e usar a forma curta (\"30,7 mil\") nos rótulos de gráfico.",
+      "**Do** escrever títulos e rótulos em Archivo larga (125%), caixa alta, com espaçamento de 0,06em.",
+      "**Do** usar `on-sky` como texto sobre qualquer preenchimento azul-céu.",
+      "**Do** fazer de todo controle uma pílula e de todo contêiner um cartão de 16px.",
+      "**Do** seguir a paleta dos gráficos: céu para o produzido, claro tracejado para a meta e a rampa do céu profundo ao céu claro para as semanas.",
+      "**Do** usar o selo oficial (`assets/logo-grande-aco-selo.jpg`) em círculo branco, a 44px na barra e a 84px no login, sempre com o brilho azul."
     ],
     "donts": [
-      "**Don't** voltar à grade escura de cartões KPI estilo SaaS nem ao painel administrativo branco com barra lateral.",
-      "**Don't** usar `ga-sky` como cor de texto sobre papel ou chão.",
-      "**Don't** pintar um painel inteiro com cor de estado; o estado vai em ponto, tag ou régua.",
-      "**Don't** escrever palavras ou títulos em mono; mono é só para números e códigos medidos.",
-      "**Don't** fazer etiquetas subirem ou ganharem sombra maior no hover; a sombra de sobreposição é só para menus, janelas e avisos.",
-      "**Don't** redesenhar o logo da Grande Aço à mão; o monograma em texto fica até o arquivo oficial chegar."
+      "**Don't** voltar ao mundo claro de etiquetas de papel; o cliente o rejeitou por \"parecer um calendário\".",
+      "**Don't** dar brilho a cartões comuns, títulos ou texto; o brilho é a luz do que está ativo, não decoração.",
+      "**Don't** pintar um painel inteiro com cor de estado; o estado vai em ponto, tag, régua ou borda.",
+      "**Don't** escrever palavras ou títulos em mono.",
+      "**Don't** pôr texto branco sobre azul-céu.",
+      "**Don't** fazer cartões subirem ou ganharem sombra no hover; a sombra escura é só para janelas, menus e avisos.",
+      "**Don't** redesenhar ou recolorir o selo da Grande Aço."
     ]
   }
 }

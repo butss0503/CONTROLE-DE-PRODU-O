@@ -1,24 +1,19 @@
----
-version: 1
-slug: "index-html"
-primary_target: "index.html"
-related_targets: ["style.css","app.js"]
----
-
 # Surface brief: dashboard (index.html)
 
 Mode: Operate. Users: PCP no PC (lança e acompanha), gerência/diretoria (PC, celular, reunião, impressão), comercial (carteira por bitola). Constraints: static HTML/CSS/JS on GitHub Pages, Chart.js, pt-BR, existing IDs and app.js behavior preserved; login/perfis já existentes.
 
+History: the "Etiqueta do Feixe" light world (round 1 pick) shipped and was rejected by the client ("parecendo um calendário"); round 2 was re-rolled with the steer "algo mais futurista, como era anteriormente, com os gráficos em cima e mais organizado". The direction below is pinned by that steer and approved by the client on 2026-11-25.
+
 ## Direction contract
 
-THESIS: Every number is the tag wired to the bundle: bitola, máquina, peso, carteira read at a glance. Refuses the dark SaaS KPI-card grid (the incumbent) and the white sidebar admin.
+THESIS: The original dark dashboard, made futuristic and on-brand: the Grande Aço sky blue is the light source of the screen. Refuses the light tag grid that read as a calendar.
 
-OWN-WORLD: Steel-mist ground #E6EAEE; tag stock #F7F7F4 with a punched hole; graphite #1A2129 shell and summary bands; brand sky #3DAEE9 lot band on data tags; deep blue #0E6FA8 for links/focus. State: green #0E7A4F, amber #A86400, red #C8312F. Archivo extended 125% for display and machine codes, JetBrains Mono for every measured number, Archivo for UI.
+OWN-WORLD: Black ground #07090C with a faint sky radial glow; surfaces #0E1217/#151B22; 1px hairlines; 16px cards; pill tabs, active tab sky #3DAEE9 with glow; sky glow on progress fills, status dots and the featured KPI; Archivo 125% uppercase titles and labels; JetBrains Mono numbers; official round seal in the top bar.
 
-STORY: Visitor sees month produced vs meta, projection and what is short; scans per-bitola tags for carteira; PCP logs production from labeled forms and sees a dashed (pending) → solid (saved) state.
+STORY: Visitor reads the month (produced vs meta with expected-today mark, projection, availability, year), then the charts, then machines and per-gauge order book; PCP logs from the Lançamentos tab after login.
 
-FIRST VIEWPORT: Graphite top bar (GA mark, tabs, period, user). Left: tall summary tag (graphite band "LOTE NOV/2026 · SEMANA 4"), produced kg in extended numeral, progress rule, ritmo/projeção/faltam rows. Right: tag grid per bitola with sky band "Ø 8,00 · EB10", produced mono numeral, carteira mini-bar. Below: weekly chart and machine tags. Signature move: data as bundle tags with lot band and punched hole; panel headers become tag bands across all tabs.
+FIRST VIEWPORT: Top bar (seal, pill tabs, period filters, Entrar); period strip with cloud status and tools; KPI strip with the featured "Produzido" card first; below it the month-vs-meta chart (wide) and the weekly chart. Signature move: sky glow as the single light accent.
 
-FORM: grounded candidate 1 of 7 (Etiqueta do Feixe), chosen as IMPECCABLE’S PICK; seed:f0ebae993140c203
+FORM: seed: none (pinned) — "algo mais futurista, como era anteriormente, com os gráficos em cima e mais organizado"
 
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance

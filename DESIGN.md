@@ -1,57 +1,57 @@
 ---
 name: Grande Aço · Dashboard de Produção
-description: Cada número é a etiqueta presa ao feixe de vergalhão — papel de etiqueta, faixa de lote, furo de amarração.
+description: Sala de controle escura da produção de vergalhão, com o azul-céu da Grande Aço como a única luz do painel.
 colors:
   ga-sky: "#3DAEE9"
-  ga-sky-soft: "#D6EEFB"
-  ga-sky-hover: "#63BFEE"
-  ga-deep: "#0E6FA8"
-  ga-ink: "#1A2129"
-  ground: "#E3E7EB"
-  stock: "#F7F7F4"
-  field: "#FFFFFF"
-  band: "#1A2129"
-  band-line: "#3A4550"
-  band-hover: "#2B3540"
-  ink: "#1A2129"
-  ink-2: "#36414C"
-  mute: "#56616B"
-  on-band: "#FFFFFF"
-  on-band-mute: "#B7C1CA"
-  line: "#C6CED5"
-  line-soft: "#DEE3E7"
-  neutral-chip: "#E2E8EE"
-  ok: "#0E7A4F"
-  ok-soft: "#DDF1E7"
-  warn: "#A35F00"
-  warn-soft: "#FBEBD3"
-  bad: "#C42F2D"
-  bad-soft: "#F8E0DF"
-  bad-deep: "#A42624"
-  chart-sky-1: "#A9D8F2"
-  chart-sky-2: "#6EC1EE"
-  chart-tick: "#4A5560"
-  chart-track: "#E1E6EA"
+  ga-sky-hi: "#7CC9F0"
+  ga-sky-deep: "#1E5A7C"
+  ga-sky-glow: "rgba(61, 174, 233, 0.35)"
+  ga-sky-soft: "rgba(61, 174, 233, 0.12)"
+  on-sky: "#04131C"
+  bg: "#07090C"
+  surface: "#0E1217"
+  surface-2: "#151B22"
+  surface-3: "#1C242D"
+  text: "#E8EDF2"
+  text-2: "#B9C4CE"
+  mute: "#8E9BA8"
+  white: "#FFFFFF"
+  line: "rgba(255, 255, 255, 0.08)"
+  line-strong: "rgba(255, 255, 255, 0.16)"
+  ok: "#34D399"
+  ok-soft: "rgba(52, 211, 153, 0.14)"
+  warn: "#FBBF24"
+  warn-soft: "rgba(251, 191, 36, 0.14)"
+  bad: "#F87171"
+  bad-soft: "rgba(248, 113, 113, 0.14)"
+  bad-solid: "#C23B3B"
+  chart-goal: "#DDE6EE"
+  chart-week-2: "#2678A6"
+  chart-week-5: "#C4E8FA"
+  chart-dobra: "#8FD3F5"
+  chart-grid: "rgba(255, 255, 255, 0.07)"
+  chart-label-bg: "#0B0F14"
 typography:
   display:
     fontFamily: "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif"
-    fontSize: "clamp(2.4rem, 4.2vw, 3.6rem)"
+    fontSize: "clamp(2.2rem, 3.4vw, 3rem)"
     fontWeight: 800
-    lineHeight: 1
-    letterSpacing: "-0.025em"
+    lineHeight: 1.1
+    letterSpacing: "-0.03em"
     fontVariation: "'wdth' 125"
   headline:
     fontFamily: "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif"
     fontSize: "1rem"
     fontWeight: 800
-    lineHeight: 1.2
-    letterSpacing: "0.01em"
+    lineHeight: 1.05
+    letterSpacing: "0.02em"
     fontVariation: "'wdth' 125"
   title:
     fontFamily: "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif"
-    fontSize: "0.98rem"
-    fontWeight: 800
-    lineHeight: 1.2
+    fontSize: "0.82rem"
+    fontWeight: 700
+    lineHeight: 1.5
+    letterSpacing: "0.06em"
     fontVariation: "'wdth' 125"
   body:
     fontFamily: "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif"
@@ -62,304 +62,331 @@ typography:
   label:
     fontFamily: "Archivo, system-ui, -apple-system, 'Segoe UI', sans-serif"
     fontSize: "0.72rem"
-    fontWeight: 800
-    lineHeight: 1.35
-    letterSpacing: "0.05em"
+    fontWeight: 700
+    lineHeight: 1.5
+    letterSpacing: "0.06em"
     fontVariation: "'wdth' 125"
   number-lg:
     fontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace"
-    fontSize: "clamp(1.5rem, 2.2vw, 1.95rem)"
+    fontSize: "clamp(1.5rem, 2.2vw, 1.9rem)"
     fontWeight: 800
     lineHeight: 1.1
     letterSpacing: "-0.02em"
   number:
     fontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace"
-    fontSize: "1.32rem"
+    fontSize: "0.92rem"
     fontWeight: 800
-    lineHeight: 1.1
-    letterSpacing: "-0.02em"
+    lineHeight: 1.5
   number-sm:
     fontFamily: "'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace"
-    fontSize: "0.9rem"
-    fontWeight: 800
-    lineHeight: 1.3
+    fontSize: "0.86rem"
+    fontWeight: 700
+    lineHeight: 1.5
 rounded:
-  meter: "2px"
-  chip: "3px"
-  item: "4px"
-  tag: "6px"
-  ctl: "6px"
+  item: "8px"
+  ctl: "10px"
+  menu: "12px"
+  card: "16px"
   pill: "999px"
 spacing:
-  xs: "6px"
+  xs: "4px"
   sm: "8px"
   md: "12px"
   lg: "16px"
-  xl: "18px"
+  panel: "22px"
   gutter: "28px"
   gutter-mobile: "14px"
 components:
   button-primary:
-    backgroundColor: "{colors.ga-ink}"
-    textColor: "{colors.on-band}"
-    typography: "{typography.body}"
-    rounded: "{rounded.ctl}"
-    padding: "10px 20px"
+    backgroundColor: "{colors.text}"
+    textColor: "{colors.bg}"
+    rounded: "{rounded.pill}"
+    padding: "10px 22px"
     height: "46px"
   button-primary-hover:
-    backgroundColor: "{colors.band-hover}"
+    backgroundColor: "{colors.white}"
   button-sky:
     backgroundColor: "{colors.ga-sky}"
-    textColor: "{colors.ga-ink}"
-    rounded: "{rounded.ctl}"
-    padding: "10px 20px"
+    textColor: "{colors.on-sky}"
+    rounded: "{rounded.pill}"
+    padding: "10px 22px"
     height: "46px"
   button-sky-hover:
-    backgroundColor: "{colors.ga-sky-hover}"
+    backgroundColor: "{colors.ga-sky-hi}"
   button-outline:
-    backgroundColor: "{colors.field}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.ctl}"
+    backgroundColor: "{colors.surface-2}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.pill}"
     padding: "5px 14px"
     height: "34px"
   button-outline-active:
-    backgroundColor: "{colors.ga-ink}"
-    textColor: "{colors.on-band}"
+    backgroundColor: "{colors.ga-sky}"
+    textColor: "{colors.on-sky}"
   button-delete:
     backgroundColor: "transparent"
     textColor: "{colors.bad}"
-    rounded: "{rounded.ctl}"
-    padding: "4px 10px"
+    rounded: "{rounded.pill}"
+    padding: "5px 12px"
   button-delete-hover:
-    backgroundColor: "{colors.bad}"
-    textColor: "{colors.field}"
+    backgroundColor: "{colors.bad-solid}"
+    textColor: "{colors.white}"
   input:
-    backgroundColor: "{colors.field}"
-    textColor: "{colors.ink}"
+    backgroundColor: "{colors.bg}"
+    textColor: "{colors.text}"
     rounded: "{rounded.ctl}"
-    padding: "9px 12px"
-    height: "44px"
+    padding: "10px 14px"
+    height: "46px"
   tab:
-    backgroundColor: "{colors.band}"
-    textColor: "{colors.on-band-mute}"
-    typography: "{typography.body}"
-    padding: "0 14px"
-    height: "60px"
+    backgroundColor: "transparent"
+    textColor: "{colors.mute}"
+    rounded: "{rounded.pill}"
+    padding: "8px 16px"
+  tab-hover:
+    backgroundColor: "{colors.surface-2}"
+    textColor: "{colors.text}"
   tab-active:
-    textColor: "{colors.on-band}"
-  tag-panel:
-    backgroundColor: "{colors.stock}"
-    textColor: "{colors.ink}"
-    rounded: "{rounded.tag}"
-  tag-band-graphite:
-    backgroundColor: "{colors.band}"
-    textColor: "{colors.on-band}"
-    typography: "{typography.label}"
-    padding: "8px 44px 8px 18px"
-    height: "40px"
-  tag-band-sky:
     backgroundColor: "{colors.ga-sky}"
-    textColor: "{colors.ga-ink}"
-    typography: "{typography.label}"
-    padding: "6px 30px 6px 12px"
+    textColor: "{colors.on-sky}"
+  nav-tabs:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.pill}"
+    padding: "5px"
+  card:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.card}"
+    padding: "20px 22px 22px"
+  kpi-card:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.card}"
+    padding: "18px 20px"
+  kpi-card-featured:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    typography: "{typography.display}"
+    rounded: "{rounded.card}"
+    padding: "18px 20px"
+  filter-group:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.ctl}"
+    padding: "6px 12px"
   chip-ok:
     backgroundColor: "{colors.ok-soft}"
     textColor: "{colors.ok}"
-    rounded: "{rounded.chip}"
-    padding: "3px 8px"
+    rounded: "{rounded.pill}"
+    padding: "3px 10px"
   chip-warn:
     backgroundColor: "{colors.warn-soft}"
     textColor: "{colors.warn}"
-    rounded: "{rounded.chip}"
-    padding: "3px 8px"
+    rounded: "{rounded.pill}"
+    padding: "3px 10px"
   chip-bad:
     backgroundColor: "{colors.bad-soft}"
     textColor: "{colors.bad}"
-    rounded: "{rounded.chip}"
-    padding: "3px 8px"
+    rounded: "{rounded.pill}"
+    padding: "3px 10px"
+  chip-sky:
+    backgroundColor: "{colors.ga-sky-soft}"
+    textColor: "{colors.ga-sky-hi}"
+    rounded: "{rounded.pill}"
+    padding: "3px 10px"
   badge-pill:
-    backgroundColor: "{colors.field}"
+    backgroundColor: "{colors.surface-2}"
     rounded: "{rounded.pill}"
     padding: "5px 12px"
+  menu-panel:
+    backgroundColor: "{colors.surface-2}"
+    rounded: "{rounded.menu}"
+    padding: "6px"
+  modal:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.card}"
+    padding: "22px 24px"
+    width: "460px"
 ---
 
 # Design System: Grande Aço · Dashboard de Produção
 
 ## Overview
 
-**Creative North Star: "Etiqueta do Feixe"**
+**Creative North Star: "A Sala de Controle"**
 
-Todo número do dashboard é a etiqueta amarrada ao feixe de vergalhão no pátio: um papel claro (`stock`), uma faixa de lote no topo e um furo de amarração no canto direito. Bitola, máquina, peso e carteira se leem como se lê a etiqueta de um feixe: o código grande na faixa, o peso logo abaixo, nada além do necessário. As etiquetas ficam sobre um chão de névoa de aço (`ground`), e a estrutura (barra superior, faixas de resumo, cabeçalhos de painel) é grafite.
+O dashboard é a sala de controle da usina à noite: um chão preto (`bg`) com um brilho azul-céu fraco vindo do canto superior direito, painéis escuros em camadas e uma única fonte de luz, o azul-céu da Grande Aço. Essa luz acende só no que está vivo ou no que importa agora: a aba ativa, o cartão em destaque do mês, as réguas de progresso, os pontos de estado e o selo da marca. O resto fica apagado e legível, em cinza-claro sobre grafite.
 
-A densidade é de chão de fábrica, não de apresentação: grades de etiquetas pequenas (mínimo de 158px por bitola), linhas tracejadas separando os campos da etiqueta e números em mono alinhados. Duas faixas fazem a hierarquia: a faixa **grafite** marca resumo e estrutura (cabeçalho de painel, etiqueta de resumo do mês, semana em destaque); a faixa **azul-céu** marca o dado por item (bitola, KPI). Os estados (ok, atenção, ruim) aparecem como pontos, tags pequenas e réguas, nunca como fundos de painel inteiros.
+A densidade é a de um painel de operação, não de uma apresentação. Uma faixa de quatro KPIs abre a Visão Geral, com o produzido do mês maior e iluminado; logo abaixo vêm dois gráficos lado a lado e, depois, a operação: a lista de máquinas e a tabela de bitolas, com produzido, carteira atendida e situação em linhas finas. Os títulos e rótulos saem em Archivo larga, em caixa alta; todo número medido sai em JetBrains Mono, com algarismos alinhados.
 
-O mundo rejeita a grade escura de cartões KPI estilo SaaS (o visual anterior do projeto) e o painel administrativo branco com barra lateral.
+O brilho azul é uma assinatura pedida pelo cliente ("mais futurista") e faz parte do sistema, não é enfeite. O mundo claro anterior, de etiquetas de feixe em papel, foi rejeitado pelo cliente por "parecer um calendário" e não volta.
 
 **Key Characteristics:**
-- Painéis são etiquetas: papel `stock`, faixa no topo, furo de amarração à direita, cantos de 6px.
-- Faixa grafite = estrutura e resumo; faixa azul-céu = dado por item.
-- Archivo larga (125%) para display, códigos de máquina e rótulos; JetBrains Mono para todo número medido.
-- Linhas tracejadas separam os campos dentro da etiqueta e marcam o que é pendente ou esperado.
-- Chão de névoa de aço, sombras curtas e baixas; nada flutua alto, exceto menus e janelas.
+- Chão preto com brilho radial azul-céu no topo direito; superfícies em três degraus de grafite.
+- Uma luz só: azul-céu com brilho (glow) na aba ativa, no cartão em destaque, nas réguas, nos pontos de estado e no selo.
+- Cartões de 16px com borda fina (hairline) de 1px e um leve reflexo no topo; controles em pílula.
+- Archivo larga (125%) em caixa alta para títulos e rótulos; JetBrains Mono para todo número medido.
+- Estados em verde, âmbar e vermelho claros, sempre como ponto, tag, régua ou borda.
 
 ## Colors
 
-Uma paleta de pátio de aço: grafite e azul-céu da marca, papel de etiqueta quente sobre névoa fria, e três estados industriais.
+Uma paleta de sala escura: grafites frios em degraus, texto quase branco e o azul-céu da marca como luz, com três cores de estado claras o bastante para ler sobre o preto.
 
 ### Primary
-- **Azul-Céu Grande Aço** (`ga-sky`): faixa de lote das etiquetas de dado (bitola, KPI), sublinhado da aba ativa, série "meta" nos gráficos, botão de entrar e botão secundário de ação. É a cor da marca; aparece em faixas e marcas, não em superfícies grandes.
-- **Céu Claro** (`ga-sky-soft`): fundo de linha total em tabela, hover de item de menu, aviso de modo consulta, tag de dobradeira.
-- **Céu Aceso** (`ga-sky-hover`): hover dos botões azul-céu.
-
-### Secondary
-- **Azul Profundo** (`ga-deep`): anel de foco, borda de campo em foco, cursor de texto, estado "pendente" da etiqueta de bitola, barras da dobradeira no gráfico. É o azul que carrega interação, porque o céu não tem contraste para texto sobre papel.
+- **Azul-Céu Grande Aço** (`ga-sky`): aba ativa, botão de entrar e botão de destaque, série "produzido" nos gráficos, ponto antes de cada título de painel, preenchimento das réguas e dos medidores de bitola, anel de foco, borda de campo em foco, cursor de texto, seleção de texto e toggle ligado.
+- **Céu Aceso** (`ga-sky-hi`): hover dos botões azul-céu, rótulo do cartão em destaque, estado "atendimento parcial" das bitolas, texto das tags azuis e quarto degrau das semanas.
+- **Céu Profundo** (`ga-sky-deep`): início do degradê das réguas de progresso (do céu profundo ao céu) e primeira semana no gráfico semanal.
+- **Brilho do Céu** (`ga-sky-glow`): a cor de todo brilho azul (aba ativa, botão de entrar, réguas, selo).
+- **Véu do Céu** (`ga-sky-soft`): fundo de linha total em tabela, aviso de modo consulta e tag de estribadeira.
+- **Tinta sobre Céu** (`on-sky`): o texto que vai sobre qualquer preenchimento azul-céu.
 
 ### Neutral
-- **Grafite Feixe** (`ga-ink` / `band` / `ink`): barra superior, faixas de cabeçalho, botão primário, preenchimento da régua de meta, texto principal, série "produzido" nos gráficos. Os três nomes têm o mesmo valor e papéis diferentes: marca, faixa e texto.
-- **Linha da Faixa** (`band-line`): bordas de filtros, chip de usuário e botões sobre fundo grafite.
-- **Grafite Aceso** (`band-hover`): hover do botão primário.
-- **Névoa de Aço** (`ground`): o chão da página, onde as etiquetas ficam; também a cor do furo de amarração.
-- **Papel de Etiqueta** (`stock`): superfície de toda etiqueta, menu e janela.
-- **Branco de Campo** (`field`): campos de digitação, pílulas, caixas de conferência. É mais branco que o papel, para o campo editável se destacar.
-- **Grafite Médio** (`ink-2`): texto secundário, rótulos de formulário.
-- **Cinza Rótulo** (`mute`): rótulos de campo de etiqueta, cabeçalhos de tabela, notas.
-- **Sobre Faixa** (`on-band`) e **Sobre Faixa Suave** (`on-band-mute`): texto sobre grafite, ativo e inativo.
-- **Linha** (`line`) e **Linha Suave** (`line-soft`): bordas de controles e tracejados (`line`); trilhos de réguas e divisores de tabela (`line-soft`).
-- **Chip Neutro** (`neutral-chip`): tag de estribadeira, avatar e perfil "visualizador".
+- **Chão Noturno** (`bg`): o fundo da página e o fundo dos campos de digitação, mais escuros que o cartão para o campo parecer um recorte.
+- **Painel** (`surface`): cartões, KPIs, faixa de período, trilho das abas, filtros, janelas.
+- **Painel Elevado** (`surface-2`): menus, botões outline, pílula de nuvem, cabeçalho de tabela, aviso rápido, hover de aba.
+- **Painel Fundo** (`surface-3`): trilhos de régua e medidor, avatar neutro, hover de item de menu.
+- **Texto** (`text`): texto principal; também o fundo do botão primário (claro sobre o escuro).
+- **Texto Secundário** (`text-2`): nomes de máquina na tabela de bitolas, rótulos de formulário, mensagens de janela.
+- **Cinza Rótulo** (`mute`): rótulos de KPI, cabeçalhos de tabela, abas inativas, notas e eixos dos gráficos.
+- **Linha** (`line`) e **Linha Forte** (`line-strong`): bordas finas de cartões e divisores de linha (`line`); bordas de controles, janelas e menus (`line-strong`).
 
 ### Estados
-- **Verde Ok** (`ok`, fundo `ok-soft`): carteira zerada, máquina disponível, salvo na nuvem, meta batida (a régua de meta fica verde).
-- **Âmbar Atenção** (`warn`, fundo `warn-soft`): bitola não iniciada, marca tracejada do "esperado até hoje", modo local (não sincronizado), backlog pendente.
-- **Vermelho Ruim** (`bad`, fundo `bad-soft`, hover `bad-deep`): excluir, máquina com mais de 8 h paradas, erros de formulário, usuário inativo.
+- **Verde Ok** (`ok`, fundo `ok-soft`): carteira zerada, nuvem online, meta batida (a régua e a borda do cartão ficam verdes), tag "Meta batida", perfil PCP.
+- **Âmbar Atenção** (`warn`, fundo `warn-soft`): bitola não iniciada, marca tracejada do "esperado até hoje", modo local, tag de dobradeira, usuário pendente.
+- **Vermelho Ruim** (`bad`, fundo `bad-soft`, cheio `bad-solid`): excluir, máquina com muitas horas paradas, erro de formulário, usuário inativo. O vermelho cheio aparece só no hover de excluir e no botão de confirmação perigosa.
 
 ### Gráficos
-- Série principal "produzido": grafite `ga-ink` com preenchimento grafite a 7% de opacidade, linha em degrau.
-- Série "meta/previsão": `ga-sky` tracejada (6/4).
-- Sequência de semanas (claro → escuro): `chart-sky-1`, `chart-sky-2`, `ga-sky`, `ga-deep`, `ga-ink`.
-- Estribadeira em `ga-ink`, dobradeira em `ga-deep`.
-- Eixos e legendas em `chart-tick`; grade em grafite a 8% (`rgba(26,33,41,0.08)`); trilho de medidor em `chart-track`.
-- Rótulos de dados: fundo `stock`, borda da cor da série, raio de 6px (uma mini-etiqueta), números em JetBrains Mono.
+- **Produzido:** linha `ga-sky` de 2,5px em degrau, com preenchimento azul-céu a 16%.
+- **Meta:** linha `chart-goal` tracejada (6/4).
+- **Semanas:** rampa do escuro ao claro: `ga-sky-deep`, `chart-week-2`, `ga-sky`, `ga-sky-hi`, `chart-week-5`.
+- **Máquinas:** estribadeira em `ga-sky`, dobradeira em `chart-dobra`.
+- **Eixos e grade:** rótulos em `mute`; grade em `chart-grid`; barras com cantos de 6px.
+- **Rótulos de dados:** texto `text` sobre `chart-label-bg`, borda da cor da série, cantos de 6px, JetBrains Mono 700 a 10px; valores grandes em forma curta ("30,7 mil"). No gráfico anual, quando ele tem menos de 520px de largura, só o mês ativo mostra o rótulo.
 
 ### Named Rules
-**The Duas Faixas Rule.** Grafite marca estrutura e resumo; azul-céu marca o dado de cada item. Uma etiqueta tem uma faixa só, e a cor da faixa diz o tipo da etiqueta.
+**The Uma Luz Rule.** O azul-céu é a única fonte de luz. O brilho (glow) vai só na aba ativa, no cartão em destaque, nas réguas e medidores, nos pontos de estado, no botão de entrar e no selo. Um cartão comum nunca brilha, e cada faixa de KPIs tem um único cartão em destaque.
 
-**The Céu Não É Texto Rule.** O azul-céu `ga-sky` nunca é cor de texto sobre papel; sobre o céu, o texto é sempre grafite `ga-ink`. Para link, foco e texto azul use `ga-deep`.
+**The Tinta sobre Céu Rule.** Sobre preenchimento azul-céu o texto é sempre `on-sky`, nunca branco. Sobre o escuro, o céu pode ser texto (`ga-sky-hi` em rótulos e tags).
 
-**The Estado em Ponto Rule.** Estados aparecem como ponto, tag pequena ou régua colorida. Nenhum painel inteiro é pintado de verde, âmbar ou vermelho.
+**The Estado em Ponto Rule.** Verde, âmbar e vermelho aparecem como ponto com brilho, tag em pílula, régua ou borda. Nenhum painel é pintado inteiro com cor de estado.
 
 ## Typography
 
-**Display Font:** Archivo larga, `font-stretch: 125%` (com system-ui)
+**Display Font:** Archivo larga, `font-stretch: 125%` (com system-ui, Segoe UI)
 **Body Font:** Archivo, largura normal (com system-ui, Segoe UI)
 **Label/Mono Font:** JetBrains Mono (com ui-monospace, Cascadia Mono, Consolas), só para números
 
-**Character:** A Archivo larga e pesada ecoa o nome "GRANDE AÇO" do logo: quadrada, industrial, em caixa alta nos rótulos. A JetBrains Mono é a régua de medição: todo peso, porcentagem, hora e valor em R$ sai nela, com algarismos de largura fixa para as colunas baterem.
+**Character:** A Archivo larga e pesada, em caixa alta, dá o tom industrial do nome "GRANDE AÇO". A JetBrains Mono funciona como instrumento de medida: todo peso, porcentagem, hora e valor em R$ sai nela, com algarismos de largura fixa para as colunas baterem. A página inteira usa algarismos tabulares.
 
 ### Hierarchy
-- **Display** (`display`): o produzido do mês na etiqueta de resumo. É o único número em Archivo larga, assim como o valor da semana em destaque (`.featured`).
-- **Headline** (`headline`): títulos de quadro ("Etiquetas por bitola") e o período na faixa de período, em caixa alta (de 1rem a 1,05rem).
-- **Title** (`title`): nomes de máquina (ES02, EB10…) na lista de status e títulos de janela (1,1rem).
-- **Body** (`body`): texto corrido e controles; formulários a 0,92rem, tabelas a 0,86rem; algarismos tabulares ligados na página inteira.
-- **Label** (`label`): faixas de etiqueta, rótulos de campo (`dt`), cabeçalhos de tabela, rótulos de filtro e de menu, entre 0,7rem e 0,74rem, caixa alta, espaçamento de 0,05em.
-- **Número grande** (`number-lg`): valores de KPI.
-- **Número** (`number`): produzido por bitola.
-- **Número pequeno** (`number-sm`): valores de linha de etiqueta (1,02rem), barras de máquina, totais de carteira, campos numéricos.
+- **Display** (`display`): só o produzido do mês no cartão em destaque. É o único número grande em Archivo larga.
+- **Headline** (`headline`): nome "Grande Aço" na barra superior e período na faixa de período, em caixa alta. Títulos de janela usam a mesma Archivo larga 800, a 1,1rem, sem caixa alta.
+- **Title** (`title`): títulos de painel em caixa alta, precedidos de um ponto azul-céu com brilho.
+- **Body** (`body`): texto corrido e controles; formulários a 0,92rem, tabelas e linhas de bitola a 0,86rem, abas a 0,84rem peso 600.
+- **Label** (`label`): rótulos de KPI, cabeçalhos de tabela e da lista de bitolas, rótulos de filtro e de menu, entre 0,7rem e 0,72rem, caixa alta, espaçamento de 0,06em a 0,08em.
+- **Número grande** (`number-lg`): valores dos KPIs comuns.
+- **Número** (`number`): totais por máquina.
+- **Número pequeno** (`number-sm`): produzido e restante por bitola, valores de tabela, campos numéricos, datas da faixa de período.
 
 ### Named Rules
-**The Mono Mede Rule.** JetBrains Mono é só para o que foi medido ou codificado: kg, t, %, h, R$, datas. Palavras, rótulos e títulos nunca saem em mono; saem em Archivo larga em caixa alta.
+**The Mono Mede Rule.** JetBrains Mono é só para o que foi medido: kg, t, %, h, R$ e datas. Palavras, rótulos e títulos nunca saem em mono. A única exceção é o produzido do mês, que sai em Archivo larga para ser o número principal da tela.
 
-**The Largura É Voz Rule.** A largura de 125% é reservada a display, códigos de máquina, faixas e rótulos. O texto corrido e os controles ficam na largura normal.
+**The Largura É Voz Rule.** A largura de 125% fica para títulos, rótulos, nomes de máquina, códigos de bitola e o número em destaque. Texto corrido, abas e controles ficam na largura normal.
 
 ## Layout
 
-A página é um pátio de etiquetas com margem lateral de 28px (14px no celular) e intervalos de 18px entre painéis. A Visão Geral abre com duas colunas: a etiqueta de resumo (de 320px a 400px) à esquerda e a grade de etiquetas por bitola (`auto-fill`, mínimo de 158px, intervalo de 12px) à direita, com as duas colunas terminando na mesma altura. Abaixo vem a grade principal em três colunas (1fr 1fr 1,2fr) e, depois, a inferior em duas.
+A página tem margem lateral de 28px (14px no celular) e intervalos de 16px entre cartões. A barra superior é fixa, translúcida (`bg` a 80% com desfoque de 12px) e traz, em linha, o selo, as abas em pílula, os filtros e o usuário; abaixo dela fica a faixa de período, com o mês ativo e as ações de nuvem.
 
-Pontos de quebra: até 1280px a grade principal passa a ter duas colunas e o último painel ocupa a linha toda; até 1000px a Visão Geral empilha; até 760px tudo vai para uma coluna, as bitolas ficam em duas colunas, as abas rolam na horizontal e a barra superior deixa de ser fixa.
+A Visão Geral tem três faixas. A primeira é a de KPIs, em quatro colunas (1,5fr e três de 1fr), com o cartão em destaque à esquerda. A segunda traz os gráficos lado a lado (1,6fr e 1fr): mês a mês contra a meta e produção semanal, em quadros de 300px de altura. A terceira é a operação (1fr e 1,6fr): a lista de máquinas e a tabela de bitolas, em seis colunas (bitola, máquina, produzido, medidor de carteira atendida, restante e situação). As outras abas usam grades de três colunas (1,3fr, 0,95fr e 1fr) e de duas.
 
-Ritmo interno: as etiquetas têm 18px de recuo lateral sob a faixa e 16px entre a faixa e o conteúdo; as linhas de etiqueta usam 11px de respiro com separador tracejado. Na impressão o fundo vira branco, as sombras e os furos somem, as etiquetas ganham borda de 1px em `line` e as faixas mantêm a cor (`print-color-adjust: exact`).
+Pontos de quebra: até 1280px os KPIs passam a duas colunas; até 1100px gráficos e operação empilham; até 760px a barra superior deixa de ser fixa, as abas rolam na horizontal na linha inteira, o filtro de data some, o cartão em destaque e o último KPI ocupam a linha toda, os gráficos descem para 260px e cada linha de bitola mostra só bitola, produzido e situação, com o medidor numa segunda linha.
+
+Os cartões têm de 18px a 22px de recuo interno; as linhas de lista usam de 9px a 11px de respiro, separadas por `line`. Na impressão o fundo vira branco, o texto preto e os cartões ganham borda cinza de 1px, sem brilho.
 
 ## Elevation & Depth
 
-Sistema quase plano, com duas sombras de papel. As etiquetas ficam assentadas no chão com uma sombra curta e baixa, que é a de um papel sobre uma superfície e não a de um cartão flutuando. Só o que se abre por cima (menus, janelas, avisos) ganha a sombra alta. A profundidade de verdade vem do contraste entre os tons (`ground` e `stock`) e do furo de amarração, que é um recorte com sombra interna mostrando o chão por trás.
+O sistema é plano e em camadas. A profundidade vem dos três degraus de grafite (`surface`, `surface-2`, `surface-3`) sobre o chão `bg`, das bordas finas de 1px e de um reflexo de 2,5% de branco no topo de cada cartão. Sombras escuras existem só para o que se abre por cima da página. O brilho azul não é elevação: é luz, e marca o que está ativo.
 
 ### Shadow Vocabulary
-- **Sombra de etiqueta** (`box-shadow: 0 1px 2px rgba(26,33,41,0.14), 0 6px 16px rgba(26,33,41,0.07)`): toda etiqueta em repouso (painel, KPI, bitola).
-- **Sombra de sobreposição** (`box-shadow: 0 2px 4px rgba(26,33,41,0.12), 0 18px 40px rgba(26,33,41,0.22)`): menus, janelas modais, avisos.
-- **Furo de amarração** (`box-shadow: inset 0 1px 2px rgba(26,33,41,0.45), 0 0 0 2px rgba(255,255,255,0.18)`): o recorte circular no canto da etiqueta.
+- **Sombra de sobreposição** (`box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6)`): janelas, menus e avisos rápidos.
+- **Brilho de destaque** (`box-shadow: 0 0 0 1px rgba(61, 174, 233, 0.08), 0 10px 40px rgba(61, 174, 233, 0.10)`): só o cartão em destaque, junto com a borda azul a 45% e um brilho radial no canto superior esquerdo.
+- **Brilho ativo** (`box-shadow: 0 0 18px var(--ga-sky-glow)`): aba ativa, botão de entrar e selo da barra (24px no selo do login).
+- **Brilho de medida** (`box-shadow: 0 0 10px var(--ga-sky-glow)`): réguas de progresso (12px na régua da meta, 8px nos medidores de bitola).
+- **Brilho de ponto** (`box-shadow: 0 0 8px currentColor`): pontos de estado e da pílula de nuvem, na cor do próprio estado.
+- **Halo de foco** (`box-shadow: 0 0 0 3px rgba(61, 174, 233, 0.22)`): campos em foco.
 
 ### Named Rules
-**The Papel Assentado Rule.** Etiquetas nunca sobem no hover nem ganham sombra maior. Só o que se sobrepõe à página usa a sombra de sobreposição.
+**The Plano com Luz Rule.** Cartões ficam planos e não sobem no hover. A sombra escura é só para o que se sobrepõe à página, e o brilho azul é só para o que está ativo ou medindo.
 
 ## Shapes
 
-Cantos discretamente arredondados de 6px em etiquetas e controles, como o papel cortado de uma etiqueta de feixe. Tags de estado e de perfil usam 3px; itens de menu, 4px; réguas e trilhos, 2px, quase retos como uma régua de aço. O círculo aparece em três lugares só: o furo de amarração (13px no painel, 10px na bitola), os pontos de estado e o avatar. A pílula (999px) fica para o indicador de nuvem e o chip de usuário.
+São duas formas. Contêineres (cartões, faixa de período, janelas, aviso de modo consulta) têm cantos generosos de 16px; menus e linhas de usuário, 12px; campos e filtros, 10px; itens de menu, 8px. Tudo o que é controle ou marca pequena é pílula (999px): abas e o trilho das abas, botões, tags, pílula de nuvem, chip de usuário, réguas e medidores. O círculo aparece no selo da marca, nos avatares, nos botões de ano e nos pontos de estado de 7px a 8px.
 
-O tracejado é forma com significado: separadores internos da etiqueta, a marca do "esperado até hoje" (2px tracejado em `warn`), as caixas de conferência, o aviso de modo consulta e a pílula de modo local. Tracejado quer dizer "campo, esperado ou pendente"; linha cheia quer dizer "registrado".
+As bordas são sempre finas (1px), e o tracejado tem um único uso: a marca âmbar do "esperado até hoje" na régua da meta e na legenda, e a linha de meta nos gráficos.
 
 ### Named Rules
-**The Tracejado Pendente Rule.** Tracejado para o que é previsto, pendente ou não salvo; linha cheia para o que já está gravado. A pílula de nuvem passa de tracejada (local) a cheia (online).
+**The Pílula É Controle Rule.** O que se clica ou o que mede é pílula; o que contém é cartão de 16px. Não há cantos retos na interface.
 
 ## Components
 
 ### Buttons
-Firmes e retos, de oficina: sem gradiente, sem brilho.
-- **Shape:** cantos de 6px (`ctl`).
-- **Primary:** fundo grafite, texto branco, peso 700, altura mínima de 46px, largura total nos formulários de lançamento.
-- **Hover / Focus:** grafite aceso no hover; desce 1px no clique; anel de foco de 2px em `ga-deep` com 2px de afastamento.
-- **Sky:** fundo azul-céu e texto grafite, para ações ligadas à marca (entrar, ação secundária de destaque); no hover fica céu aceso.
-- **Outline:** fundo `field`, borda `line`, 34px; no hover a borda fica grafite; quando ligado (toggle ativo) vira grafite cheio. Sobre faixa grafite fica transparente, com borda que acende em azul-céu.
-- **Delete:** texto vermelho com borda rosada; no hover fica vermelho cheio com texto branco.
+Pílulas firmes, com o brilho reservado à ação de marca.
+- **Shape:** pílula (999px).
+- **Primary:** fundo claro `text`, texto `bg`, peso 700, altura mínima de 46px e largura total nos formulários; fica branco no hover e desce 1px no clique.
+- **Sky:** fundo azul-céu e texto `on-sky`; no hover fica céu aceso e ganha brilho de 20px. O botão de entrar é a mesma pílula, a 40px, já com brilho em repouso.
+- **Outline:** fundo `surface-2`, borda `line-strong`, 34px, 0,78rem peso 600; no hover a borda fica azul-céu; ligado (toggle) vira azul-céu cheio.
+- **Delete:** texto `bad` com borda vermelha a 45%; no hover fica `bad-solid` cheio com texto branco.
+- **Focus:** contorno de 2px em azul-céu com 2px de afastamento, em todo elemento focável.
 
 ### Chips
-- **Style:** tags retangulares de 3px, 0,7rem, peso 700: verde (`ok-soft`/`ok`), âmbar (`warn-soft`/`warn`), vermelho (`bad-soft`/`bad`), céu (`ga-sky-soft` com texto azul escuro) para dobradeira, neutro (`neutral-chip`) para estribadeira.
-- **Perfil:** administrador em azul-céu cheio, PCP em verde suave, visualizador em neutro.
-- **Pílula de nuvem:** fundo branco, ponto de 8px na cor do estado; borda cheia verde quando online e tracejada âmbar quando está em modo local.
+- **Style:** pílulas de 0,72rem peso 700: verde (`ok-soft`/`ok`), âmbar (`warn-soft`/`warn`), vermelho (`bad-soft`/`bad`) e céu (`ga-sky-soft`/`ga-sky-hi`).
+- **Perfil:** administrador em azul-céu cheio com texto `on-sky`, PCP em verde suave, visualizador em `surface-3`.
+- **Pílula de nuvem:** fundo `surface-2` com ponto de 8px brilhando na cor do estado; borda verde quando online e âmbar em modo local.
 
 ### Cards / Containers
-- **Corner Style:** 6px (`tag`).
-- **Background:** papel `stock` sobre chão `ground`.
-- **Shadow Strategy:** sombra de etiqueta (ver Elevation & Depth).
-- **Border:** nenhuma em tela; 1px `line` só na impressão.
-- **Internal Padding:** 18px nas laterais, 18px embaixo; a faixa vai de ponta a ponta, com 8px por 18px de recuo e 44px à direita para abrir espaço ao furo.
+- **Corner Style:** 16px (`card`).
+- **Background:** `surface`, com reflexo branco de 2,5% nos primeiros 40% da altura.
+- **Shadow Strategy:** nenhuma em repouso (ver Elevation & Depth).
+- **Border:** 1px `line`; verde a 60% quando a meta é batida.
+- **Internal Padding:** 20px a 22px nos painéis e 18px a 20px nos KPIs.
+- **Título de painel:** `title` em caixa alta com um ponto azul-céu de 7px brilhando antes do texto.
 
 ### Inputs / Fields
-- **Style:** fundo branco `field`, borda de 1px `line`, 6px, altura mínima de 44px; os campos numéricos usam JetBrains Mono. Os rótulos ficam acima, em 0,78rem e peso 600, na cor `ink-2`.
-- **Focus:** a borda passa a `ga-deep`, com halo de 3px em azul-céu a 28%.
-- **Error:** caixa `bad-soft` com borda rosada e texto vermelho escuro acima das ações.
-- **Filtros na faixa grafite:** campo transparente dentro de uma moldura de 1px `band-line`, com rótulo em caixa alta; a moldura acende em azul-céu no foco.
+- **Style:** fundo `bg`, borda de 1px `line-strong`, cantos de 10px, altura mínima de 46px; os campos numéricos usam JetBrains Mono. Os rótulos ficam acima, a 0,78rem peso 600 em `text-2`.
+- **Focus:** a borda fica azul-céu, com halo de 3px a 22%.
+- **Error:** caixa `bad-soft` com borda vermelha a 45% e texto rosado acima das ações.
+- **Filtros da barra:** moldura `surface` de 10px com rótulo em caixa alta e campo transparente; a moldura acende em azul-céu no foco.
 
 ### Navigation
-- Barra superior grafite com 60px, fixa no topo da tela (no celular rola com a página). Monograma GA em azul-céu, Archivo larga peso 900.
-- Abas em texto `on-band-mute`, peso 600, 0,86rem; no hover e na aba ativa o texto fica branco, e a aba ativa ganha um sublinhado azul-céu de 3px que cresce do centro (0,25s, `cubic-bezier(0.16, 1, 0.3, 1)`).
-- No celular as abas ocupam a linha inteira e rolam na horizontal, com 46px de altura.
+- Barra superior fixa e translúcida, com o selo de 44px (branco, com anel de 1px e brilho azul de 18px), o nome "Grande Aço" em `headline` e a linha "Produção · PCP · Sucata" em rótulo.
+- Abas em pílula dentro de um trilho `surface` com 5px de recuo: inativas em `mute`, peso 600, 0,84rem; no hover ganham `surface-2`; a ativa fica azul-céu cheio, com texto `on-sky` e brilho de 18px. As transições levam 0,18s.
+- No celular as abas ocupam a linha inteira e rolam na horizontal, e o subtítulo da marca some.
 
-### Etiqueta de Resumo (signature)
-A etiqueta alta à esquerda da Visão Geral. Tem faixa grafite com "LOTE <MÊS / ANO>" e, quando a meta é batida, uma tag "Meta batida" em azul-céu. Mostra o produzido do mês em display e uma régua de meta de 12px (trilho `line-soft`, preenchimento grafite que fica verde ao bater a meta) com a marca tracejada âmbar do esperado até hoje. Depois vêm as linhas de etiqueta (projeção, disponibilidade, acumulado do ano), com o rótulo à esquerda, o valor em mono à direita e a nota abaixo, separadas por tracejado.
+### Cartão em Destaque (signature)
+O primeiro cartão da faixa de KPIs, mais largo (1,5fr). Tem borda azul-céu a 45%, brilho radial azul no canto superior esquerdo e brilho de destaque. O rótulo sai em `ga-sky-hi`, com a tag "Meta batida" à direita quando a meta é alcançada. O produzido do mês sai em `display`. Abaixo vem a régua da meta: trilho `surface-3` de 8px, preenchimento em degradê do céu profundo ao céu com brilho (verde quando a meta é batida) e a marca tracejada âmbar do esperado até hoje. Por fim, o atingimento em mono e a legenda.
 
-### Etiqueta de Bitola (signature)
-Uma etiqueta pequena por bitola. A faixa azul-céu traz "Ø 8,00", com o Ø em Archivo larga 900, e as máquinas à direita, cortadas com reticências se não couberem. Abaixo vêm o produzido em mono 1,32rem, a linha "Carteira" com o valor e um medidor de 6px do quanto já foi atendido, e um ponto de estado no rodapé: verde para carteira zerada, azul profundo para atendimento parcial, âmbar para não iniciada e cinza para sem pedido. A etiqueta sem pedido troca a faixa para `line` e apaga o número.
-
-### Etiqueta KPI
-Faixa azul-céu com o rótulo em caixa alta e o valor em `number-lg`. A variante em destaque (`.featured`, a melhor semana) troca para faixa grafite e valor em Archivo larga.
+### Lista de Bitolas (signature)
+Uma tabela em linhas finas, uma linha por bitola: o código em Archivo larga 800; as máquinas em `text-2`, cortadas com reticências; o produzido e o restante em mono, alinhados à direita; um medidor em pílula de 6px com o quanto da carteira já foi atendido (céu com brilho, verde quando zerada); e a situação com um ponto brilhante: verde para "Carteira zerada", céu aceso para "% atendido", âmbar para "Não iniciada" e cinza para "Sem pedido" (que também apaga o número). No hover a linha recebe um véu azul a 5%. A lista de máquinas segue a mesma lógica: nome, tag de disponibilidade, régua com brilho e total em mono.
 
 ### Tabelas
-Cabeçalho em `label` cinza, sublinhado por uma régua grafite de 2px; linhas separadas por `line-soft`; hover de linha em azul-céu a 7%; linha de total em `ga-sky-soft` e peso 700.
+Cabeçalho em `label` cinza sobre `surface-2`, com cantos superiores de 10px e borda `line-strong`; linhas separadas por `line`; hover de linha em azul a 5%; linha de total em `ga-sky-soft` e peso 700.
+
+### Janelas
+`surface` com borda `line-strong`, 16px, sombra de sobreposição, até 460px de largura, sobre um véu preto a 70% com desfoque. A janela de login centraliza o selo de 84px com brilho azul de 24px, o título e as ações empilhadas em largura total.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** montar todo painel novo como etiqueta: papel `stock`, faixa de ponta a ponta no topo, furo de amarração no canto direito e cantos de 6px.
-- **Do** usar faixa grafite para resumo e estrutura e faixa azul-céu para o dado de cada item (The Duas Faixas Rule).
-- **Do** pôr todo número medido (kg, t, %, h, R$) em JetBrains Mono 800, no formato pt-BR (1.234,5 kg).
-- **Do** escrever rótulos em Archivo larga (125%), caixa alta, entre 0,7rem e 0,74rem, com espaçamento de 0,05em.
-- **Do** usar tracejado para o previsto, pendente ou não salvo e linha cheia para o registrado.
-- **Do** manter o texto sobre azul-céu em grafite `ga-ink` e usar `ga-deep` para foco e texto azul.
-- **Do** seguir a sequência dos gráficos: grafite para o realizado, céu tracejado para a meta e a rampa céu-claro → grafite para as semanas.
+- **Do** manter o chão `bg` com o brilho radial azul no topo direito e montar todo cartão novo em `surface`, com borda de 1px `line` e cantos de 16px.
+- **Do** usar o brilho azul-céu só no que está ativo, medindo ou em destaque (The Uma Luz Rule), com um único cartão em destaque por faixa.
+- **Do** pôr todo número medido (kg, t, %, h, R$) em JetBrains Mono, no formato pt-BR (1.234,5 kg), e usar a forma curta ("30,7 mil") nos rótulos de gráfico.
+- **Do** escrever títulos e rótulos em Archivo larga (125%), caixa alta, com espaçamento de 0,06em.
+- **Do** usar `on-sky` como texto sobre qualquer preenchimento azul-céu.
+- **Do** fazer de todo controle uma pílula e de todo contêiner um cartão de 16px.
+- **Do** seguir a paleta dos gráficos: céu para o produzido, claro tracejado para a meta e a rampa do céu profundo ao céu claro para as semanas.
+- **Do** usar o selo oficial (`assets/logo-grande-aco-selo.jpg`) em círculo branco, a 44px na barra e a 84px no login, sempre com o brilho azul.
 
 ### Don't:
-- **Don't** voltar à grade escura de cartões KPI estilo SaaS nem ao painel administrativo branco com barra lateral.
-- **Don't** usar `ga-sky` como cor de texto sobre papel ou chão.
-- **Don't** pintar um painel inteiro com cor de estado; o estado vai em ponto, tag ou régua.
-- **Don't** escrever palavras ou títulos em mono; mono é só para números e códigos medidos.
-- **Don't** fazer etiquetas subirem ou ganharem sombra maior no hover; a sombra de sobreposição é só para menus, janelas e avisos.
-- **Don't** redesenhar o logo da Grande Aço à mão; o monograma em texto fica até o arquivo oficial chegar.
+- **Don't** voltar ao mundo claro de etiquetas de papel; o cliente o rejeitou por "parecer um calendário".
+- **Don't** dar brilho a cartões comuns, títulos ou texto; o brilho é a luz do que está ativo, não decoração.
+- **Don't** pintar um painel inteiro com cor de estado; o estado vai em ponto, tag, régua ou borda.
+- **Don't** escrever palavras ou títulos em mono.
+- **Don't** pôr texto branco sobre azul-céu.
+- **Don't** fazer cartões subirem ou ganharem sombra no hover; a sombra escura é só para janelas, menus e avisos.
+- **Don't** redesenhar ou recolorir o selo da Grande Aço.
