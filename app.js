@@ -1,6 +1,6 @@
 Chart.register(ChartDataLabels);
 Chart.defaults.font.family = "'Archivo', system-ui, sans-serif";
-Chart.defaults.color = '#4A5560';
+Chart.defaults.color = '#8E9BA8';
 
 const DEFAULT_CLOUD_URL = "https://script.google.com/macros/s/AKfycbxEgRmd7Z4TXB2sIvFTmmh3-Sx0tXQhlmYxSCvL28ZhZ1NIher81lydZC0eAlb4RUpD_w/exec";
 const CUSTOM_URL_KEY = "GRANDE_ACO_CUSTOM_GAS_URL_V9";
@@ -2320,19 +2320,22 @@ function renderGaugeTags(m) {
     if (remaining > 0 && produced === 0) { state = 'warn'; stateText = 'Não iniciada'; }
     else if (remaining > 0) { state = 'pend'; stateText = `${servedPct}% atendido`; }
     else if (produced > 0) { state = 'ok'; stateText = 'Carteira zerada'; }
-    const label = `${g}: produzido ${formatValue(produced, 0)}, carteira restante ${formatValue(remaining, 0)}`;
     return `
-      <article class="bitola-tag is-${state}" aria-label="${escapeHtml(label)}">
-        <header class="bitola-band"><span>${escapeHtml(g)}</span><span>${escapeHtml(machines)}</span></header>
-        <div class="bitola-body">
-          <div class="bitola-kg">${formatValue(produced, 0)}</div>
-          <div class="bitola-sub">produzido no mês</div>
-          <div class="bitola-cart"><span>Carteira</span><strong>${formatValue(remaining, 0)}</strong></div>
-          <div class="bitola-meter" aria-hidden="true"><i style="width:${total > 0 ? servedPct : 0}%"></i></div>
-          <div class="bitola-state">${stateText}</div>
-        </div>
-      </article>`;
+      <div class="bitola-row is-${state}" role="row">
+        <span class="bitola-gauge" role="cell">${escapeHtml(g)}</span>
+        <span class="bitola-mach" role="cell">${escapeHtml(machines)}</span>
+        <span class="bitola-kg" role="cell">${formatValue(produced, 0)}</span>
+        <span class="bitola-meter" role="cell" aria-label="${servedPct}% da carteira atendida"><i style="width:${total > 0 ? servedPct : 0}%"></i></span>
+        <span class="bitola-cart" role="cell">${remaining > 0 ? formatValue(remaining, 0) : '—'}</span>
+        <span class="bitola-state" role="cell">${stateText}</span>
+      </div>`;
   }).join('');
+  grid.insertAdjacentHTML('afterbegin', `
+    <div class="bitola-row bitola-head" role="row">
+      <span role="columnheader">Bitola</span><span role="columnheader">Máquina</span>
+      <span role="columnheader">Produzido</span><span role="columnheader">Carteira atendida</span>
+      <span role="columnheader">Restante</span><span role="columnheader">Situação</span>
+    </div>`);
 }
 
 function renderTables() {
@@ -2515,10 +2518,10 @@ function renderCharts() {
   const activeWeekLabels = hasWeek5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
   const activeWeeksData = hasWeek5 ? weeksAll : weeksAll.slice(0, 4);
 
-  const gridColor = 'rgba(26,33,41,0.08)';
-  const tickColor = '#4A5560';
+  const gridColor = 'rgba(255,255,255,0.07)';
+  const tickColor = '#8E9BA8';
 
-  // 1. Evolução Mensal vs. Previsão (grafite = realizado, azul = meta)
+  // 1. Evolução Mensal vs. Previsão (azul = realizado, claro tracejado = meta)
   const ctxMonth = document.getElementById('monthlyStepChart').getContext('2d');
   if (monthlyChart) monthlyChart.destroy();
 
@@ -2534,17 +2537,17 @@ function renderCharts() {
         {
           label: `Produzido (${viewFilter.unit})`,
           data: prodSeries,
-          borderColor: '#1A2129',
-          backgroundColor: 'rgba(26, 33, 41, 0.07)',
+          borderColor: '#3DAEE9',
+          backgroundColor: 'rgba(61, 174, 233, 0.16)',
           fill: true,
           stepped: 'middle',
           borderWidth: 2.5,
           pointRadius: 4,
-          pointBackgroundColor: '#1A2129',
+          pointBackgroundColor: '#3DAEE9',
           datalabels: {
-            color: '#1A2129',
-            backgroundColor: '#F7F7F4',
-            borderColor: '#1A2129',
+            color: '#E8EDF2',
+            backgroundColor: '#0B0F14',
+            borderColor: '#3DAEE9',
             borderWidth: 1,
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 5, right: 5 },
@@ -2552,7 +2555,7 @@ function renderCharts() {
             align: (ctx) => prodSeries[ctx.dataIndex] >= goalSeries[ctx.dataIndex] ? 'top' : 'bottom',
             offset: 6,
             // Produzido: número em todos os meses com produção.
-            display: (ctx) => Number(ctx.dataset.data[ctx.dataIndex]) > 0,
+            display: (ctx) => Number(ctx.dataset.data[ctx.dataIndex]) > 0 && (ctx.chart.width >= 520 || ctx.dataIndex === viewFilter.activeMonthIndex),
             clamp: true,
             clip: false,
             formatter: (val) => compactChartNumber(val)
@@ -2561,17 +2564,17 @@ function renderCharts() {
         {
           label: `Previsão / Meta (${viewFilter.unit})`,
           data: goalSeries,
-          borderColor: '#3DAEE9',
+          borderColor: '#DDE6EE',
           borderDash: [6, 4],
           fill: false,
           tension: 0.25,
           borderWidth: 2,
           pointRadius: 4,
-          pointBackgroundColor: '#3DAEE9',
+          pointBackgroundColor: '#DDE6EE',
           datalabels: {
-            color: '#1A2129',
-            backgroundColor: '#F7F7F4',
-            borderColor: '#3DAEE9',
+            color: '#E8EDF2',
+            backgroundColor: '#0B0F14',
+            borderColor: '#DDE6EE',
             borderWidth: 1,
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 5, right: 5 },
@@ -2581,7 +2584,7 @@ function renderCharts() {
             // Meta: número no mês ativo e nos meses ainda sem produção
             // (nos outros, o rótulo da produção já fica ao lado e eles se atropelariam).
             display: (ctx) => Number(ctx.dataset.data[ctx.dataIndex]) > 0 &&
-              (ctx.dataIndex === viewFilter.activeMonthIndex || !(prodSeries[ctx.dataIndex] > 0)),
+              (ctx.dataIndex === viewFilter.activeMonthIndex || (ctx.chart.width >= 520 && !(prodSeries[ctx.dataIndex] > 0))),
             clamp: true,
             clip: false,
             formatter: (val) => compactChartNumber(val)
@@ -2616,8 +2619,8 @@ function renderCharts() {
       datasets: [{
         label: `Produção Semanal (${viewFilter.unit})`,
         data: weekPlotData,
-        backgroundColor: ['#A9D8F2', '#6EC1EE', '#3DAEE9', '#0E6FA8', '#1A2129'],
-        borderRadius: 2
+        backgroundColor: ['#1E5A7C', '#2678A6', '#3DAEE9', '#7CC9F0', '#C4E8FA'],
+        borderRadius: 6
       }]
     },
     options: {
@@ -2628,7 +2631,7 @@ function renderCharts() {
       plugins: {
         legend: { display: false },
         datalabels: {
-          color: '#1A2129',
+          color: '#E8EDF2',
           anchor: 'end',
           align: 'top',
           font: { family: "'JetBrains Mono', monospace", weight: '700', size: 11 },
@@ -2650,10 +2653,10 @@ function renderCharts() {
 
   if (gaugeMonth) gaugeMonth.destroy();
   // Medidores retirados do layout: o resumo do mês já mostra o atingimento.
-  if (document.getElementById('gaugeMonthChart')) gaugeMonth = createGauge(document.getElementById('gaugeMonthChart'), pctMonth, '#3DAEE9');
+  if (document.getElementById('gaugeMonthChart')) gaugeMonth = createGauge(document.getElementById('gaugeMonthChart'), pctMonth, '#DDE6EE');
 
   if (gaugeYear) gaugeYear.destroy();
-  if (document.getElementById('gaugeYearChart')) gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#1A2129');
+  if (document.getElementById('gaugeYearChart')) gaugeYear = createGauge(document.getElementById('gaugeYearChart'), pctYear, '#3DAEE9');
 
   // 4. Gráfico por Máquina + Bitola (Aba 2)
   const ctxMach = document.getElementById('machineBarChart').getContext('2d');
@@ -2669,7 +2672,7 @@ function renderCharts() {
       datasets: [{
         label: `Peso Produzido (${viewFilter.unit})`,
         data: machPlotData,
-        backgroundColor: m.items.map(i => i.category === 'Estribadeira' ? '#1A2129' : '#0E6FA8'),
+        backgroundColor: m.items.map(i => i.category === 'Estribadeira' ? '#3DAEE9' : '#8FD3F5'),
         borderRadius: 6
       }]
     },
@@ -2681,7 +2684,7 @@ function renderCharts() {
       plugins: {
         legend: { display: false },
         datalabels: {
-          color: '#1A2129',
+          color: '#E8EDF2',
           anchor: 'end',
           align: 'top',
           font: { weight: '600', size: 10 },
@@ -2715,11 +2718,11 @@ function renderCharts() {
         {
           label: `Produzido (${viewFilter.unit})`,
           data: gaugeTotals,
-          backgroundColor: '#1A2129',
+          backgroundColor: '#3DAEE9',
           borderRadius: 6,
           datalabels: {
-            color: '#1A2129',
-            backgroundColor: '#F7F7F4',
+            color: '#E8EDF2',
+            backgroundColor: '#0B0F14',
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 4, right: 4 },
             anchor: 'end',
@@ -2732,11 +2735,11 @@ function renderCharts() {
         {
           label: `Carteira / Pedido (${viewFilter.unit})`,
           data: gaugeDemands,
-          backgroundColor: '#3DAEE9',
+          backgroundColor: '#DDE6EE',
           borderRadius: 6,
           datalabels: {
-            color: '#1A2129',
-            backgroundColor: '#F7F7F4',
+            color: '#E8EDF2',
+            backgroundColor: '#0B0F14',
             borderRadius: 6,
             padding: { top: 2, bottom: 2, left: 4, right: 4 },
             anchor: 'end',
@@ -2773,7 +2776,7 @@ function renderCharts() {
   const listToPlot = activeMonthsForWeeks.length > 0 ? activeMonthsForWeeks : months.slice(5, 10);
   const anyMonthHasW5 = listToPlot.some(item => item.weeks && item.weeks[4] > 0);
   const multiWeekLabels = anyMonthHasW5 ? WEEK_LABELS : WEEK_LABELS.slice(0, 4);
-  const weekColors = ['#A9D8F2', '#6EC1EE', '#3DAEE9', '#0E6FA8', '#1A2129'];
+  const weekColors = ['#1E5A7C', '#2678A6', '#3DAEE9', '#7CC9F0', '#C4E8FA'];
 
   const allMultiValues = [];
   listToPlot.forEach(item => {
@@ -2802,7 +2805,7 @@ function renderCharts() {
       plugins: {
         legend: { labels: { color: tickColor, padding: 14, font: { size: 12, weight: '600' } } },
         datalabels: {
-          color: '#1A2129',
+          color: '#E8EDF2',
           anchor: 'end',
           align: 'top',
           offset: 2,
@@ -2812,7 +2815,7 @@ function renderCharts() {
         }
       },
       scales: {
-        x: { ticks: { color: '#1A2129', font: { size: 12, weight: '600' } }, grid: { display: false } },
+        x: { ticks: { color: '#E8EDF2', font: { size: 12, weight: '600' } }, grid: { display: false } },
         y: { ticks: { color: tickColor }, grid: { color: gridColor }, beginAtZero: true, suggestedMax: maxMultiWeekVal * 1.24 }
       }
     }
@@ -2838,7 +2841,7 @@ function renderCharts() {
       datasets: [{
         label: `Peso de Sucata (${viewFilter.unit})`,
         data: scrapByOriginKg,
-        backgroundColor: '#0E6FA8',
+        backgroundColor: '#8FD3F5',
         borderRadius: 6
       }]
     },
@@ -2850,7 +2853,7 @@ function renderCharts() {
       plugins: {
         legend: { display: false },
         datalabels: {
-          color: '#1A2129',
+          color: '#E8EDF2',
           anchor: 'end',
           align: 'top',
           font: { weight: '600', size: 10 },
@@ -2880,7 +2883,7 @@ function renderCharts() {
       datasets: [{
         label: 'Valor Acumulado em Sucata (R$)',
         data: monthlyScrapBrlSeries,
-        backgroundColor: '#3DAEE9',
+        backgroundColor: '#DDE6EE',
         borderRadius: 6
       }]
     },
@@ -2892,7 +2895,7 @@ function renderCharts() {
       plugins: {
         legend: { labels: { color: tickColor, padding: 14 } },
         datalabels: {
-          color: '#1A2129',
+          color: '#E8EDF2',
           anchor: 'end',
           align: 'top',
           font: { weight: '600', size: 9.5 },
@@ -2913,7 +2916,7 @@ function createGauge(canvasEl, pct, colorHex) {
     data: {
       datasets: [{
         data: [pct, 100 - pct],
-        backgroundColor: [colorHex, '#E1E6EA'],
+        backgroundColor: [colorHex, 'rgba(255,255,255,0.08)'],
         borderWidth: 0
       }]
     },

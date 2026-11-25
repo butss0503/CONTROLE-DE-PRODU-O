@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1A2129" />
+  <meta name="theme-color" content="#07090C" />
   <title>GRANDE AÇO | Dashboard MES, PCP & Controle de Sucata</title>
   <link rel="icon" type="image/jpeg" href="assets/logo-grande-aco-selo.jpg" />
   <link rel="apple-touch-icon" href="assets/logo-grande-aco-selo.jpg" />
@@ -13,7 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2026-11-24-logo" />
+  <link rel="stylesheet" href="style.css?v=2026-11-25-dark" />
 </head>
 <body>
 
@@ -100,40 +100,49 @@
 
   <!-- ABA 1: VISÃO GERAL -->
   <section id="visao-geral" class="tab-section active">
-    <div class="overview-top">
-      <article class="panel summary-tag" id="kpiCardOee">
-        <div class="panel-header">
-          <span class="panel-title">Lote <span id="kpiMonthSub">NOVEMBRO / 2026</span></span>
+    <!-- 1. Indicadores do mês -->
+    <div class="kpi-grid kpi-overview">
+      <div class="kpi-card featured" id="kpiCardOee">
+        <div class="kpi-label">
+          <span>Produzido · <span id="kpiMonthSub">NOVEMBRO / 2026</span></span>
           <span class="goal-badge-trophy">Meta batida</span>
         </div>
-        <div class="summary-body">
-          <div class="summary-label">Produzido no mês</div>
-          <div class="summary-value" id="kpiMonthProd">0 kg</div>
-          <div class="goal-rule" role="img" id="kpiGoalRule" aria-label="Progresso da meta">
-            <span class="goal-rule-fill" id="kpiGoalFill"></span>
-            <span class="goal-rule-mark" id="kpiGoalMark" hidden></span>
-          </div>
-          <div class="summary-goal"><strong id="kpiAttainment">0,0%</strong> <span id="kpiMonthGoal">da meta de 0 kg</span></div>
-          <div class="summary-goal-legend" id="kpiGoalLegend"></div>
-
-          <dl class="tag-rows">
-            <div><dt>Projeção do mês</dt><dd id="kpiForecastVal">0 kg</dd></div>
-            <div class="tag-row-note" id="kpiForecastSub">Ritmo: 0 kg/dia</div>
-            <div><dt>Disponibilidade das máquinas</dt><dd id="kpiUptimeVal">100,0%</dd></div>
-            <div class="tag-row-note" id="kpiDowntimeSub">0,0 h paradas</div>
-            <div><dt>Acumulado em <span id="kpiYearLabel">2026</span></dt><dd id="kpiTotalProd">0 kg</dd></div>
-            <div class="tag-row-note" id="kpiTotalGoal">Previsão anual: 0 kg</div>
-          </dl>
+        <div class="kpi-value" id="kpiMonthProd">0 kg</div>
+        <div class="goal-rule" role="img" id="kpiGoalRule" aria-label="Progresso da meta">
+          <span class="goal-rule-fill" id="kpiGoalFill"></span>
+          <span class="goal-rule-mark" id="kpiGoalMark" hidden></span>
         </div>
-      </article>
-
-      <section class="bitola-board" aria-labelledby="bitolaBoardTitle">
-        <h2 class="board-title" id="bitolaBoardTitle">Etiquetas por bitola <span>produzido e carteira · <span id="bitolaBoardPeriod">NOVEMBRO/2026</span></span></h2>
-        <div class="bitola-grid" id="gaugeTagGrid"></div>
-      </section>
+        <div class="kpi-sub"><strong id="kpiAttainment">0,0%</strong> <span id="kpiMonthGoal">da meta de 0 kg</span></div>
+        <div class="kpi-sub summary-goal-legend" id="kpiGoalLegend"></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Projeção do mês</div>
+        <div class="kpi-value" id="kpiForecastVal">0 kg</div>
+        <div class="kpi-sub" id="kpiForecastSub">Ritmo: 0 kg/dia</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Disponibilidade</div>
+        <div class="kpi-value" id="kpiUptimeVal">100,0%</div>
+        <div class="kpi-sub" id="kpiDowntimeSub">0,0 h paradas</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Acumulado em <span id="kpiYearLabel">2026</span></div>
+        <div class="kpi-value" id="kpiTotalProd">0 kg</div>
+        <div class="kpi-sub" id="kpiTotalGoal">Previsão anual: 0 kg</div>
+      </div>
     </div>
 
-    <div class="main-grid">
+    <!-- 2. Gráficos -->
+    <div class="charts-row">
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Mês a mês vs. meta · <span id="chartYearTitle">2026</span></span>
+        </div>
+        <div class="chart-box">
+          <canvas id="monthlyStepChart"></canvas>
+        </div>
+      </div>
+
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Produção semanal · <span id="overviewWeekTitle">NOVEMBRO/2026</span></span>
@@ -142,7 +151,10 @@
           <canvas id="overviewWeeklyChart"></canvas>
         </div>
       </div>
+    </div>
 
+    <!-- 3. Operação: máquinas e bitolas -->
+    <div class="ops-row">
       <div class="panel">
         <div class="panel-header">
           <span class="panel-title">Máquinas · <span id="statusMonthTitle">NOVEMBRO/2026</span></span>
@@ -152,14 +164,11 @@
 
       <div class="panel">
         <div class="panel-header">
-          <span class="panel-title">Mês a mês vs. meta · <span id="chartYearTitle">2026</span></span>
+          <span class="panel-title">Bitolas · produzido e carteira · <span id="bitolaBoardPeriod">NOVEMBRO/2026</span></span>
         </div>
-        <div class="chart-box">
-          <canvas id="monthlyStepChart"></canvas>
-        </div>
+        <div class="bitola-list" id="gaugeTagGrid" role="table" aria-label="Produção e carteira por bitola"></div>
       </div>
     </div>
-
   </section>
 
   <!-- ABA 2: MÁQUINAS, BITOLAS & CARTEIRA DE PEDIDOS -->
@@ -631,6 +640,6 @@
     </div>
   </section>
 
-  <script src="app.js?v=2026-11-24-logo"></script>
+  <script src="app.js?v=2026-11-25-dark"></script>
 </body>
 </html>
